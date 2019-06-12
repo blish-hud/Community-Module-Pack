@@ -5,9 +5,11 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Blish_HUD;
 using Blish_HUD.Controls;
+using Blish_HUD.Entities;
 using Blish_HUD.Modules;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -62,7 +64,7 @@ namespace Compass_Module {
             _settingVerticalOffset = settingsManager.DefineSetting("Vertical Offset", 0f,   0f,   true, "How high to offset the compass off the ground.");
         }
 
-        protected override void LoadAsync() {
+        protected override async Task LoadAsync() {
             
         }
 
@@ -83,6 +85,14 @@ namespace Compass_Module {
             _eastBb.Opacity  = Math.Min(1 - GameService.Camera.Forward.X, 1f);
             _southBb.Opacity = Math.Min(1 + GameService.Camera.Forward.Y, 1f);
             _westBb.Opacity  = Math.Min(1 + GameService.Camera.Forward.X, 1f);
+        }
+
+        /// <inheritdoc />
+        protected override void Unload() {
+            GameService.Graphics.World.Entities.Remove(_northBb);
+            GameService.Graphics.World.Entities.Remove(_eastBb);
+            GameService.Graphics.World.Entities.Remove(_southBb);
+            GameService.Graphics.World.Entities.Remove(_westBb);
         }
 
     }

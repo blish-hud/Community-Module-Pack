@@ -5,17 +5,15 @@
   "package": "Markers and Paths Module.dll",
   "manifest_version": 1,
 
-  "description": "Adds support for reading TacO marker packs and AugTyr paths. Allows for new behavior attributes which add many features to markers and paths.",
-  "dependencies": {
-  },
+  "description": "Adds support for reading TacO marker packs and AugTyr paths. Also adds support for new behavior attributes in the marker pack XML format allowing for more advanced features and abilities.\n\nWhen this module is enabled, a new folder called 'markers' will be created under your '...\\Documents\\Guild Wars 2\\addons\\blish hud\\markers'.  Drag and drop your marker packs into this folder to make them available to Blish HUD.",
+  
   "url": "https://github.com/blish-hud/Blish-HUD",
-  "contributers": [
-    {
-      "name": "Freesnöw",
-      "username": "LandersXanders.1235",
-      "url": "https://github.com/dlamkins"
-    }
-  ],
+  
+  "author": {
+    "name": "FreesnÃ¶w",
+    "username": "LandersXanders.1235",
+    "url": "https://github.com/dlamkins"
+  },
 
-  "directories": ["markers"] 
+  "directories": [ "markers" ]
 }

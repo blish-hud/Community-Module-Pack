@@ -31,7 +31,7 @@ namespace Markers_and_Paths_Module {
             GameService.Pathing.NewMapLoaded += delegate { PackFormat.TacO.Readers.MarkerPackReader.UpdatePathableStates(); };
         }
 
-        protected override void LoadAsync() {
+        protected override async Task LoadAsync() {
             GameService.Debug.StartTimeFunc("Markers and Paths");
 
             LoadPacks();
