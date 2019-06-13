@@ -1,0 +1,22 @@
+{
+  "name": "Musician",
+  "version": "0.6.0",
+  "namespace": "bh.general.musician",
+  "package": "Musician_Module.dll",
+  "manifest_version": 1,
+
+  "description": "Create, share and play sheet music.",
+  "url": "https://github.com/blish-hud/Blish-HUD",
+  "author": {
+    "name": "Andy",
+    "username": "Nekres.1038"
+  },
+  "directories": [ "musician" ],
+  "enabled_without_gw2": false,
+  "api_permissions": {
+    "account": {
+      "optional": true,
+      "details": "Needed if you want the special feature enabled."
+    }
+  }
+}
