@@ -42,7 +42,7 @@ namespace Loading_Screen_Hints_Module {
         /// and render loop, so be sure to not do anything here that takes too long.
         /// </summary>
         protected override void Initialize() {
-            ContentsMgr = ContentsMgr;
+            ContentsMgr = this.ContentsManager;
         }
 
         /// <summary>

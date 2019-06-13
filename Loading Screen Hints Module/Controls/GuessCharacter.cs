@@ -80,8 +80,8 @@ namespace Loading_Screen_Hints_Module.Controls {
 
             CharacterString = Characters[rnd];
 
-            string cleanCharacterName = CharacterString.Replace("_", "");
-            CharacterTexture = LoadingScreenHintsModule.ContentsMgr.GetTexture($@"characters\{cleanCharacterName}.png"); //Content.GetTexture(@"characters\" + Regex.Replace(CharacterString.ToLower(), @"\s", "_", RegexOptions.Multiline));
+            string cleanCharacterName = CharacterString.Replace(" ", "_");
+            CharacterTexture = LoadingScreenHintsModule.ContentsMgr.GetTexture($@"characters/{cleanCharacterName}.png");
 
             var center = new Point(this.Size.X / 2, this.Size.Y / 2);
             int centerLeft = center.X / 2;
