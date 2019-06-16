@@ -32,7 +32,7 @@ namespace Loading_Screen_Hints_Module {
         /// Define the settings you would like to use in your module.  Settings are persistent
         /// between updates to both Blish HUD and your module.
         /// </summary>
-        protected override void DefineSettings(SettingsManager settingsManager) {
+        protected override void DefineSettings(SettingCollection settings) {
             
         }
 
@@ -54,6 +54,8 @@ namespace Loading_Screen_Hints_Module {
         /// with <see cref="Blish_HUD.DirectorService.QueueMainThreadUpdate(Action{GameTime})"/>.
         /// </summary>
         protected override async Task LoadAsync() {
+            await Task.Delay(1);
+
             LoadScreenPanel = new LoadScreenPanel() {Opacity = 0f};
         }
 

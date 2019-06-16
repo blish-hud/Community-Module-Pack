@@ -22,7 +22,7 @@ namespace Markers_and_Paths_Module {
         [ImportingConstructor]
         public MarkersAndPathsModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) { /* NOOP */ }
 
-        protected override void DefineSettings(SettingsManager settingsManager) {
+        protected override void DefineSettings(SettingCollection settings) {
 
         }
 
@@ -33,6 +33,8 @@ namespace Markers_and_Paths_Module {
         }
 
         protected override async Task LoadAsync() {
+            await Task.Delay(1);
+
             GameService.Debug.StartTimeFunc("Markers and Paths");
 
             LoadPacks();
@@ -101,7 +103,13 @@ namespace Markers_and_Paths_Module {
             GameService.Pathing.Icon.LoadingMessage = null;
             GameService.Debug.StopTimeFuncAndOutput("Markers and Paths");
 
+            PackFormat.TacO.Readers.MarkerPackReader.UpdatePathableStates();
+
             base.OnModuleLoaded(e);
+        }
+
+        protected override void Unload() {
+            PackFormat.TacO.Readers.MarkerPackReader.Pathables.ForEach(p => GameService.Graphics.World.Entities.Remove(p.ManagedEntity));
         }
 
 
