@@ -14,8 +14,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Loading_Screen_Hints_Module {
 
-    [Export(typeof(ExternalModule))]
-    public class LoadingScreenHintsModule : ExternalModule {
+    [Export(typeof(Module))]
+    public class LoadingScreenHintsModule : Module {
 
         internal static ContentsManager ContentsMgr;
 

@@ -9,12 +9,13 @@ using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Blish_HUD.Modules;
+using Blish_HUD.Modules.Managers;
 using Blish_HUD.Pathing.Content;
 
 namespace Markers_and_Paths_Module {
 
-    [Export(typeof(ExternalModule))]
-    public class MarkersAndPathsModule : Blish_HUD.Modules.ExternalModule {
+    [Export(typeof(Module))]
+    public class MarkersAndPathsModule : Module {
 
         private string _markerDirectory;
 
@@ -22,7 +23,7 @@ namespace Markers_and_Paths_Module {
         public MarkersAndPathsModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) { /* NOOP */ }
 
         protected override void DefineSettings(SettingsManager settingsManager) {
-            settingsManager.DefineSetting("Test Setting", true, true, true, "This is a test setting. Should be removed before next community release.");
+
         }
 
         protected override void Initialize() {
