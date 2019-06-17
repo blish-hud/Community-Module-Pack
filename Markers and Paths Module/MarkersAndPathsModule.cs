@@ -19,6 +19,12 @@ namespace Markers_and_Paths_Module {
 
         private string _markerDirectory;
 
+        private List<Control> _moduleControls;
+
+        private EventHandler<EventArgs> _onNewMapLoaded;
+
+        private PersistentStore _pathableToggleStates;
+
         [ImportingConstructor]
         public MarkersAndPathsModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) { /* NOOP */ }
 
@@ -29,7 +35,11 @@ namespace Markers_and_Paths_Module {
         protected override void Initialize() {
             _markerDirectory = DirectoriesManager.GetFullDirectoryPath("markers");
 
-            GameService.Pathing.NewMapLoaded += delegate { PackFormat.TacO.Readers.MarkerPackReader.UpdatePathableStates(); };
+            _moduleControls = new List<Control>();
+            _pathableToggleStates = GameService.Store.RegisterStore(this.Namespace);
+
+            _onNewMapLoaded = delegate { PackFormat.TacO.Readers.MarkerPackReader.UpdatePathableStates(); };
+            GameService.Pathing.NewMapLoaded += _onNewMapLoaded;
         }
 
         protected override async Task LoadAsync() {
@@ -41,10 +51,14 @@ namespace Markers_and_Paths_Module {
             BuildCategoryMenus();
         }
 
+        private List<PathableResourceManager> _allPathableResourceManagers;
+
         private void LoadPacks() {
+            _allPathableResourceManagers = new List<PathableResourceManager>();
+
             var dirDataReader      = new DirectoryReader(_markerDirectory);
             var dirResourceManager = new PathableResourceManager(dirDataReader);
-            GameService.Pathing.RegisterPathableResourceManager(dirResourceManager);
+            _allPathableResourceManagers.Add(dirResourceManager);
             dirDataReader.LoadOnFileType((Stream fileStream, IDataReader dataReader) => {
                 PackFormat.TacO.Readers.MarkerPackReader.ReadFromXmlPack(fileStream, dirResourceManager);
             }, ".xml");
@@ -55,7 +69,7 @@ namespace Markers_and_Paths_Module {
                 // Potentially contains many packs within
                 var zipDataReader      = new ZipArchiveReader(packFile);
                 var zipResourceManager = new PathableResourceManager(zipDataReader);
-                GameService.Pathing.RegisterPathableResourceManager(zipResourceManager);
+                _allPathableResourceManagers.Add(zipResourceManager);
                 zipDataReader.LoadOnFileType((Stream fileStream, IDataReader dataReader) => {
                     PackFormat.TacO.Readers.MarkerPackReader.ReadFromXmlPack(fileStream, zipResourceManager);
                 }, ".xml");
@@ -64,13 +78,25 @@ namespace Markers_and_Paths_Module {
 
         private void AddCategoryToMenuStrip(ContextMenuStrip parentMenuStrip, PackFormat.TacO.PathingCategory newCategory) {
             var newCategoryMenuItem = parentMenuStrip.AddMenuItem(newCategory.DisplayName);
+
+            _moduleControls.Add(newCategoryMenuItem);
+
+            StoreValue<bool> categoryStoreState = _pathableToggleStates.GetOrSetValue(newCategory.Namespace, true);
+            newCategory.Visible = categoryStoreState.Value;
+
             newCategoryMenuItem.CanCheck = true;
             newCategoryMenuItem.Checked  = newCategory.Visible;
 
-            newCategoryMenuItem.CheckedChanged += delegate (object sender, CheckChangedEvent e) { newCategory.Visible = e.Checked; };
+            newCategoryMenuItem.CheckedChanged += delegate(object sender, CheckChangedEvent e) {
+                newCategory.Visible = e.Checked;
+                categoryStoreState.Value = e.Checked;
+            };
 
             if (newCategory.Any()) {
                 var childMenuStrip = new ContextMenuStrip();
+
+                _moduleControls.Add(childMenuStrip);
+
                 newCategoryMenuItem.Submenu = childMenuStrip;
 
                 foreach (var childCategory in newCategory) {
@@ -85,11 +111,15 @@ namespace Markers_and_Paths_Module {
             GameService.Director.QueueMainThreadUpdate((gameTime) => {
                 var rootCategoryMenu = new ContextMenuStrip();
 
+                _moduleControls.Add(rootCategoryMenu);
+
                 var allMarkersCMS = new ContextMenuStripItem() {
                     Text     = "All markers",
                     Submenu  = rootCategoryMenu,
                     CanCheck = false
                 };
+
+                _moduleControls.Add(allMarkersCMS);
 
                 foreach (var childCategory in PackFormat.TacO.Readers.MarkerPackReader.Categories) {
                     AddCategoryToMenuStrip(rootCategoryMenu, childCategory);
@@ -101,6 +131,9 @@ namespace Markers_and_Paths_Module {
 
         protected override void OnModuleLoaded(EventArgs e) {
             GameService.Pathing.Icon.LoadingMessage = null;
+
+            _allPathableResourceManagers.ForEach(GameService.Pathing.RegisterPathableResourceManager);
+
             GameService.Debug.StopTimeFuncAndOutput("Markers and Paths");
 
             PackFormat.TacO.Readers.MarkerPackReader.UpdatePathableStates();
@@ -109,7 +142,13 @@ namespace Markers_and_Paths_Module {
         }
 
         protected override void Unload() {
-            PackFormat.TacO.Readers.MarkerPackReader.Pathables.ForEach(p => GameService.Graphics.World.Entities.Remove(p.ManagedEntity));
+            GameService.Pathing.NewMapLoaded -= _onNewMapLoaded;
+            _moduleControls.ForEach(c => c.Dispose());
+            _moduleControls.Clear();
+            _allPathableResourceManagers.ForEach(GameService.Pathing.UnregisterPathableResourceManager);
+            PackFormat.TacO.Readers.MarkerPackReader.Pathables.ForEach(p => GameService.Pathing.UnregisterPathable(p));
+            PackFormat.TacO.Readers.MarkerPackReader.Pathables.Clear();
+            PackFormat.TacO.Readers.MarkerPackReader.Categories.Clear();
         }
 
 
