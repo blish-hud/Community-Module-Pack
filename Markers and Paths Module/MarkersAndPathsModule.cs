@@ -11,6 +11,8 @@ using Blish_HUD.Controls;
 using Blish_HUD.Modules;
 using Blish_HUD.Modules.Managers;
 using Blish_HUD.Pathing.Content;
+using Blish_HUD.Settings;
+using NLog;
 
 namespace Markers_and_Paths_Module {
 
@@ -26,7 +28,9 @@ namespace Markers_and_Paths_Module {
         private PersistentStore _pathableToggleStates;
 
         [ImportingConstructor]
-        public MarkersAndPathsModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) { /* NOOP */ }
+        public MarkersAndPathsModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) {
+            Logger = LogManager.GetCurrentClassLogger(typeof(MarkersAndPathsModule));
+        }
 
         protected override void DefineSettings(SettingCollection settings) {
 
@@ -43,8 +47,6 @@ namespace Markers_and_Paths_Module {
         }
 
         protected override async Task LoadAsync() {
-            await Task.Delay(1);
-
             GameService.Debug.StartTimeFunc("Markers and Paths");
 
             LoadPacks();

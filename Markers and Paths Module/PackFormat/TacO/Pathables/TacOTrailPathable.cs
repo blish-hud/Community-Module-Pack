@@ -136,6 +136,8 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
 
             // Load trl file
             using (var trlStream = this.PathableManager.DataReader.GetFileStream(this.TrlFilePath)) {
+                if (trlStream == null) return false;
+
                 var sectionData = Readers.TrlReader.ReadStream(trlStream);
 
                 if (!sectionData.Any()) return false;
