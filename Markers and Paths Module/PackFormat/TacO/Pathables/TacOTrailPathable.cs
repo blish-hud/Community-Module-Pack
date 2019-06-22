@@ -1,6 +1,7 @@
 ﻿using Blish_HUD.Pathing.Format;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -78,15 +79,12 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
 
             // TrailData
             RegisterAttribute("trailData",
-                              attribute => (!string.IsNullOrEmpty(
-                                   this.TrlFilePath = attribute.Value.Trim()
-                                  )
-                              ),
+                              attribute => (!string.IsNullOrEmpty(this.TrlFilePath = attribute.Value.Trim())),
                               true);
 
             // Alpha (alias:Opacity)
             RegisterAttribute("alpha", delegate (XmlAttribute attribute) {
-                if (!float.TryParse(attribute.Value, out float fOut)) return false;
+                if (!float.TryParse(attribute.Value, NumberStyles.Any, CultureInfo.InvariantCulture, out float fOut)) return false;
 
                 this.Opacity = fOut;
                 return true;
@@ -94,7 +92,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
 
             // FadeNear
             RegisterAttribute("fadeNear", delegate (XmlAttribute attribute) {
-                if (!float.TryParse(attribute.Value, out float fOut)) return false;
+                if (!float.TryParse(attribute.Value, NumberStyles.Any, CultureInfo.InvariantCulture, out float fOut)) return false;
 
                 this.FadeNear = fOut;
                 return true;
@@ -102,7 +100,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
 
             // FadeFar
             RegisterAttribute("fadeFar", delegate (XmlAttribute attribute) {
-                if (!float.TryParse(attribute.Value, out float fOut)) return false;
+                if (!float.TryParse(attribute.Value, NumberStyles.Any, CultureInfo.InvariantCulture, out float fOut)) return false;
 
                 this.FadeFar = fOut;
                 return true;
@@ -110,7 +108,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
 
             // AnimationSpeed
             RegisterAttribute("animSpeed", delegate (XmlAttribute attribute) {
-                if (!float.TryParse(attribute.Value, out float fOut)) return false;
+                if (!float.TryParse(attribute.Value, NumberStyles.Any, CultureInfo.InvariantCulture, out float fOut)) return false;
 
                 this.ManagedEntity.AnimationSpeed = fOut;
                 return true;
@@ -118,7 +116,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
 
             // TrailScale
             RegisterAttribute("trailScale", delegate (XmlAttribute attribute) {
-                if (!float.TryParse(attribute.Value, out float fOut)) return false;
+                if (!float.TryParse(attribute.Value, NumberStyles.Any, CultureInfo.InvariantCulture, out float fOut)) return false;
 
                 this.Scale = fOut;
                 return true;

@@ -17,7 +17,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
 
         internal static readonly PathingCategory Categories = new PathingCategory("root") { Visible = true };
 
-        internal static readonly List<IPathable<Entity>> Pathables = new List<IPathable<Entity>>();
+        internal static readonly SynchronizedCollection<IPathable<Entity>> Pathables = new SynchronizedCollection<IPathable<Entity>>();
 
         public static void RegisterPathable(IPathable<Entity> pathable) {
             if (pathable == null) return;
@@ -26,8 +26,9 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
         }
 
         public static void UpdatePathableStates() {
-            for (int i = 0; i < Pathables.Count - 1; i++)
-                ProcessPathableState(Pathables[i]);
+            foreach (var pathable in Pathables) {
+                ProcessPathableState(pathable);
+            }
         }
 
         private static void ProcessPathableState(IPathable<Entity> pathable) {

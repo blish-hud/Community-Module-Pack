@@ -111,8 +111,8 @@ namespace Loading_Screen_Hints_Module.Controls {
             int centerLeft = center.X / 2;
             int centerRight = center.X + (center.X / 2);
 
-            var left = Blish_HUD.Utils.DrawUtil.HorizontalAlignment.Left;
-            var top = Blish_HUD.Utils.DrawUtil.VerticalAlignment.Top;
+            var left = HorizontalAlignment.Left;
+            var top = VerticalAlignment.Top;
 
             string title = this.Result ? "It's " + CharacterString + '!' : "Who's that Character?";
             string wrappedTitle = Blish_HUD.Utils.DrawUtil.WrapText(this.Font, title, this.Width / 2 - LoadScreenPanel.RIGHT_PADDING);

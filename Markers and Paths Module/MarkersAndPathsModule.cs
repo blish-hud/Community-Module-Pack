@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
+using Blish_HUD.Entities;
 using Blish_HUD.Modules;
 using Blish_HUD.Modules.Managers;
+using Blish_HUD.Pathing;
 using Blish_HUD.Pathing.Content;
 using Blish_HUD.Settings;
 using NLog;
@@ -28,9 +30,7 @@ namespace Markers_and_Paths_Module {
         private PersistentStore _pathableToggleStates;
 
         [ImportingConstructor]
-        public MarkersAndPathsModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) {
-            Logger = LogManager.GetCurrentClassLogger(typeof(MarkersAndPathsModule));
-        }
+        public MarkersAndPathsModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) { /* NOOP */ }
 
         protected override void DefineSettings(SettingCollection settings) {
 
@@ -137,7 +137,7 @@ namespace Markers_and_Paths_Module {
             _allPathableResourceManagers.ForEach(GameService.Pathing.RegisterPathableResourceManager);
 
             GameService.Debug.StopTimeFuncAndOutput("Markers and Paths");
-
+            
             PackFormat.TacO.Readers.MarkerPackReader.UpdatePathableStates();
 
             base.OnModuleLoaded(e);
@@ -148,7 +148,11 @@ namespace Markers_and_Paths_Module {
             _moduleControls.ForEach(c => c.Dispose());
             _moduleControls.Clear();
             _allPathableResourceManagers.ForEach(GameService.Pathing.UnregisterPathableResourceManager);
-            PackFormat.TacO.Readers.MarkerPackReader.Pathables.ForEach(p => GameService.Pathing.UnregisterPathable(p));
+
+            foreach (IPathable<Entity> pathable in PackFormat.TacO.Readers.MarkerPackReader.Pathables) {
+                GameService.Pathing.UnregisterPathable(pathable);
+            }
+
             PackFormat.TacO.Readers.MarkerPackReader.Pathables.Clear();
             PackFormat.TacO.Readers.MarkerPackReader.Categories.Clear();
         }

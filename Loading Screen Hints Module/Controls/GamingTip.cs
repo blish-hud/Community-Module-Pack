@@ -75,8 +75,8 @@ namespace Loading_Screen_Hints_Module.Controls {
         }
         protected override void Paint(SpriteBatch spriteBatch, Rectangle bounds) {
             var center = new Point((this.Size.X / 2), this.Size.Y / 2);
-            var left = Blish_HUD.Utils.DrawUtil.HorizontalAlignment.Center;
-            var top = Blish_HUD.Utils.DrawUtil.VerticalAlignment.Top;
+            var left = HorizontalAlignment.Center;
+            var top = VerticalAlignment.Top;
             string title = "Did You Know:";
             int titleHeight = (int)this.BigFont.MeasureString(title).Height;
             int titleWidth = (int)this.BigFont.MeasureString(title).Width;
