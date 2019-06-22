@@ -15,7 +15,7 @@ using Humanizer;
 
 namespace Markers_and_Paths_Module.PackFormat.TacO {
 
-    public class PathingCategory : ObservableKeyedCollection<string, PathingCategory>, INotifyPropertyChanged {
+    public class PathingCategory : KeyedCollection<string, PathingCategory> {
 
         private PathingCategory _parent;
         public PathingCategory Parent {
@@ -34,20 +34,15 @@ namespace Markers_and_Paths_Module.PackFormat.TacO {
             }
         }
 
-        public string Name { get; }
+        private string _name;
+        public string Name => _name;
 
         public string Namespace =>
-            (this.Parent != null && this.Parent.Parent != null)
+            Parent?.Parent != null
                 ? $"{this.Parent.Namespace}.{this.Name}"
                 : this.Name;
 
-        //private List<Entities.Marker> _markers = new List<Marker>();
-        //private List<Entities.Pathing.Paths.ITrail> _paths = new List<ITrail>();
-
         private List<IPathable> _pathables = new List<IPathable>();
-
-        //public ReadOnlyCollection<Entities.Marker> Markers => _markers.AsReadOnly();
-        //public ReadOnlyCollection<Entities.Pathing.Paths.ITrail> Paths => _paths.AsReadOnly();
 
         public ReadOnlyCollection<IPathable> Pathables => _pathables.AsReadOnly();
 
@@ -82,17 +77,13 @@ namespace Markers_and_Paths_Module.PackFormat.TacO {
 
         private bool _visible = true;
         public bool Visible {
-            //get => this.Parent?.Visible ?? true && _visible;
             get => _visible;
             set {
                 if (_visible == value) return;
 
                 _visible = value;
 
-                //UpdateMarkerState();
                 UpdatePathableState();
-
-                OnPropertyChanged();
             }
         }
 
@@ -104,7 +95,6 @@ namespace Markers_and_Paths_Module.PackFormat.TacO {
 
                 _parentVisible = value;
 
-                //UpdateMarkerState();
                 UpdatePathableState();
             }
         }
@@ -144,8 +134,8 @@ namespace Markers_and_Paths_Module.PackFormat.TacO {
 
         public XmlNode SourceXmlNode { get; set; }
 
-        public PathingCategory(string name) {
-            this.Name = name.ToLower();
+        public PathingCategory(string name) : base(StringComparer.OrdinalIgnoreCase) {
+            _name = name;
         }
 
         public void UpdatePathableState() {
@@ -156,15 +146,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO {
             }
         }
 
-        //public void AddMarker(Entities.Marker newMarker) {
-        //    _markers.Add(newMarker);
-        //}
-
-        //public void AddPath(Entities.Pathing.Paths.ITrail newTrail) {
-        //    _paths.Add(newTrail);
-        //}
-
-        public void AddPathable(Blish_HUD.Pathing.IPathable pathable) {
+        public void AddPathable(IPathable pathable) {
             _pathables.Add(pathable);
         }
 
@@ -175,7 +157,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO {
         }
 
         public PathingCategory GetOrAddCategoryFromNamespace(IEnumerable<string> splitNamespace) {
-            List<string> namespaceSegments = splitNamespace.Select(ns => ns.ToLower()).ToList();
+            List<string> namespaceSegments = splitNamespace.ToList();
 
             string segmentValue = namespaceSegments[0];
 
@@ -202,17 +184,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO {
         }
 
         protected override string GetKeyForItem(PathingCategory item) {
-            return item.Name.ToLower();
-        }
-
-        private void ChildPropertyChanged(object sender, PropertyChangedEventArgs e) {
-            var childCat = sender as PathingCategory;
-
-            // Not sure how you even got here...
-            if (childCat == null) return;
-
-            // Just something to let us waterfall back up
-            OnPropertyChanged(nameof(this.Items));
+            return item.Name;
         }
 
         #region Property Binding

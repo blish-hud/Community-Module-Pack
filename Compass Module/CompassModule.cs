@@ -11,13 +11,14 @@ using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Entities;
 using Blish_HUD.Modules;
+using Blish_HUD.Modules.Managers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Compass_Module {
 
-    [Export(typeof(ExternalModule))]
-    public class CompassModule : Blish_HUD.Modules.ExternalModule {
+    [Export(typeof(Module))]
+    public class CompassModule : Module {
 
         private SettingEntry<float> _settingCompassSize;
         private SettingEntry<float> _settingCompassRadius;
@@ -58,10 +59,10 @@ namespace Compass_Module {
             _westBb.Size  = newSize;
         }
 
-        protected override void DefineSettings(SettingsManager settingsManager) {
-            _settingCompassSize    = settingsManager.DefineSetting("Compass Size",    0.5f, 0.5f, true, "Size of the compass elements.");
-            _settingCompassRadius  = settingsManager.DefineSetting("Compass Radius",  0f,   0f,   true, "Radius of the compass.");
-            _settingVerticalOffset = settingsManager.DefineSetting("Vertical Offset", 0f,   0f,   true, "How high to offset the compass off the ground.");
+        protected override void DefineSettings(SettingCollection settings) {
+            _settingCompassSize    = settings.DefineSetting("CompassSize",    0.5f, "Compass Size",    "Size of the compass elements.");
+            _settingCompassRadius  = settings.DefineSetting("CompassRadius",  0f,   "Compass Radius",  "Radius of the compass.");
+            _settingVerticalOffset = settings.DefineSetting("VerticalOffset", 0f,   "Vertical Offset", "How high to offset the compass off the ground.");
         }
 
         protected override async Task LoadAsync() {
