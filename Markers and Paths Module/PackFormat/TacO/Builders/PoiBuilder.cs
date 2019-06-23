@@ -21,7 +21,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
                     var newPoiMarker = new Pathables.TacOMarkerPathable(pathableNode, pathableResourceManager, rootCategory);
 
                     if (newPoiMarker.SuccessfullyLoaded) {
-                        Logger.Info("Marker {markerGuid} was successfully loaded!", newPoiMarker.Guid);
+                        //Logger.Info("Marker {markerGuid} was successfully loaded!", newPoiMarker.Guid);
                         Readers.MarkerPackReader.RegisterPathable(newPoiMarker);
                     } else {
                         Logger.Warn("Failed to load marker!");
@@ -31,7 +31,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
                     var newPathTrail = new Pathables.TacOTrailPathable(pathableNode, pathableResourceManager, rootCategory);
 
                     if (newPathTrail.SuccessfullyLoaded) {
-                        Logger.Info("Trail {trailGuid} was successfully loaded!", newPathTrail.Guid);
+                        //Logger.Info("Trail {trailGuid} was successfully loaded!", newPathTrail.Guid);
                         Readers.MarkerPackReader.RegisterPathable(newPathTrail);
                     } else {
                         Logger.Warn("Failed to load trail!");

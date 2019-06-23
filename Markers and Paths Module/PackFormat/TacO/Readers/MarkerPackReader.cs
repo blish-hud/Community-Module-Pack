@@ -26,7 +26,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
         }
 
         public static void UpdatePathableStates() {
-            foreach (var pathable in Pathables) {
+            foreach (var pathable in Pathables.ToArray()) {
                 ProcessPathableState(pathable);
             }
         }
