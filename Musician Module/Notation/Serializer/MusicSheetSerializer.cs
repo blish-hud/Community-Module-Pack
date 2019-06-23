@@ -1,8 +1,8 @@
 ﻿using System.Text;
-using Blish_HUD.Modules.Musician.Domain;
-using Blish_HUD.Modules.Musician.Notation.Persistance;
+using Musician_Module.Domain;
+using Musician_Module.Notation.Persistance;
 
-namespace Blish_HUD.Modules.Musician.Notation.Serializer
+namespace Musician_Module.Notation.Serializer
 {
     public class MusicSheetSerializer
     {

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Xml.Linq;
 
-namespace Blish_HUD.Modules.Musician.Notation.Persistance
+namespace Musician_Module.Notation.Persistance
 {
     public class XmlMusicSheetWriter
     {

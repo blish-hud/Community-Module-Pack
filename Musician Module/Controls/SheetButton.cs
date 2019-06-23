@@ -2,8 +2,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Blish_HUD.Controls;
-using Blish_HUD.Modules.Musician.Notation.Persistance;
-namespace Blish_HUD.Modules.Musician.Controls {
+using Musician_Module.Notation.Persistance;
+namespace Musician_Module.Controls {
 
     // TODO: Show "Edit" button when music sheet creator correlates to account name from ApiService. Navigates to composer.
     public class SheetButton : DetailsButton {
@@ -18,7 +18,13 @@ namespace Blish_HUD.Modules.Musician.Controls {
         public string Title { get; set; }
         public string User { get; set; }
         private static Texture2D BeatmaniaSprite;
+        private static Texture2D GlowBeatmaniaSprite;
         private static Texture2D AutoplaySprite;
+        private static Texture2D GlowAutoplaySprite;
+        private static Texture2D PlaySprite;
+        private static Texture2D GlowPlaySprite;
+        private static Texture2D StopSprite;
+        private static Texture2D GlowStopSprite;
         private static Texture2D BackgroundSprite;
         private static Texture2D DividerSprite;
         private static Texture2D IconBoxSprite;
@@ -61,12 +67,17 @@ namespace Blish_HUD.Modules.Musician.Controls {
         }
         public SheetButton()
         {
-
-            BeatmaniaSprite = BeatmaniaSprite ?? Content.GetTexture("beatmania");
-            AutoplaySprite = AutoplaySprite ?? Content.GetTexture("autoplay");
-            BackgroundSprite = BackgroundSprite ?? ContentService.Textures.Pixel;
-            DividerSprite = DividerSprite ?? Content.GetTexture("157218");
-            IconBoxSprite = IconBoxSprite ?? Content.GetTexture("605003");
+            BeatmaniaSprite = BeatmaniaSprite ?? MusicianModule.ContentsMgr.GetTexture("beatmania");
+            GlowBeatmaniaSprite = GlowBeatmaniaSprite ?? MusicianModule.ContentsMgr.GetTexture("glow_beatmania");
+            AutoplaySprite = AutoplaySprite ?? MusicianModule.ContentsMgr.GetTexture("autoplay");
+            GlowAutoplaySprite = GlowAutoplaySprite ?? MusicianModule.ContentsMgr.GetTexture("glow_autoplay");
+            StopSprite = StopSprite ?? MusicianModule.ContentsMgr.GetTexture("stop");
+            GlowStopSprite = GlowStopSprite ?? MusicianModule.ContentsMgr.GetTexture("glow_stop");
+            PlaySprite = PlaySprite ?? MusicianModule.ContentsMgr.GetTexture("play");
+            GlowPlaySprite = GlowPlaySprite ?? MusicianModule.ContentsMgr.GetTexture("glow_play");
+            BackgroundSprite = BackgroundSprite ?? MusicianModule.ContentsMgr.Textures.Pixel;
+            DividerSprite = DividerSprite ?? MusicianModule.ContentsMgr.GetTexture("157218");
+            IconBoxSprite = IconBoxSprite ?? MusicianModule.ContentsMgr.GetTexture("605003");
             this.MouseMoved += SheetButton_MouseMoved;
             this.MouseLeft += SheetButton_MouseLeft;
             this.Size = new Point(SHEETBUTTON_WIDTH, SHEETBUTTON_HEIGHT);
@@ -163,34 +174,34 @@ namespace Blish_HUD.Modules.Musician.Controls {
             if (this._mouseOverPreview)
             {
                 if (this.IsPreviewing) {
-                    spriteBatch.DrawOnCtrl(this, Content.GetTexture("glow_stop"), new Rectangle(SHEETBUTTON_WIDTH - 36, bounds.Height - BOTTOMSECTION_HEIGHT + 1, 32, 32), Color.White);
+                    spriteBatch.DrawOnCtrl(this, GlowStopSprite, new Rectangle(SHEETBUTTON_WIDTH - 36, bounds.Height - BOTTOMSECTION_HEIGHT + 1, 32, 32), Color.White);
                 } else {
-                spriteBatch.DrawOnCtrl(this, Content.GetTexture("glow_play"), new Rectangle(SHEETBUTTON_WIDTH - 36, bounds.Height - BOTTOMSECTION_HEIGHT + 1, 32, 32), Color.White);
+                spriteBatch.DrawOnCtrl(this, GlowPlaySprite, new Rectangle(SHEETBUTTON_WIDTH - 36, bounds.Height - BOTTOMSECTION_HEIGHT + 1, 32, 32), Color.White);
                 }
             }
             else
             {
                 if (this.IsPreviewing)
                 {
-                    spriteBatch.DrawOnCtrl(this, Content.GetTexture("stop"), new Rectangle(SHEETBUTTON_WIDTH - 36, bounds.Height - BOTTOMSECTION_HEIGHT + 1, 32, 32), Color.White);
+                    spriteBatch.DrawOnCtrl(this, StopSprite, new Rectangle(SHEETBUTTON_WIDTH - 36, bounds.Height - BOTTOMSECTION_HEIGHT + 1, 32, 32), Color.White);
                 }
                 else
                 {
-                    spriteBatch.DrawOnCtrl(this, Content.GetTexture("play"), new Rectangle(SHEETBUTTON_WIDTH - 36, bounds.Height - BOTTOMSECTION_HEIGHT + 1, 32, 32), Color.White);
+                    spriteBatch.DrawOnCtrl(this, PlaySprite, new Rectangle(SHEETBUTTON_WIDTH - 36, bounds.Height - BOTTOMSECTION_HEIGHT + 1, 32, 32), Color.White);
                 }
             }
 
             // Draw beatmania icon
             if (this._mouseOverPlay)
             {
-                spriteBatch.DrawOnCtrl(this, Content.GetTexture("glow_beatmania"), new Rectangle(SHEETBUTTON_WIDTH - 73, bounds.Height - BOTTOMSECTION_HEIGHT + 1, 32, 32), Color.White);
+                spriteBatch.DrawOnCtrl(this, GlowBeatmaniaSprite, new Rectangle(SHEETBUTTON_WIDTH - 73, bounds.Height - BOTTOMSECTION_HEIGHT + 1, 32, 32), Color.White);
             } else {
                 spriteBatch.DrawOnCtrl(this, BeatmaniaSprite, new Rectangle(SHEETBUTTON_WIDTH - 73, bounds.Height - BOTTOMSECTION_HEIGHT + 1, 32, 32), Color.White);
             }
 
             if (this._mouseOverEmulate)
             {
-                spriteBatch.DrawOnCtrl(this, Content.GetTexture("glow_autoplay"), new Rectangle(SHEETBUTTON_WIDTH - 109, bounds.Height - BOTTOMSECTION_HEIGHT + 1, 32, 32), Color.White);
+                spriteBatch.DrawOnCtrl(this, GlowAutoplaySprite, new Rectangle(SHEETBUTTON_WIDTH - 109, bounds.Height - BOTTOMSECTION_HEIGHT + 1, 32, 32), Color.White);
             } else {
                 spriteBatch.DrawOnCtrl(this, AutoplaySprite, new Rectangle(SHEETBUTTON_WIDTH - 109, bounds.Height - BOTTOMSECTION_HEIGHT + 1, 32, 32), Color.White);
             }
@@ -204,7 +215,7 @@ namespace Blish_HUD.Modules.Musician.Controls {
                 // Draw icon box
                 if (this.IconSize == DetailsIconSize.Large)
                 {
-                    spriteBatch.DrawOnCtrl(this, Content.GetTexture("605003"), new Rectangle(0, 0, iconSize, iconSize), Color.White);
+                    spriteBatch.DrawOnCtrl(this, IconBoxSprite, new Rectangle(0, 0, iconSize, iconSize), Color.White);
                 }
             }
             // Wrap text

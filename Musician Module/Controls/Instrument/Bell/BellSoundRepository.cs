@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Blish_HUD.Controls.Intern;
-using Blish_HUD.Modules.Musician.Player.Sound;
+using Musician_Module.Player.Sound;
 using NAudio.Vorbis;
-namespace Blish_HUD.Modules.Musician.Controls.Instrument
+namespace Musician_Module.Controls.Instrument
 {
     public class BellSoundRepository
     {
@@ -39,28 +39,28 @@ namespace Blish_HUD.Modules.Musician.Controls.Instrument
 
         private static readonly Dictionary<string, CachedSound> Sound = new Dictionary<string, CachedSound>
         {
-            {"D4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bell\D4.ogg"))))},
-            {"E4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bell\E4.ogg"))))},
-            {"F4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bell\F4.ogg"))))},
-            {"G4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bell\G4.ogg"))))},
-            {"A4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bell\A4.ogg"))))},
-            {"B4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bell\B4.ogg"))))},
-            {"C5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bell\C5.ogg"))))},
-            {"D5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bell\D5.ogg"))))},
-            {"E5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bell\E5.ogg"))))},
-            {"F5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bell\F5.ogg"))))},
-            {"G5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bell\G5.ogg"))))},
-            {"A5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bell\A5.ogg"))))},
-            {"B5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bell\B5.ogg"))))},
-            {"C6", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bell\C6.ogg"))))},
-            {"D6", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bell\D6.ogg"))))},
-            {"E6", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bell\E6.ogg"))))},
-            {"F6", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bell\F6.ogg"))))},
-            {"G6", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bell\G6.ogg"))))},
-            {"A6", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bell\A6.ogg"))))},
-            {"B6", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bell\B6.ogg"))))},
-            {"C7", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bell\C7.ogg"))))},
-            {"D7", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bell\D7.ogg"))))}
+            {"D4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bell\D4.ogg"))))},
+            {"E4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bell\E4.ogg"))))},
+            {"F4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bell\F4.ogg"))))},
+            {"G4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bell\G4.ogg"))))},
+            {"A4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bell\A4.ogg"))))},
+            {"B4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bell\B4.ogg"))))},
+            {"C5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bell\C5.ogg"))))},
+            {"D5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bell\D5.ogg"))))},
+            {"E5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bell\E5.ogg"))))},
+            {"F5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bell\F5.ogg"))))},
+            {"G5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bell\G5.ogg"))))},
+            {"A5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bell\A5.ogg"))))},
+            {"B5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bell\B5.ogg"))))},
+            {"C6", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bell\C6.ogg"))))},
+            {"D6", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bell\D6.ogg"))))},
+            {"E6", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bell\E6.ogg"))))},
+            {"F6", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bell\F6.ogg"))))},
+            {"G6", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bell\G6.ogg"))))},
+            {"A6", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bell\A6.ogg"))))},
+            {"B6", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bell\B6.ogg"))))},
+            {"C7", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bell\C7.ogg"))))},
+            {"D7", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bell\D7.ogg"))))}
 
         };
 

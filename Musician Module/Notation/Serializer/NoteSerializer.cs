@@ -1,8 +1,8 @@
 ﻿using System;
-using Blish_HUD.Modules.Musician.Domain.Values;
-using Blish_HUD.Modules.Musician.Controls.Instrument;
+using Musician_Module.Domain.Values;
+using Musician_Module.Controls.Instrument;
 using System.Collections.Generic;
-namespace Blish_HUD.Modules.Musician.Notation.Serializer
+namespace Musician_Module.Notation.Serializer
 {
     public class NoteSerializer
     {

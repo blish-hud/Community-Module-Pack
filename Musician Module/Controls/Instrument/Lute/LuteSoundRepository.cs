@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Blish_HUD.Controls.Intern;
-using Blish_HUD.Modules.Musician.Player.Sound;
+using Musician_Module.Player.Sound;
 using NAudio.Vorbis;
-namespace Blish_HUD.Modules.Musician.Controls.Instrument
+namespace Musician_Module.Controls.Instrument
 {
     public class LuteSoundRepository
     {
@@ -39,28 +39,28 @@ namespace Blish_HUD.Modules.Musician.Controls.Instrument
 
         private static readonly Dictionary<string, CachedSound> Sound = new Dictionary<string, CachedSound>
         {
-            {"C3", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Lute\C3.ogg"))))},
-            {"D3", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Lute\D3.ogg"))))},
-            {"E3", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Lute\E3.ogg"))))},
-            {"F3", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Lute\F3.ogg"))))},
-            {"G3", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Lute\G3.ogg"))))},
-            {"A3", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Lute\A3.ogg"))))},
-            {"B3", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Lute\B3.ogg"))))},
-            {"C4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Lute\C4.ogg"))))},
-            {"D4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Lute\D4.ogg"))))},
-            {"E4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Lute\E4.ogg"))))},
-            {"F4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Lute\F4.ogg"))))},
-            {"G4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Lute\G4.ogg"))))},
-            {"A4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Lute\A4.ogg"))))},
-            {"B4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Lute\B4.ogg"))))},
-            {"C5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Lute\C5.ogg"))))},
-            {"D5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Lute\D5.ogg"))))},
-            {"E5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Lute\E5.ogg"))))},
-            {"F5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Lute\F5.ogg"))))},
-            {"G5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Lute\G5.ogg"))))},
-            {"A5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Lute\A5.ogg"))))},
-            {"B5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Lute\B5.ogg"))))},
-            {"C6", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Lute\C6.ogg"))))}
+            {"C3", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Lute\C3.ogg"))))},
+            {"D3", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Lute\D3.ogg"))))},
+            {"E3", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Lute\E3.ogg"))))},
+            {"F3", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Lute\F3.ogg"))))},
+            {"G3", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Lute\G3.ogg"))))},
+            {"A3", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Lute\A3.ogg"))))},
+            {"B3", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Lute\B3.ogg"))))},
+            {"C4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Lute\C4.ogg"))))},
+            {"D4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Lute\D4.ogg"))))},
+            {"E4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Lute\E4.ogg"))))},
+            {"F4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Lute\F4.ogg"))))},
+            {"G4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Lute\G4.ogg"))))},
+            {"A4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Lute\A4.ogg"))))},
+            {"B4", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Lute\B4.ogg"))))},
+            {"C5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Lute\C5.ogg"))))},
+            {"D5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Lute\D5.ogg"))))},
+            {"E5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Lute\E5.ogg"))))},
+            {"F5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Lute\F5.ogg"))))},
+            {"G5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Lute\G5.ogg"))))},
+            {"A5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Lute\A5.ogg"))))},
+            {"B5", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Lute\B5.ogg"))))},
+            {"C6", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Lute\C6.ogg"))))}
 
         };
 

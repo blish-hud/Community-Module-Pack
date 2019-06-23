@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Blish_HUD.Controls.Intern;
-namespace Blish_HUD.Modules.Musician.Controls.Instrument
+namespace Musician_Module.Controls.Instrument
 {
     public class KeyboardPractice : IKeyboard
     {

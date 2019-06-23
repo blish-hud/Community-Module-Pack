@@ -1,7 +1,7 @@
 ﻿using System;
 using Blish_HUD.Controls.Intern;
-using Blish_HUD.Modules.Musician.Player.Sound;
-namespace Blish_HUD.Modules.Musician.Controls.Instrument
+using Musician_Module.Player.Sound;
+namespace Musician_Module.Controls.Instrument
 {
     public class HarpPreview : IKeyboard
     {

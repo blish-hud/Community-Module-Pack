@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Blish_HUD.Modules.Musician.Domain.Values;
+using Musician_Module.Domain.Values;
 
-namespace Blish_HUD.Modules.Musician.Domain
+namespace Musician_Module.Domain
 {
     public class MusicSheet
     {

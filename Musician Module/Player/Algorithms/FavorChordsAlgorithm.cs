@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
-using Blish_HUD.Modules.Musician.Controls.Instrument;
-using Blish_HUD.Modules.Musician.Domain.Values;
+using Musician_Module.Controls.Instrument;
+using Musician_Module.Domain.Values;
 
-namespace Blish_HUD.Modules.Musician.Player.Algorithms
+namespace Musician_Module.Player.Algorithms
 {
     public class FavorChordsAlgorithm : IPlayAlgorithm
     {

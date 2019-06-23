@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
-using Blish_HUD.Modules.Musician.Domain.Values;
+using Musician_Module.Domain.Values;
 
-namespace Blish_HUD.Modules.Musician.Notation.Parsers
+namespace Musician_Module.Notation.Parsers
 {
     public class ChordParser
     {

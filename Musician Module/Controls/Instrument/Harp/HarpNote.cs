@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Blish_HUD.Modules.Musician.Domain.Values;
-namespace Blish_HUD.Modules.Musician.Controls.Instrument
+using Musician_Module.Domain.Values;
+namespace Musician_Module.Controls.Instrument
 {
     public class HarpNote
     {

@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Threading;
 using System;
-using Blish_HUD.Modules.Musician.Domain.Values;
-using Blish_HUD.Modules.Musician.Controls.Instrument;
-namespace Blish_HUD.Modules.Musician.Player.Algorithms
+using Musician_Module.Domain.Values;
+using Musician_Module.Controls.Instrument;
+namespace Musician_Module.Player.Algorithms
 {
     public class FavorNotesAlgorithm : IPlayAlgorithm
     {

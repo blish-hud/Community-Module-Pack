@@ -1,4 +1,4 @@
-namespace Blish_HUD.Modules.Musician.Notation.Persistance
+namespace Musician_Module.Notation.Persistance
 {
     public class RawMusicSheet
     {

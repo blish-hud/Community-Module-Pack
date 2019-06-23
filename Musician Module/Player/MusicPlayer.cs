@@ -1,10 +1,10 @@
 ﻿using System.Linq;
 using System.Threading;
-using Blish_HUD.Modules.Musician.Controls.Instrument;
-using Blish_HUD.Modules.Musician.Domain;
-using Blish_HUD.Modules.Musician.Player.Algorithms;
-using Blish_HUD.Modules.Musician.Controls;
-namespace Blish_HUD.Modules.Musician.Player
+using Musician_Module.Controls.Instrument;
+using Musician_Module.Domain;
+using Musician_Module.Player.Algorithms;
+using Musician_Module.Controls;
+namespace Musician_Module.Player
 {
     public class MusicPlayer
     {

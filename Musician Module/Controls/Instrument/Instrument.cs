@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using Blish_HUD.Modules.Musician.Domain.Values;
+using Musician_Module.Domain.Values;
 using Microsoft.Xna.Framework;
-namespace Blish_HUD.Modules.Musician.Controls.Instrument
+namespace Musician_Module.Controls.Instrument
 {
     public enum InstrumentSkillType
     {
@@ -20,7 +20,7 @@ namespace Blish_HUD.Modules.Musician.Controls.Instrument
     public abstract class Instrument
     {
         public bool IsInstrument(string instrument) {
-            return this.GetType().Name.ToLower().Trim() == instrument.ToLower().Trim();
+            return string.Equals(this.GetType().Name, instrument, StringComparison.OrdinalIgnoreCase);
         }
         public abstract void PlayNote(Note note);
         public abstract void GoToOctave(Note note);

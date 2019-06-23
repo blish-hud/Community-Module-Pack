@@ -2,7 +2,7 @@
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 
-namespace Blish_HUD.Modules.Musician.Player.Sound
+namespace Musician_Module.Player.Sound
 {
     public class AudioPlaybackEngine : IDisposable
     {

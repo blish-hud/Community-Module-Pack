@@ -1,4 +1,4 @@
-﻿namespace Blish_HUD.Modules.Musician.Domain.Values
+﻿namespace Musician_Module.Domain.Values
 {
     public class Beat
     {

@@ -4,7 +4,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
-namespace Blish_HUD.Modules.Musician.Notation.Persistance
+namespace Musician_Module.Notation.Persistance
 {
     public class XmlMusicSheetReader
     {

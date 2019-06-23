@@ -14,10 +14,12 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Musician_Module
 {
 
-    [Export(typeof(ExternalModule))]
-    public class MusicianModule : ExternalModule
+    [Export(typeof(Module))]
+    public class MusicianModule : Module
     {
-        private Texture2D ICON = GameService.Content.GetTexture("musician_icon");
+        internal static ContentsManager ContentsMgr;
+
+        private Texture2D ICON;
         private const string DD_TITLE = "Title";
         private const string DD_ARTIST = "Artist";
         private const string DD_USER = "User";
@@ -60,7 +62,8 @@ namespace Musician_Module
         /// </summary>
         protected override void Initialize()
         {
-            Directory.CreateDirectory(Path.Combine(GameService.FileSrv.BasePath, "musician"));
+            ContentsMgr = this.ContentsManager;
+            ICON = ICON ?? ContentsMgr.GetTexture("musician_icon");
             xmlParser = new XmlMusicSheetReader();
             displayedSheets = new List<SheetButton>();
         }
@@ -75,7 +78,6 @@ namespace Musician_Module
         /// </summary>
         protected override async Task LoadAsync()
         {
-            MusicianTab = GameService.Director.BlishHudWindow.AddTab("Musician", ICON, BuildHomePanel(GameService.Director.BlishHudWindow), 0);
         }
 
         /// <summary>
@@ -86,7 +88,7 @@ namespace Musician_Module
         /// </summary>
         protected override void OnModuleLoaded(EventArgs e)
         {
-
+            MusicianTab = GameService.Director.BlishHudWindow.AddTab("Musician", ICON, BuildHomePanel(GameService.Director.BlishHudWindow), 0);
             base.OnModuleLoaded(e);
         }
 
@@ -101,7 +103,7 @@ namespace Musician_Module
         {
             if (settingBackgroundPlayback.Value && GameService.GameIntegration.Gw2IsRunning)
             {
-                if (Utils.Window.GetForegroundWindow() != GameService.GameIntegration.Gw2Process.MainWindowHandle)
+                if (WindowUtil.OnTop != GameService.GameIntegration.Gw2Process.MainWindowHandle)
                 {
                     this.StopPlayback();
                     return;

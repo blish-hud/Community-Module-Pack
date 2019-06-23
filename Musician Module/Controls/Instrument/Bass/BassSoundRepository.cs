@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Blish_HUD.Controls.Intern;
-using Blish_HUD.Modules.Musician.Player.Sound;
+using Musician_Module.Player.Sound;
 using NAudio.Vorbis;
-namespace Blish_HUD.Modules.Musician.Controls.Instrument
+namespace Musician_Module.Controls.Instrument
 {
     public class BassSoundRepository
     {
@@ -30,21 +30,21 @@ namespace Blish_HUD.Modules.Musician.Controls.Instrument
 
         private static readonly Dictionary<string, CachedSound> Sound = new Dictionary<string, CachedSound>
         {
-            {"C1", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bass\C1.ogg"))))},
-            {"D1", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bass\D1.ogg"))))},
-            {"E1", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bass\E1.ogg"))))},
-            {"F1", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bass\F1.ogg"))))},
-            {"G1", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bass\G1.ogg"))))},
-            {"A1", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bass\A1.ogg"))))},
-            {"B1", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bass\B1.ogg"))))},
-            {"C2", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bass\C2.ogg"))))},
-            {"D2", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bass\D2.ogg"))))},
-            {"E2", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bass\E2.ogg"))))},
-            {"F2", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bass\F2.ogg"))))},
-            {"G2", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bass\G2.ogg"))))},
-            {"A2", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bass\A2.ogg"))))},
-            {"B2", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bass\B2.ogg"))))},
-            {"C3", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(GameService.Content.GetFile(@"instruments\Bass\C3.ogg"))))}
+            {"C1", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bass\C1.ogg"))))},
+            {"D1", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bass\D1.ogg"))))},
+            {"E1", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bass\E1.ogg"))))},
+            {"F1", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bass\F1.ogg"))))},
+            {"G1", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bass\G1.ogg"))))},
+            {"A1", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bass\A1.ogg"))))},
+            {"B1", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bass\B1.ogg"))))},
+            {"C2", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bass\C2.ogg"))))},
+            {"D2", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bass\D2.ogg"))))},
+            {"E2", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bass\E2.ogg"))))},
+            {"F2", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bass\F2.ogg"))))},
+            {"G2", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bass\G2.ogg"))))},
+            {"A2", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bass\A2.ogg"))))},
+            {"B2", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bass\B2.ogg"))))},
+            {"C3", new CachedSound(new AutoDisposeFileReader(new VorbisWaveReader(MusicianModule.ContentsMgr.GetFileStream(@"instruments\Bass\C3.ogg"))))}
 
         };
 

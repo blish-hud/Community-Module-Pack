@@ -1,7 +1,7 @@
 using System.Text;
-using Blish_HUD.Modules.Musician.Domain.Values;
+using Musician_Module.Domain.Values;
 
-namespace Blish_HUD.Modules.Musician.Notation.Serializer
+namespace Musician_Module.Notation.Serializer
 {
     public class ChordOffsetSerializer
     {

@@ -5,8 +5,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Glide;
 using System.Collections.Generic;
 using Blish_HUD.Controls.Intern;
-using Blish_HUD.Modules.Musician.Controls.Instrument;
-namespace Blish_HUD.Modules.Musician.Controls {
+using Musician_Module.Controls.Instrument;
+namespace Musician_Module.Controls {
 
 
     /// <summary>
@@ -27,14 +27,14 @@ namespace Blish_HUD.Modules.Musician.Controls {
         };
         private static readonly Dictionary<InstrumentSkillType, Texture2D> NoteTexture = new Dictionary<InstrumentSkillType, Texture2D>
         {
-            {InstrumentSkillType.LowNote, Content.GetTexture("note_block")},
-            {InstrumentSkillType.MiddleNote, Content.GetTexture("note_block")},
-            {InstrumentSkillType.HighNote, Content.GetTexture("note_block")},
-            {InstrumentSkillType.IncreaseOctaveToMiddle, Content.GetTexture("incr_octave")},
-            {InstrumentSkillType.IncreaseOctaveToHigh, Content.GetTexture("incr_octave")},
-            {InstrumentSkillType.DecreaseOctaveToLow, Content.GetTexture("decr_octave")},
-            {InstrumentSkillType.DecreaseOctaveToMiddle, Content.GetTexture("decr_octave")},
-            {InstrumentSkillType.StopPlaying, Content.GetTexture("pause_block")}
+            {InstrumentSkillType.LowNote, MusicianModule.ContentsMgr.GetTexture("note_block")},
+            {InstrumentSkillType.MiddleNote, MusicianModule.ContentsMgr.GetTexture("note_block")},
+            {InstrumentSkillType.HighNote, MusicianModule.ContentsMgr.GetTexture("note_block")},
+            {InstrumentSkillType.IncreaseOctaveToMiddle, MusicianModule.ContentsMgr.GetTexture("incr_octave")},
+            {InstrumentSkillType.IncreaseOctaveToHigh, MusicianModule.ContentsMgr.GetTexture("incr_octave")},
+            {InstrumentSkillType.DecreaseOctaveToLow, MusicianModule.ContentsMgr.GetTexture("decr_octave")},
+            {InstrumentSkillType.DecreaseOctaveToMiddle, MusicianModule.ContentsMgr.GetTexture("decr_octave")},
+            {InstrumentSkillType.StopPlaying, MusicianModule.ContentsMgr.GetTexture("pause_block")}
         };
         public Glide.Tween NoteAnim = null;
         public int Lane;

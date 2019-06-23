@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
-using Blish_HUD.Modules.Musician.Controls.Instrument;
-using Blish_HUD.Modules.Musician.Notation.Parsers;
-using Blish_HUD.Modules.Musician.Notation.Persistance;
-using Blish_HUD.Modules.Musician.Player.Algorithms;
-using Blish_HUD.Modules.Musician.Controls;
+using Musician_Module.Controls.Instrument;
+using Musician_Module.Notation.Parsers;
+using Musician_Module.Notation.Persistance;
+using Musician_Module.Player.Algorithms;
+using Musician_Module.Controls;
 using Blish_HUD.Controls.Intern;
-namespace Blish_HUD.Modules.Musician.Player
+namespace Musician_Module.Player
 {
     public enum KeyboardType
     {

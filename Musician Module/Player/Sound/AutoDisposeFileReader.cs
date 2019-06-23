@@ -1,7 +1,7 @@
 using NAudio.Vorbis;
 using NAudio.Wave;
 
-namespace Blish_HUD.Modules.Musician.Player.Sound
+namespace Musician_Module.Player.Sound
 {
     public class AutoDisposeFileReader : ISampleProvider
     {
