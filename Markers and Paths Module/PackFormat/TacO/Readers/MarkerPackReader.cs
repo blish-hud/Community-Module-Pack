@@ -13,9 +13,11 @@ using Blish_HUD.Pathing.Content;
 namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
     public static class MarkerPackReader {
 
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         internal static readonly PathingCategory Categories = new PathingCategory("root") { Visible = true };
 
-        internal static readonly List<IPathable<Entity>> Pathables = new List<IPathable<Entity>>();
+        internal static readonly SynchronizedCollection<IPathable<Entity>> Pathables = new SynchronizedCollection<IPathable<Entity>>();
 
         public static void RegisterPathable(IPathable<Entity> pathable) {
             if (pathable == null) return;
@@ -24,8 +26,9 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
         }
 
         public static void UpdatePathableStates() {
-            for (int i = 0; i < Pathables.Count - 1; i++)
-                ProcessPathableState(Pathables[i]);
+            foreach (var pathable in Pathables) {
+                ProcessPathableState(pathable);
+            }
         }
 
         private static void ProcessPathableState(IPathable<Entity> pathable) {
@@ -52,10 +55,10 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
             try {
                 packDocument.LoadXml(packSrc);
                 packLoaded = true;
-            } catch (XmlException exception) {
-                GameService.Debug.WriteErrorLine($"Could not load tacO overlay file {pathableResourceManager} from context {xmlPackContents.GetType().Name} due to an XML error.  Error: {exception.Message}");
+            } catch (XmlException ex) {
+                Logger.Error(ex, "Could not load tacO overlay file {pathableResourceManager} from {xmlPackContentsType} due to an XML error.", pathableResourceManager, xmlPackContents);
             } catch (Exception ex) {
-                throw;
+                Logger.Error(ex, "Could not load tacO overlay file {pathableResourceManager} from {xmlPackContentsType} due to an unexpected exception.", pathableResourceManager, xmlPackContents);
             }
 
             if (packLoaded) {
@@ -76,6 +79,8 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
         private static void TryLoadPOIs(XmlDocument packDocument, PathableResourceManager pathableResourceManager, PathingCategory rootCategory) {
             var poiNodes = packDocument.DocumentElement?.SelectSingleNode("/OverlayData/POIs");
             if (poiNodes == null) return;
+
+            Logger.Info("Found {poiCount} markers to load.", poiNodes.ChildNodes.Count);
 
             foreach (XmlNode poiNode in poiNodes) {
                 Builders.PoiBuilder.UnpackPathable(poiNode, pathableResourceManager, rootCategory);

@@ -78,8 +78,8 @@ namespace Loading_Screen_Hints_Module.Controls {
             var center = new Point(this.Size.X / 2, this.Size.Y / 2);
             int centerRight = center.X + (center.X / 2);
 
-            var left = Blish_HUD.Utils.DrawUtil.HorizontalAlignment.Center;
-            var top = Blish_HUD.Utils.DrawUtil.VerticalAlignment.Top;
+            var left = HorizontalAlignment.Center;
+            var top = VerticalAlignment.Top;
 
             string citation = Blish_HUD.Utils.DrawUtil.WrapText(this.Font, SelectedNarration, this.Width - LoadScreenPanel.RIGHT_PADDING);
             string sourceBind = "— ";

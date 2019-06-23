@@ -12,6 +12,7 @@ using Blish_HUD.Controls;
 using Blish_HUD.Entities;
 using Blish_HUD.Modules;
 using Blish_HUD.Modules.Managers;
+using Blish_HUD.Settings;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 

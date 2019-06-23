@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using Blish_HUD;
 using Blish_HUD.Pathing;
 using Blish_HUD.Pathing.Content;
 using Blish_HUD.Pathing.Entities;
@@ -106,7 +108,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
 
             // Alpha (alias:Opacity)
             RegisterAttribute("alpha", delegate (XmlAttribute attribute) {
-                if (!float.TryParse(attribute.Value, out float fOut)) return false;
+                if (!InvariantUtil.TryParseFloat(attribute.Value, out float fOut)) return false;
 
                 this.Opacity = fOut;
                 return true;
@@ -114,7 +116,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
 
             // FadeNear
             RegisterAttribute("fadeNear", delegate (XmlAttribute attribute) {
-                if (!float.TryParse(attribute.Value, out float fOut)) return false;
+                if (!InvariantUtil.TryParseFloat(attribute.Value, out float fOut)) return false;
 
                 this.ManagedEntity.FadeNear = fOut;
                 return true;
@@ -122,7 +124,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
 
             // FadeFar
             RegisterAttribute("fadeFar", delegate (XmlAttribute attribute) {
-                if (!float.TryParse(attribute.Value, out float fOut)) return false;
+                if (!InvariantUtil.TryParseFloat(attribute.Value, out float fOut)) return false;
 
                 this.ManagedEntity.FadeFar = fOut;
                 return true;
@@ -130,7 +132,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
 
             // IconSize
             RegisterAttribute("iconSize", delegate (XmlAttribute attribute) {
-                if (!float.TryParse(attribute.Value, out float fOut)) return false;
+                if (!InvariantUtil.TryParseFloat(attribute.Value, out float fOut)) return false;
 
                 this.ManagedEntity.AutoResize = false;
                 this.ManagedEntity.Size = new Vector2(fOut * 2f);
@@ -139,7 +141,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
 
             // HeightOffset
             RegisterAttribute("heightOffset", delegate (XmlAttribute attribute) {
-                if (!float.TryParse(attribute.Value, out float fOut)) return false;
+                if (!InvariantUtil.TryParseFloat(attribute.Value, out float fOut)) return false;
 
                 this.HeightOffset = fOut;
                 return true;
@@ -147,7 +149,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
 
             // ResetLength
             RegisterAttribute("resetLength", delegate (XmlAttribute attribute) {
-                if (!int.TryParse(attribute.Value, out int iOut)) return false;
+                if (!InvariantUtil.TryParseInt(attribute.Value, out int iOut)) return false;
 
                 this.ResetLength = iOut;
                 return true;
@@ -167,7 +169,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
 
             // TriggerRange
             RegisterAttribute("triggerRange", delegate (XmlAttribute attribute) {
-                if (!float.TryParse(attribute.Value, out float fOut)) return false;
+                if (!float.TryParse(attribute.Value, NumberStyles.Any, CultureInfo.InvariantCulture, out float fOut)) return false;
 
                 this.TriggerRange = fOut;
                 return true;

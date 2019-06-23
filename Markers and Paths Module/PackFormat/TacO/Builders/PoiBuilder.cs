@@ -9,6 +9,8 @@ using Blish_HUD.Pathing.Content;
 namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
     public static class PoiBuilder {
 
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         private const string ELEMENT_POITYPE_POI   = "poi";
         private const string ELEMENT_POITYPE_TRAIL = "trail";
         private const string ELEMENT_POITYPE_ROUTE = "route";
@@ -19,30 +21,30 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
                     var newPoiMarker = new Pathables.TacOMarkerPathable(pathableNode, pathableResourceManager, rootCategory);
 
                     if (newPoiMarker.SuccessfullyLoaded) {
+                        Logger.Info("Marker {markerGuid} was successfully loaded!", newPoiMarker.Guid);
                         Readers.MarkerPackReader.RegisterPathable(newPoiMarker);
                     } else {
-                        Console.WriteLine("Failed to load marker: ");
-                        //Console.WriteLine(string.Join("; ", pathableNode.Attributes.Select(s => ((XmlAttribute)s).Name + " = " + ((XmlAttribute)s).Value)));
+                        Logger.Warn("Failed to load marker!");
                     }
                     break;
                 case ELEMENT_POITYPE_TRAIL:
                     var newPathTrail = new Pathables.TacOTrailPathable(pathableNode, pathableResourceManager, rootCategory);
 
                     if (newPathTrail.SuccessfullyLoaded) {
+                        Logger.Info("Trail {trailGuid} was successfully loaded!", newPathTrail.Guid);
                         Readers.MarkerPackReader.RegisterPathable(newPathTrail);
                     } else {
-                        Console.WriteLine("Failed to load trail: ");
-                        //Console.WriteLine(string.Join("; ", pathableNode.Attributes.Select(s => ((XmlAttribute)s).Name + " = " + ((XmlAttribute)s).Value)));
+                        Logger.Warn("Failed to load trail!");
                     }
 
                     break;
                 case ELEMENT_POITYPE_ROUTE:
-                    Console.WriteLine("Skipped loading route.");
-                    //RouteBuilder.UnpackNode(pathableNode);
+                    Logger.Warn("Support for routes has not been added yet. They have been skipped.");
 
                     break;
                 default:
-                    Console.WriteLine($"Tried to unpack '{pathableNode.Name}' as POI!");
+                    Logger.Warn("Tried to pack {pathableNodeName} as a POI!", pathableNode.Name);
+
                     break;
             }
         }
