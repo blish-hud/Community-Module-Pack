@@ -110,7 +110,7 @@ namespace Markers_and_Paths_Module {
         private void BuildCategoryMenus() {
             GameService.Pathing.Icon.LoadingMessage = "Building category menus...";
 
-            GameService.Director.QueueMainThreadUpdate((gameTime) => {
+            GameService.Overlay.QueueMainThreadUpdate((gameTime) => {
                 var rootCategoryMenu = new ContextMenuStrip();
 
                 _moduleControls.Add(rootCategoryMenu);

@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compass Module", "Compass M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Loading Screen Hints Module", "Loading Screen Hints Module\Loading Screen Hints Module.csproj", "{F6C1BF91-DEAA-4413-946D-074C67672CB7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Events Module", "Events Module\Events Module.csproj", "{D9B0225E-5C5D-4D98-906C-AAE89F4D04D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Discord Rich Presence Module", "Discord Rich Presence Module\Discord Rich Presence Module.csproj", "{1DED6817-F7EB-4273-B793-9314D8E3E8D9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,22 @@ Global
 		{F6C1BF91-DEAA-4413-946D-074C67672CB7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F6C1BF91-DEAA-4413-946D-074C67672CB7}.Release|x64.ActiveCfg = Release|x64
 		{F6C1BF91-DEAA-4413-946D-074C67672CB7}.Release|x64.Build.0 = Release|x64
+		{D9B0225E-5C5D-4D98-906C-AAE89F4D04D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9B0225E-5C5D-4D98-906C-AAE89F4D04D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9B0225E-5C5D-4D98-906C-AAE89F4D04D9}.Debug|x64.ActiveCfg = Debug|x64
+		{D9B0225E-5C5D-4D98-906C-AAE89F4D04D9}.Debug|x64.Build.0 = Debug|x64
+		{D9B0225E-5C5D-4D98-906C-AAE89F4D04D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9B0225E-5C5D-4D98-906C-AAE89F4D04D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9B0225E-5C5D-4D98-906C-AAE89F4D04D9}.Release|x64.ActiveCfg = Release|x64
+		{D9B0225E-5C5D-4D98-906C-AAE89F4D04D9}.Release|x64.Build.0 = Release|x64
+		{1DED6817-F7EB-4273-B793-9314D8E3E8D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DED6817-F7EB-4273-B793-9314D8E3E8D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DED6817-F7EB-4273-B793-9314D8E3E8D9}.Debug|x64.ActiveCfg = Debug|x64
+		{1DED6817-F7EB-4273-B793-9314D8E3E8D9}.Debug|x64.Build.0 = Debug|x64
+		{1DED6817-F7EB-4273-B793-9314D8E3E8D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DED6817-F7EB-4273-B793-9314D8E3E8D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DED6817-F7EB-4273-B793-9314D8E3E8D9}.Release|x64.ActiveCfg = Release|x64
+		{1DED6817-F7EB-4273-B793-9314D8E3E8D9}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
