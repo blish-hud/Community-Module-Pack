@@ -21,6 +21,14 @@ namespace Compass_Module {
     [Export(typeof(Module))]
     public class CompassModule : Module {
 
+        internal static CompassModule ModuleInstance;
+
+        // Service Managers
+        internal SettingsManager    SettingsManager    => this.ModuleParameters.SettingsManager;
+        internal ContentsManager    ContentsManager    => this.ModuleParameters.ContentsManager;
+        internal DirectoriesManager DirectoriesManager => this.ModuleParameters.DirectoriesManager;
+        internal Gw2ApiManager      Gw2ApiManager      => this.ModuleParameters.Gw2ApiManager;
+
         private SettingEntry<float> _settingCompassSize;
         private SettingEntry<float> _settingCompassRadius;
         private SettingEntry<float> _settingVerticalOffset;
@@ -35,7 +43,9 @@ namespace Compass_Module {
         /// Use "Initialize()" to handle initializing the module.
         /// </summary>
         [ImportingConstructor]
-        public CompassModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) { /* NOOP */ }
+        public CompassModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) {
+            ModuleInstance = this;
+        }
 
         protected override void Initialize() {
             _northBb = new Blish_HUD.Entities.Primitives.Billboard(ContentsManager.GetTexture("north.png"));
@@ -91,6 +101,8 @@ namespace Compass_Module {
 
         /// <inheritdoc />
         protected override void Unload() {
+            ModuleInstance = null;
+
             GameService.Graphics.World.Entities.Remove(_northBb);
             GameService.Graphics.World.Entities.Remove(_eastBb);
             GameService.Graphics.World.Entities.Remove(_southBb);

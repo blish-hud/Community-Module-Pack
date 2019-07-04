@@ -1,0 +1,16 @@
+{
+  "name": "Events and Metas Observer",
+  "version": "0.4.3",
+  "namespace": "bh.general.events",
+  "package": "Events Module.dll",
+  "manifest_version": 1,
+
+  "description": "Displays upcoming events and metas and gives you the option to subscribe to in-game notifications for when they're going to be starting soon.",
+  "dependencies": {
+  },
+  "url": "https://github.com/blish-hud/Blish-HUD",
+  "author": {
+    "name": "Freesnöw",
+    "username": "LandersXanders.1235"
+  }
+}

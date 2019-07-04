@@ -9,11 +9,13 @@ using System.Xml;
 namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
     public static class PathingCategoryBuilder {
 
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         private const string ELEMENT_CATEGORY = "markercategory";
 
         public static void UnpackCategory(XmlNode categoryNode, PathingCategory categoryParent) {
-            if (!string.Equals(categoryNode.Name, ELEMENT_CATEGORY, StringComparison.OrdinalIgnoreCase)) {
-                Debug.WriteLine($"Tried to unpack '{categoryNode.Name}' as category!");
+            if (!string.Equals(categoryNode.Name, ELEMENT_CATEGORY, StringComparison.OrdinalIgnoreCase) && categoryNode.NodeType == XmlNodeType.Element) {
+                Logger.Warn("Tried to unpack {categoryNodeName} (type: {nodeType}) as category!", categoryNode.Name, categoryNode.NodeType);
                 return;
             }
 
@@ -27,7 +29,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
         }
 
         public static PathingCategory FromXmlNode(XmlNode categoryNode, PathingCategory parent) {
-            string categoryName = categoryNode.Attributes["name"]?.InnerText;
+            string categoryName = categoryNode.Attributes["name"]?.Value;
 
             // Can't define a marker category without a name
             if (string.IsNullOrEmpty(categoryName)) return null;
@@ -38,7 +40,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
                                    // We're adding a new category
                                    : parent.GetOrAddCategoryFromNamespace(categoryName);
 
-            subjCategory.DisplayName = categoryNode.Attributes["DisplayName"]?.InnerText;
+            subjCategory.DisplayName = categoryNode.Attributes["DisplayName"]?.Value;
 
             subjCategory.SourceXmlNode = categoryNode;
 

@@ -81,11 +81,11 @@ namespace Loading_Screen_Hints_Module.Controls {
             var left = HorizontalAlignment.Center;
             var top = VerticalAlignment.Top;
 
-            string citation = Blish_HUD.Utils.DrawUtil.WrapText(this.Font, SelectedNarration, this.Width - LoadScreenPanel.RIGHT_PADDING);
+            string citation = DrawUtil.WrapText(this.Font, SelectedNarration, this.Width - LoadScreenPanel.RIGHT_PADDING);
             string sourceBind = "— ";
             int srcBindWidth = (int)this.Font.MeasureString(sourceBind).Width;
             int srcBindHeight = (int)this.Font.MeasureString(sourceBind).Height;
-            string source = Blish_HUD.Utils.DrawUtil.WrapText(this.Font, SelectedSource, centerRight / 2);
+            string source = DrawUtil.WrapText(this.Font, SelectedSource, centerRight / 2);
 
             int srcHeight = (int)this.Font.MeasureString(source).Height;
             int srcWidth = (int)this.Font.MeasureString(source).Width;
