@@ -19,7 +19,7 @@ namespace Loading_Screen_Hints_Module.Controls {
         private static readonly Texture2D _textureBackgroundLoadScreenPanel;
 
         static LoadScreenPanel() {
-            _textureBackgroundLoadScreenPanel = LoadingScreenHintsModule.ContentsMgr.GetTexture("background_loadscreenpanel.png");
+            _textureBackgroundLoadScreenPanel = LoadingScreenHintsModule.ModuleInstance.ContentsManager.GetTexture("background_loadscreenpanel.png");
         }
 
         #endregion

@@ -21,6 +21,14 @@ namespace Markers_and_Paths_Module {
     [Export(typeof(Module))]
     public class MarkersAndPathsModule : Module {
 
+        internal static MarkersAndPathsModule ModuleInstance;
+
+        // Service Managers
+        internal SettingsManager    SettingsManager    => this.ModuleParameters.SettingsManager;
+        internal ContentsManager    ContentsManager    => this.ModuleParameters.ContentsManager;
+        internal DirectoriesManager DirectoriesManager => this.ModuleParameters.DirectoriesManager;
+        internal Gw2ApiManager      Gw2ApiManager      => this.ModuleParameters.Gw2ApiManager;
+
         private string _markerDirectory;
 
         private List<Control> _moduleControls;
@@ -30,7 +38,9 @@ namespace Markers_and_Paths_Module {
         private PersistentStore _pathableToggleStates;
 
         [ImportingConstructor]
-        public MarkersAndPathsModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) { /* NOOP */ }
+        public MarkersAndPathsModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) {
+            ModuleInstance = this;
+        }
 
         protected override void DefineSettings(SettingCollection settings) {
 
@@ -144,6 +154,8 @@ namespace Markers_and_Paths_Module {
         }
 
         protected override void Unload() {
+            ModuleInstance = null;
+
             GameService.Pathing.NewMapLoaded -= _onNewMapLoaded;
             _moduleControls.ForEach(c => c.Dispose());
             _moduleControls.Clear();

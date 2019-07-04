@@ -81,7 +81,7 @@ namespace Loading_Screen_Hints_Module.Controls {
             CharacterString = Characters[rnd];
 
             string cleanCharacterName = CharacterString.Replace(" ", "_");
-            CharacterTexture = LoadingScreenHintsModule.ContentsMgr.GetTexture($@"characters/{cleanCharacterName}.png");
+            CharacterTexture = LoadingScreenHintsModule.ModuleInstance.ContentsManager.GetTexture($@"characters/{cleanCharacterName}.png");
 
             var center = new Point(this.Size.X / 2, this.Size.Y / 2);
             int centerLeft = center.X / 2;
@@ -115,7 +115,7 @@ namespace Loading_Screen_Hints_Module.Controls {
             var top = VerticalAlignment.Top;
 
             string title = this.Result ? "It's " + CharacterString + '!' : "Who's that Character?";
-            string wrappedTitle = Blish_HUD.Utils.DrawUtil.WrapText(this.Font, title, this.Width / 2 - LoadScreenPanel.RIGHT_PADDING);
+            string wrappedTitle = DrawUtil.WrapText(this.Font, title, this.Width / 2 - LoadScreenPanel.RIGHT_PADDING);
             int titleHeight = (int)this.Font.MeasureString(wrappedTitle).Height;
             int titleWidth = (int)this.Font.MeasureString(wrappedTitle).Width;
             var titleCenter = new Point(centerRight - (titleWidth / 2), center.Y - (titleHeight / 2));

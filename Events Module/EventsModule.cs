@@ -11,9 +11,7 @@ using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Modules;
 using Blish_HUD.Modules.Managers;
-using Blish_HUD.Pathing.Behaviors;
 using Blish_HUD.Settings;
-using Blish_HUD.Utils;
 using Humanizer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -21,7 +19,15 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Events_Module {
 
     [Export(typeof(Module))]
-    public class Events_Module : Module {
+    public class EventsModule : Module {
+
+        internal static EventsModule ModuleInstance;
+
+        // Service Managers
+        internal SettingsManager    SettingsManager    => this.ModuleParameters.SettingsManager;
+        internal ContentsManager    ContentsManager    => this.ModuleParameters.ContentsManager;
+        internal DirectoriesManager DirectoriesManager => this.ModuleParameters.DirectoriesManager;
+        internal Gw2ApiManager      Gw2ApiManager      => this.ModuleParameters.Gw2ApiManager;
 
         private const string DD_ALPHABETICAL = "Alphabetical";
         private const string DD_NEXTUP       = "Next Up";
@@ -37,8 +43,13 @@ namespace Events_Module {
 
         private SettingCollection _watchCollection;
 
+        private Texture2D _textureWatch;
+        private Texture2D _textureWatchActive;
+
         [ImportingConstructor]
-        public Events_Module([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) { /* NOOP */ }
+        public EventsModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) {
+            ModuleInstance = this;
+        }
 
         protected override void DefineSettings(SettingCollection settings) {
             _watchCollection = settings.AddSubCollection("Watching");
@@ -48,14 +59,20 @@ namespace Events_Module {
             _displayedEvents = new List<DetailsButton>();
         }
 
+        private void LoadTextures() {
+            _textureWatch       = ContentsManager.GetTexture(@"textures\605021.png");
+            _textureWatchActive = ContentsManager.GetTexture(@"textures\605019.png");
+        }
+
         protected override async Task LoadAsync() {
             Meta.Load(this.ContentsManager);
+            LoadTextures();
 
             _tabPanel = BuildSettingPanel(GameService.Overlay.BlishHudWindow.ContentRegion);
         }
 
         protected override void OnModuleLoaded(EventArgs e) {
-            GameService.Overlay.BlishHudWindow.AddTab("Events and Metas", this.ContentsManager.GetTexture(@"textures\1466345.png"), _tabPanel);
+            _eventsTab = GameService.Overlay.BlishHudWindow.AddTab("Events and Metas", this.ContentsManager.GetTexture(@"textures\1466345.png"), _tabPanel);
 
             base.OnModuleLoaded(e);
         }
@@ -66,20 +83,43 @@ namespace Events_Module {
                 Size = panelBounds.Size
             };
 
-            var eventPanel = new FlowPanel() {
-                FlowDirection = ControlFlowDirection.LeftToRight,
-                ControlPadding = new Vector2(8, 8),
-                Location = new Point(etPanel.Width - 720 - 10 - 20, 50),
-                Size = new Point(748, etPanel.Size.Y - 50 - Panel.BOTTOM_MARGIN),
+            var ddSortMethod = new Dropdown() {
+                Location = new Point(etPanel.Right - 150 - Dropdown.Standard.ControlOffset.X, Dropdown.Standard.ControlOffset.Y),
+                Width    = 150,
                 Parent = etPanel,
-                CanScroll = true,
             };
 
-            var ddSortMethod = new Dropdown() {
-                Parent = etPanel,
-                Location = new Point(etPanel.Right - 150 - 10, 5),
-                Width = 150
+            int topOffset = ddSortMethod.Bottom + Panel.MenuStandard.ControlOffset.Y;
+
+            var menuSection = new Panel {
+                Title      = "Event Categories",
+                ShowBorder = true,
+                Size       = Panel.MenuStandard.Size - new Point(0, topOffset + Panel.MenuStandard.ControlOffset.Y),
+                Location   = new Point(Panel.MenuStandard.PanelOffset.X, topOffset),
+                Parent     = etPanel
             };
+
+            var eventPanel = new FlowPanel() {
+                FlowDirection  = ControlFlowDirection.LeftToRight,
+                ControlPadding = new Vector2(8, 8),
+                Location       = new Point(menuSection.Right + Panel.MenuStandard.ControlOffset.X, menuSection.Top),
+                Size           = new Point(ddSortMethod.Right - menuSection.Right - Control.ControlStandard.ControlOffset.X, menuSection.Height),
+                CanScroll      = true,
+                Parent         = etPanel
+            };
+
+            GameService.Overlay.QueueMainThreadUpdate((gameTime) => {
+                var searchBox = new TextBox() {
+                    PlaceholderText = "Event Search",
+                    Width           = menuSection.Width,
+                    Location        = new Point(ddSortMethod.Top, menuSection.Left),
+                    Parent          = etPanel
+                };
+
+                searchBox.OnTextChanged += delegate(object sender, EventArgs args) {
+                    eventPanel.FilterChildren<DetailsButton>(db => db.Text.ToLower().Contains(searchBox.Text.ToLower()));
+                };
+            });
 
             foreach (var meta in Meta.Events) {
                 var setting = _watchCollection.DefineSetting("watchEvent:" + meta.Name, true);
@@ -87,23 +127,23 @@ namespace Events_Module {
                 meta.IsWatched = setting.Value;
 
                 var es2 = new DetailsButton {
-                    Parent = eventPanel,
+                    Parent           = eventPanel,
                     BasicTooltipText = meta.Category,
-                    Text = meta.Name,
-                    IconSize = DetailsIconSize.Small,
-                    Icon = string.IsNullOrEmpty(meta.Icon) ? null : GameService.Content.GetTexture(meta.Icon),
-                    ShowVignette = false,
-                    HighlightType = DetailsHighlightType.LightHighlight,
+                    Text             = meta.Name,
+                    IconSize         = DetailsIconSize.Small,
+                    Icon             = string.IsNullOrEmpty(meta.Icon) ? null : GameService.Content.GetTexture(meta.Icon),
+                    ShowVignette     = false,
+                    HighlightType    = DetailsHighlightType.LightHighlight,
                     ShowToggleButton = true
                 };
 
                 var nextTimeLabel = new Label() {
-                    Size = new Point(65, es2.ContentRegion.Height),
-                    Text = meta.NextTime.ToShortTimeString(),
-                    BasicTooltipText = GetTimeDetails(meta),
+                    Size                = new Point(65, es2.ContentRegion.Height),
+                    Text                = meta.NextTime.ToShortTimeString(),
+                    BasicTooltipText    = GetTimeDetails(meta),
                     HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Middle,
-                    Parent = es2,
+                    VerticalAlignment   = VerticalAlignment.Middle,
+                    Parent              = es2,
                 };
 
                 Adhesive.Binding.CreateOneWayBinding(() => nextTimeLabel.Height, () => es2.ContentRegion, (rectangle => rectangle.Height), true);
@@ -141,12 +181,12 @@ namespace Events_Module {
                 }
 
                 var toggleFollowBttn = new GlowButton() {
-                    Icon = GameService.Content.GetTexture("605021"),
-                    ActiveIcon = GameService.Content.GetTexture("605019"),
+                    Icon             = _textureWatch,
+                    ActiveIcon       = _textureWatchActive,
                     BasicTooltipText = "Click to toggle tracking for this event.",
-                    ToggleGlow = true,
-                    Checked = meta.IsWatched,
-                    Parent = es2,
+                    ToggleGlow       = true,
+                    Checked          = meta.IsWatched,
+                    Parent           = es2,
                 };
 
                 toggleFollowBttn.Click += delegate {
@@ -164,20 +204,12 @@ namespace Events_Module {
                 _displayedEvents.Add(es2);
             }
 
-            var menuSection = new Panel {
-                ShowBorder = true,
-                Size = new Point(etPanel.Width - 720 - 10 - 10 - 5 - 20, eventPanel.Height + Panel.BOTTOM_MARGIN),
-                Location = new Point(5, 50),
-                Parent = etPanel,
-                Title = "Event Categories"
-            };
-
             // Add menu items for each category (and built-in categories)
             var eventCategories = new Menu {
-                Size = menuSection.ContentRegion.Size,
+                Size           = menuSection.ContentRegion.Size,
                 MenuItemHeight = 40,
-                Parent = menuSection,
-                CanSelect = true
+                Parent         = menuSection,
+                CanSelect      = true
             };
 
             List<IGrouping<string, Meta>> submetas = Meta.Events.GroupBy(e => e.Category).ToList();
@@ -187,6 +219,9 @@ namespace Events_Module {
             evAll.Click += delegate {
                 eventPanel.FilterChildren<DetailsButton>(db => true);
             };
+
+            //var summaryLink   = eventCategories.AddMenuItem("Summary");
+            //var watchListLink = eventCategories.AddMenuItem("Watch List");
 
             foreach (IGrouping<string, Meta> e in submetas) {
                 var ev = eventCategories.AddMenuItem(e.Key);
@@ -214,10 +249,6 @@ namespace Events_Module {
 
             ddSortMethod.SelectedItem = DD_NEXTUP;
             //UpdateSort(ddSortMethod, EventArgs.Empty);
-
-            //Console.WriteLine("Main Panel is: " + etPanel.Location.ToString() + " :: " + etPanel.Size.ToString());
-            //Console.WriteLine("Event Panel is: " + eventPanel.Location.ToString() + " :: " + eventPanel.Size.ToString());
-            //Console.WriteLine("Menu Section Panel is: " + menuSection.Location.ToString() + " :: " + eventPanel.Size.ToString());
 
             return etPanel;
         }
@@ -280,6 +311,9 @@ namespace Events_Module {
         }
 
         protected override void Unload() {
+            ModuleInstance = null;
+
+            GameService.Overlay.BlishHudWindow.RemoveTab(_eventsTab);
             _displayedEvents.ForEach(de => de.Dispose());
             _displayedEvents.Clear();
         }

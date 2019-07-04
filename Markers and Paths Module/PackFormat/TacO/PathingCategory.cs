@@ -115,6 +115,8 @@ namespace Markers_and_Paths_Module.PackFormat.TacO {
         //public float       FadeNear     = -1.0f;
         //public float       FadeFar      = -1.0f;
         //public float       Height       = 1.5f;
+        //public string      TrailData;
+        //public float       AnimSpeed = 1;
 
         //// TODO: Implement POIBehavior
         ////public POIBehavior Behavior     = POIBehavior.AlwaysVisible;
@@ -127,8 +129,6 @@ namespace Markers_and_Paths_Module.PackFormat.TacO {
         //public int         MinSize      = 5;
         //public int         MaxSize      = 2048;
         //public Color       Color        = Color.White;
-        //public string      TrailData;
-        //public float       AnimSpeed = 1;
         //public float       TrailScale = 1;
         //public string      ToggleCategory;
 

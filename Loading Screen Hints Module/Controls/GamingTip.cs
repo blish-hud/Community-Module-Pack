@@ -82,7 +82,7 @@ namespace Loading_Screen_Hints_Module.Controls {
             int titleWidth = (int)this.BigFont.MeasureString(title).Width;
             var titleCenter = new Point(center.X - (titleWidth / 2), center.Y - (titleHeight / 2));
             spriteBatch.DrawStringOnCtrl(this, title, this.BigFont, new Rectangle(titleCenter.X, LoadScreenPanel.TOP_PADDING, titleWidth, titleHeight), Color.White, false, true, 2, left, top);
-            string wrappedTip = Blish_HUD.Utils.DrawUtil.WrapText(this.Font, this.SelectedTip, this.Width - LoadScreenPanel.RIGHT_PADDING);
+            string wrappedTip = DrawUtil.WrapText(this.Font, this.SelectedTip, this.Width - LoadScreenPanel.RIGHT_PADDING);
             int tipHeight = (int)this.Font.MeasureString(wrappedTip).Height;
             int tipWidth = (int)this.Font.MeasureString(wrappedTip).Width;
             var tipCenter = new Point(center.X - (tipWidth / 2), center.Y - (tipHeight / 2));

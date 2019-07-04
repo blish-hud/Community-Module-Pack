@@ -1,29 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Blish_HUD;
-using Blish_HUD.Controls;
 using Blish_HUD.Modules;
+using Blish_HUD.Modules.Managers;
 using Blish_HUD.Settings;
 using DiscordRPC;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace Discord_Rich_Presence_Module {
 
     [Export(typeof(Module))]
-    public class Events_Module : Module {
+    public class DiscordRichPresenceModule : Module {
 
+        internal static DiscordRichPresenceModule ModuleInstance;
+
+        // Service Managers
+        internal SettingsManager    SettingsManager    => this.ModuleParameters.SettingsManager;
+        internal ContentsManager    ContentsManager    => this.ModuleParameters.ContentsManager;
+        internal DirectoriesManager DirectoriesManager => this.ModuleParameters.DirectoriesManager;
+        internal Gw2ApiManager      Gw2ApiManager      => this.ModuleParameters.Gw2ApiManager;
 
         private const string DISCORD_APP_ID = "498585183792922677";
-
-        private DiscordRpcClient rpcClient;
-
-        private DateTime startTime;
 
         private enum MapType {
             PvP                   = 2,
@@ -49,8 +52,13 @@ namespace Discord_Rich_Presence_Module {
 
         };
 
+        private DiscordRpcClient _rpcClient;
+        private DateTime         _startTime;
+
         [ImportingConstructor]
-        public Events_Module([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) { /* NOOP */ }
+        public DiscordRichPresenceModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) {
+            ModuleInstance = this;
+        }
 
         protected override void DefineSettings(SettingCollection settings) {
             settings.DefineSetting("HideInWvW", false, "Hide Detailed Location while in WvW", "Prevents people on Discord from being able to see closest landmark details while you're in WvW.");
@@ -76,20 +84,14 @@ namespace Discord_Rich_Presence_Module {
             InitRichPresence();
         }
 
-        protected override void OnModuleLoaded(EventArgs e) {
-
-
-            base.OnModuleLoaded(e);
-        }
-
         private void UpdateDetails() {
             if (GameService.Player.Map == null) return;
 
-            Console.WriteLine($"Player changed maps to '{GameService.Player.Map.Name}' ({GameService.Player.Map.Id}).");
+            Debug.WriteLine($"Player changed maps to '{GameService.Player.Map.Name}' ({GameService.Player.Map.Id}).");
 
             // rpcClient *shouldn't* be null at this point unless a rare race condition occurs
             // In the event that this occurs, it'll be resolved by the next loop
-            rpcClient?.SetPresence(new RichPresence() {
+            _rpcClient?.SetPresence(new RichPresence() {
                 // Truncate length (requirements: https://discordapp.com/developers/docs/rich-presence/how-to)
                 // Identified in: [BLISHHUD-11]
                 Details = DiscordUtil.TruncateLength(GameService.Player.CharacterName, 128),
@@ -101,31 +103,31 @@ namespace Discord_Rich_Presence_Module {
                     SmallImageText = DiscordUtil.TruncateLength(((MapType)GameService.Player.MapType).ToString().Replace("_", " "), 128)
                 },
                 Timestamps = new Timestamps() {
-                    Start = startTime
+                    Start = _startTime
                 }
             });
 
-            rpcClient?.Invoke();
+            _rpcClient?.Invoke();
         }
 
         private void InitRichPresence() {
             try {
-                startTime = GameService.GameIntegration.Gw2Process.StartTime.ToUniversalTime();
+                _startTime = GameService.GameIntegration.Gw2Process.StartTime.ToUniversalTime();
             } catch (Exception ex) {
                 // TODO: Make a log entry here
-                startTime = DateTime.UtcNow;
+                _startTime = DateTime.UtcNow;
             }
 
-            rpcClient = new DiscordRpcClient(DISCORD_APP_ID);
-            rpcClient.Initialize();
+            _rpcClient = new DiscordRpcClient(DISCORD_APP_ID);
+            _rpcClient.Initialize();
 
             UpdateDetails();
         }
 
         private void CleanUpRichPresence() {
-            // Disposing rpcClient also clears presence
-            rpcClient?.Dispose();
-            rpcClient = null;
+            // Disposing _rpcClient also clears presence
+            _rpcClient?.Dispose();
+            _rpcClient = null;
         }
 
         protected override void Update(GameTime gameTime) {
@@ -133,6 +135,8 @@ namespace Discord_Rich_Presence_Module {
         }
 
         protected override void Unload() {
+            ModuleInstance = null;
+
             CleanUpRichPresence();
         }
 

@@ -11,6 +11,9 @@ using System.Xml;
 using Blish_HUD.Pathing.Content;
 
 namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
+
+    // TODO: Use XmlReader to speed things up https://stackoverflow.com/a/676280/595437
+
     public static class MarkerPackReader {
 
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
@@ -89,10 +92,10 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
 
         private static string SanitizeXml(string xmlDoc) {
             // TODO: Ask Tekkit (and others) to fix syntax
+            // FYI, '>' does not need to be encoded in attribute values
             return xmlDoc
-                  .Replace("&", "&amp;")
+                  .Replace("& ", "&amp; ") // Space added to avoid replacing correctly encoded attribute values
                   .Replace("=\"<", "=\"&lt;")
-                  .Replace(">\">", "&gt;\">")
                   .Replace("*", "")
                   .Replace("0behavior", "behavior");
         }

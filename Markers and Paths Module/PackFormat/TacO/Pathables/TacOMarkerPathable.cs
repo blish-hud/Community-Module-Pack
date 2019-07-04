@@ -211,17 +211,5 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
             return base.FinalizeAttributes(attributeLoaders);
         }
 
-        public override void Update(GameTime gameTime) {
-            base.Update(gameTime);
-
-            //float playerDistance = Utils.World.WorldToGameCoord(this.ManagedEntity.DistanceFromPlayer);
-
-            //if (this.FadeFar >= 0 && this.FadeNear >= 0) {
-            //    float baseLeft = playerDistance - this.FadeNear;
-            //    float baseRange = this.FadeFar - this.FadeNear;
-            //    this.ManagedEntity.Opacity = 1 - MathHelper.Clamp(baseLeft / baseRange, 0f, 1f);
-            //}
-        }
-
     }
 }
