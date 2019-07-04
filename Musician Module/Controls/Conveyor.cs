@@ -5,6 +5,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Blish_HUD.Controls.Intern;
 using Musician_Module.Controls.Instrument;
+using Blish_HUD;
+
 namespace Musician_Module.Controls {
 
     public class Conveyor:Container {
@@ -12,8 +14,8 @@ namespace Musician_Module.Controls {
         private static Texture2D ConveyorTopSprite;
         private static Texture2D ConveyorBottomSprite;
         public Conveyor() {
-            ConveyorTopSprite = ConveyorTopSprite ?? MusicianModule.ContentsMgr.GetTexture("conveyor_top");
-            ConveyorBottomSprite = ConveyorBottomSprite ?? MusicianModule.ContentsMgr.GetTexture("conveyor_bottom");
+            ConveyorTopSprite = ConveyorTopSprite ?? MusicianModule.ModuleInstance.ContentsManager.GetTexture("conveyor_top.png");
+            ConveyorBottomSprite = ConveyorBottomSprite ?? MusicianModule.ModuleInstance.ContentsManager.GetTexture("conveyor_bottom.png");
             this.Size = new Point(744, Graphics.SpriteScreen.Height); // set static bounds.
             this.ZIndex = -1;
             UpdateLocation(null, null);

@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Blish_HUD.Controls;
 using Musician_Module.Notation.Persistance;
+using Blish_HUD;
+
 namespace Musician_Module.Controls {
 
     // TODO: Show "Edit" button when music sheet creator correlates to account name from ApiService. Navigates to composer.
@@ -67,17 +69,17 @@ namespace Musician_Module.Controls {
         }
         public SheetButton()
         {
-            BeatmaniaSprite = BeatmaniaSprite ?? MusicianModule.ContentsMgr.GetTexture("beatmania");
-            GlowBeatmaniaSprite = GlowBeatmaniaSprite ?? MusicianModule.ContentsMgr.GetTexture("glow_beatmania");
-            AutoplaySprite = AutoplaySprite ?? MusicianModule.ContentsMgr.GetTexture("autoplay");
-            GlowAutoplaySprite = GlowAutoplaySprite ?? MusicianModule.ContentsMgr.GetTexture("glow_autoplay");
-            StopSprite = StopSprite ?? MusicianModule.ContentsMgr.GetTexture("stop");
-            GlowStopSprite = GlowStopSprite ?? MusicianModule.ContentsMgr.GetTexture("glow_stop");
-            PlaySprite = PlaySprite ?? MusicianModule.ContentsMgr.GetTexture("play");
-            GlowPlaySprite = GlowPlaySprite ?? MusicianModule.ContentsMgr.GetTexture("glow_play");
-            BackgroundSprite = BackgroundSprite ?? MusicianModule.ContentsMgr.Textures.Pixel;
-            DividerSprite = DividerSprite ?? MusicianModule.ContentsMgr.GetTexture("157218");
-            IconBoxSprite = IconBoxSprite ?? MusicianModule.ContentsMgr.GetTexture("605003");
+            BeatmaniaSprite = BeatmaniaSprite ?? MusicianModule.ModuleInstance.ContentsManager.GetTexture("beatmania.png");
+            GlowBeatmaniaSprite = GlowBeatmaniaSprite ?? MusicianModule.ModuleInstance.ContentsManager.GetTexture("glow_beatmania.png");
+            AutoplaySprite = AutoplaySprite ?? MusicianModule.ModuleInstance.ContentsManager.GetTexture("autoplay.png");
+            GlowAutoplaySprite = GlowAutoplaySprite ?? MusicianModule.ModuleInstance.ContentsManager.GetTexture("glow_autoplay.png");
+            StopSprite = StopSprite ?? MusicianModule.ModuleInstance.ContentsManager.GetTexture("stop.png");
+            GlowStopSprite = GlowStopSprite ?? MusicianModule.ModuleInstance.ContentsManager.GetTexture("glow_stop.png");
+            PlaySprite = PlaySprite ?? MusicianModule.ModuleInstance.ContentsManager.GetTexture("play.png");
+            GlowPlaySprite = GlowPlaySprite ?? MusicianModule.ModuleInstance.ContentsManager.GetTexture("glow_play.png");
+            BackgroundSprite = BackgroundSprite ?? ContentService.Textures.Pixel;
+            DividerSprite = DividerSprite ?? MusicianModule.ModuleInstance.ContentsManager.GetTexture("157218.png");
+            IconBoxSprite = IconBoxSprite ?? MusicianModule.ModuleInstance.ContentsManager.GetTexture("605003.png");
             this.MouseMoved += SheetButton_MouseMoved;
             this.MouseLeft += SheetButton_MouseLeft;
             this.Size = new Point(SHEETBUTTON_WIDTH, SHEETBUTTON_HEIGHT);
@@ -220,11 +222,11 @@ namespace Musician_Module.Controls {
             }
             // Wrap text
             string track = Title + @" - " + Artist;
-            string wrappedText = Utils.DrawUtil.WrapText(Content.DefaultFont14, track, SHEETBUTTON_WIDTH - 40 - iconSize - 20);
-            spriteBatch.DrawStringOnCtrl(this, wrappedText, Content.DefaultFont14, new Rectangle(89, 0, 216, this.Height - BOTTOMSECTION_HEIGHT), Color.White, false, true, 2, Utils.DrawUtil.HorizontalAlignment.Left, Utils.DrawUtil.VerticalAlignment.Middle);
+            string wrappedText = Blish_HUD.DrawUtil.WrapText(Content.DefaultFont14, track, SHEETBUTTON_WIDTH - 40 - iconSize - 20);
+            spriteBatch.DrawStringOnCtrl(this, wrappedText, Content.DefaultFont14, new Rectangle(89, 0, 216, this.Height - BOTTOMSECTION_HEIGHT), Color.White, false, true, 2, HorizontalAlignment.Left, VerticalAlignment.Middle);
 
             // Draw the user;
-            spriteBatch.DrawStringOnCtrl(this, this.User, Content.DefaultFont14, new Rectangle(5, bounds.Height - BOTTOMSECTION_HEIGHT, USER_WIDTH, 35), Color.White, false, false, 0, Utils.DrawUtil.HorizontalAlignment.Left, Utils.DrawUtil.VerticalAlignment.Middle);
+            spriteBatch.DrawStringOnCtrl(this, this.User, Content.DefaultFont14, new Rectangle(5, bounds.Height - BOTTOMSECTION_HEIGHT, USER_WIDTH, 35), Color.White, false, false, 0, HorizontalAlignment.Left, VerticalAlignment.Middle);
         }
     }
 }

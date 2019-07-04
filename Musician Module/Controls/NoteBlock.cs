@@ -6,6 +6,8 @@ using Glide;
 using System.Collections.Generic;
 using Blish_HUD.Controls.Intern;
 using Musician_Module.Controls.Instrument;
+using Blish_HUD;
+
 namespace Musician_Module.Controls {
 
 
@@ -27,14 +29,14 @@ namespace Musician_Module.Controls {
         };
         private static readonly Dictionary<InstrumentSkillType, Texture2D> NoteTexture = new Dictionary<InstrumentSkillType, Texture2D>
         {
-            {InstrumentSkillType.LowNote, MusicianModule.ContentsMgr.GetTexture("note_block")},
-            {InstrumentSkillType.MiddleNote, MusicianModule.ContentsMgr.GetTexture("note_block")},
-            {InstrumentSkillType.HighNote, MusicianModule.ContentsMgr.GetTexture("note_block")},
-            {InstrumentSkillType.IncreaseOctaveToMiddle, MusicianModule.ContentsMgr.GetTexture("incr_octave")},
-            {InstrumentSkillType.IncreaseOctaveToHigh, MusicianModule.ContentsMgr.GetTexture("incr_octave")},
-            {InstrumentSkillType.DecreaseOctaveToLow, MusicianModule.ContentsMgr.GetTexture("decr_octave")},
-            {InstrumentSkillType.DecreaseOctaveToMiddle, MusicianModule.ContentsMgr.GetTexture("decr_octave")},
-            {InstrumentSkillType.StopPlaying, MusicianModule.ContentsMgr.GetTexture("pause_block")}
+            {InstrumentSkillType.LowNote, MusicianModule.ModuleInstance.ContentsManager.GetTexture("note_block.png")},
+            {InstrumentSkillType.MiddleNote, MusicianModule.ModuleInstance.ContentsManager.GetTexture("note_block.png")},
+            {InstrumentSkillType.HighNote, MusicianModule.ModuleInstance.ContentsManager.GetTexture("note_block.png")},
+            {InstrumentSkillType.IncreaseOctaveToMiddle, MusicianModule.ModuleInstance.ContentsManager.GetTexture("incr_octave.png")},
+            {InstrumentSkillType.IncreaseOctaveToHigh, MusicianModule.ModuleInstance.ContentsManager.GetTexture("incr_octave.png")},
+            {InstrumentSkillType.DecreaseOctaveToLow, MusicianModule.ModuleInstance.ContentsManager.GetTexture("decr_octave.png")},
+            {InstrumentSkillType.DecreaseOctaveToMiddle, MusicianModule.ModuleInstance.ContentsManager.GetTexture("decr_octave.png")},
+            {InstrumentSkillType.StopPlaying, MusicianModule.ModuleInstance.ContentsManager.GetTexture("pause_block.png")}
         };
         public Glide.Tween NoteAnim = null;
         public int Lane;
@@ -42,6 +44,10 @@ namespace Musician_Module.Controls {
         private IKeyboard fKeyboard;
         private GuildWarsControls fKey;
         private Texture2D NoteSprite;
+        private IKeyboard keyboard;
+        private GuildWarsControls key;
+        private InstrumentSkillType noteType;
+
         public NoteBlock(IKeyboard _keyboard, GuildWarsControls _key, InstrumentSkillType _noteType) {
             this.ZIndex = 0;
             switch (_key)
@@ -92,7 +98,6 @@ namespace Musician_Module.Controls {
             );
             Graphics.SpriteScreen.Resized += UpdateLocation;
         }
-
         private void UpdateLocation(object sender, EventArgs e) {
             this.Size = new Point(56, 30);
         }

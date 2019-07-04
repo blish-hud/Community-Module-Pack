@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+using Blish_HUD;
 using Musician_Module.Controls.Instrument;
 using Musician_Module.Domain.Values;
 

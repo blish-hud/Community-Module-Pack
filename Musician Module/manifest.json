@@ -2,7 +2,7 @@
   "name": "Musician",
   "version": "0.6.0",
   "namespace": "bh.general.musician",
-  "package": "Musician_Module.dll",
+  "package": "Musician Module.dll",
   "manifest_version": 1,
 
   "description": "Create, share and play sheet music.",

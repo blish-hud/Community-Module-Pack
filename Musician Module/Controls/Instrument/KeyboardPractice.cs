@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Blish_HUD;
 using Blish_HUD.Controls.Intern;
 namespace Musician_Module.Controls.Instrument
 {

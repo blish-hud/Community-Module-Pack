@@ -7,9 +7,14 @@ using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Modules;
+using Blish_HUD.Settings;
+using Blish_HUD.Modules.Managers;
 using Gw2Sharp.WebApi.V2.Models;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Musician_Module.Controls;
+using Musician_Module.Notation.Persistance;
+using Musician_Module.Player;
 
 namespace Musician_Module
 {
@@ -17,9 +22,19 @@ namespace Musician_Module
     [Export(typeof(Module))]
     public class MusicianModule : Module
     {
-        internal static ContentsManager ContentsMgr;
+        internal static MusicianModule ModuleInstance;
+
+        // Service Managers
+        internal SettingsManager SettingsManager => this.ModuleParameters.SettingsManager;
+        internal ContentsManager ContentsManager => this.ModuleParameters.ContentsManager;
+        internal DirectoriesManager DirectoriesManager => this.ModuleParameters.DirectoriesManager;
+        internal Gw2ApiManager Gw2ApiManager => this.ModuleParameters.Gw2ApiManager;
 
         private Texture2D ICON;
+        private const int TOP_MARGIN = 0;
+        private const int RIGHT_MARGIN = 5;
+        private const int BOTTOM_MARGIN = 10;
+        private const int LEFT_MARGIN = 8;
         private const string DD_TITLE = "Title";
         private const string DD_ARTIST = "Artist";
         private const string DD_USER = "User";
@@ -45,15 +60,25 @@ namespace Musician_Module
         /// Use <see cref="Initialize"/> to handle initializing the module.
         /// </summary>
         [ImportingConstructor]
-        public Musician_Module([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) { /* NOOP */ }
+        public MusicianModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters)
+        {
+            ModuleInstance = this;
+        }
+
+        #region Settings
+
+        private SettingEntry<bool> settingBackgroundPlayback;
 
         /// <summary>
         /// Define the settings you would like to use in your module.  Settings are persistent
         /// between updates to both Blish HUD and your module.
         /// </summary>
-        protected override void DefineSettings(SettingsManager settingsManager)
+        protected override void DefineSettings(SettingCollection settingsManager)
         {
+            settingBackgroundPlayback = settingsManager.DefineSetting<bool>("backgroundPlayback", false, "No background playback", "Stop key emulation when GW2 is in the background");
         }
+
+        #endregion
 
         /// <summary>
         /// Allows your module to perform any initialization it needs before starting to run.
@@ -62,8 +87,7 @@ namespace Musician_Module
         /// </summary>
         protected override void Initialize()
         {
-            ContentsMgr = this.ContentsManager;
-            ICON = ICON ?? ContentsMgr.GetTexture("musician_icon");
+            ICON = ICON ?? ContentsManager.GetTexture("musician_icon.png");
             xmlParser = new XmlMusicSheetReader();
             displayedSheets = new List<SheetButton>();
         }
@@ -78,6 +102,8 @@ namespace Musician_Module
         /// </summary>
         protected override async Task LoadAsync()
         {
+            // Load local sheet music (*.xml) files.
+            await Task.Run(() => Sheets = xmlParser.LoadDirectory(DirectoriesManager.GetFullDirectoryPath("musician")));
         }
 
         /// <summary>
@@ -88,7 +114,7 @@ namespace Musician_Module
         /// </summary>
         protected override void OnModuleLoaded(EventArgs e)
         {
-            MusicianTab = GameService.Director.BlishHudWindow.AddTab("Musician", ICON, BuildHomePanel(GameService.Director.BlishHudWindow), 0);
+            MusicianTab = GameService.Overlay.BlishHudWindow.AddTab("Musician", ICON, BuildHomePanel(GameService.Overlay.BlishHudWindow), 0);
             base.OnModuleLoaded(e);
         }
 
@@ -103,7 +129,7 @@ namespace Musician_Module
         {
             if (settingBackgroundPlayback.Value && GameService.GameIntegration.Gw2IsRunning)
             {
-                if (WindowUtil.OnTop != GameService.GameIntegration.Gw2Process.MainWindowHandle)
+                if (Blish_HUD.WindowUtil.OnTop)
                 {
                     this.StopPlayback();
                     return;
@@ -120,7 +146,7 @@ namespace Musician_Module
         protected override void Unload()
         {
             this.StopPlayback();
-            GameService.Director.BlishHudWindow.RemoveTab(MusicianTab);
+            GameService.Overlay.BlishHudWindow.RemoveTab(MusicianTab);
         }
         private void StopPlayback()
         {
@@ -150,7 +176,7 @@ namespace Musician_Module
             var contentPanel = new Panel()
             {
                 Location = new Point(hPanel.Width - 630, 50),
-                Size = new Point(630, hPanel.Size.Y - 50 - Panel.BOTTOM_MARGIN),
+                Size = new Point(630, hPanel.Size.Y - 50 - MusicianModule.BOTTOM_MARGIN),
                 Parent = hPanel,
                 CanScroll = true
             };
@@ -158,8 +184,8 @@ namespace Musician_Module
             {
                 ShowBorder = true,
                 //Title = "Musician Panel",
-                Size = new Point(hPanel.Width - contentPanel.Width - 10, contentPanel.Height + Panel.BOTTOM_MARGIN),
-                Location = new Point(Panel.LEFT_MARGIN, 20),
+                Size = new Point(hPanel.Width - contentPanel.Width - 10, contentPanel.Height + MusicianModule.BOTTOM_MARGIN),
+                Location = new Point(MusicianModule.LEFT_MARGIN, 20),
                 Parent = hPanel,
             };
             var musicianCategories = new Menu
@@ -193,16 +219,12 @@ namespace Musician_Module
             };
             var melodyPanel = new TintedPanel()
             {
-                Location = new Point(0, Panel.BOTTOM_MARGIN + backButton.Bottom),
-                Size = new Point(lPanel.Width, lPanel.Size.Y - 50 - Panel.BOTTOM_MARGIN),
+                Location = new Point(0, MusicianModule.BOTTOM_MARGIN + backButton.Bottom),
+                Size = new Point(lPanel.Width, lPanel.Size.Y - 50 - MusicianModule.BOTTOM_MARGIN),
                 Parent = lPanel,
                 ShowBorder = true,
                 CanScroll = true
             };
-
-            // Load local sheet music (*.xml) files.
-            Task loader = Task.Run(() => Sheets = xmlParser.LoadDirectory(GameService.FileSrv.BasePath + @"\musician"));
-            loader.Wait();
 
             // TODO: Load a list from online database.
             foreach (RawMusicSheet sheet in Sheets)
@@ -222,7 +244,7 @@ namespace Musician_Module
                 {
                     if (melody.MouseOverPlay)
                     {
-                        GameService.Director.BlishHudWindow.Hide();
+                        GameService.Overlay.BlishHudWindow.Hide();
                         MusicPlayer = MusicPlayerFactory.Create(
                             melody.MusicSheet,
                             KeyboardType.Practice
@@ -231,7 +253,7 @@ namespace Musician_Module
                     }
                     if (melody.MouseOverEmulate)
                     {
-                        GameService.Director.BlishHudWindow.Hide();
+                        GameService.Overlay.BlishHudWindow.Hide();
                         MusicPlayer = MusicPlayerFactory.Create(
                             melody.MusicSheet,
                             KeyboardType.Emulated
@@ -312,8 +334,8 @@ namespace Musician_Module
             };
             var composerPanel = new Panel()
             {
-                Location = new Point(Panel.LEFT_MARGIN + 20, Panel.BOTTOM_MARGIN + backButton.Bottom),
-                Size = new Point(cPanel.Size.X - 50 - Panel.LEFT_MARGIN, cPanel.Size.Y - 50 - Panel.BOTTOM_MARGIN),
+                Location = new Point(MusicianModule.LEFT_MARGIN + 20, MusicianModule.BOTTOM_MARGIN + backButton.Bottom),
+                Size = new Point(cPanel.Size.X - 50 - MusicianModule.LEFT_MARGIN, cPanel.Size.Y - 50 - MusicianModule.BOTTOM_MARGIN),
                 Parent = cPanel,
                 CanScroll = false
             };
@@ -341,7 +363,7 @@ namespace Musician_Module
             var userLabel = new Label
             {
                 Size = new Point(150, 20),
-                Location = new Point(0, titleTextBox.Top + 20 + Panel.BOTTOM_MARGIN),
+                Location = new Point(0, titleTextBox.Top + 20 + MusicianModule.BOTTOM_MARGIN),
                 Text = "Created by",
                 Parent = composerPanel
             };
@@ -357,7 +379,7 @@ namespace Musician_Module
             var ddInstrumentSelection = new Dropdown()
             {
                 Parent = composerPanel,
-                Location = new Point(0, userTextBox.Top + 20 + Panel.BOTTOM_MARGIN),
+                Location = new Point(0, userTextBox.Top + 20 + MusicianModule.BOTTOM_MARGIN),
                 Width = 150,
             };
             foreach (string item in Instruments)
@@ -375,7 +397,7 @@ namespace Musician_Module
             var tempoLabel = new Label()
             {
                 Parent = composerPanel,
-                Location = new Point(0, ddInstrumentSelection.Top + 22 + Panel.BOTTOM_MARGIN),
+                Location = new Point(0, ddInstrumentSelection.Top + 22 + MusicianModule.BOTTOM_MARGIN),
                 Size = new Point(150, 20),
                 Text = "Beats per minute:"
             };
@@ -392,7 +414,7 @@ namespace Musician_Module
             var meterLabel = new Label()
             {
                 Parent = composerPanel,
-                Location = new Point(0, tempoLabel.Top + 22 + Panel.BOTTOM_MARGIN),
+                Location = new Point(0, tempoLabel.Top + 22 + MusicianModule.BOTTOM_MARGIN),
                 Size = new Point(150, 20),
                 Text = "Notes per beat:"
             };
@@ -412,7 +434,7 @@ namespace Musician_Module
             var notationTextBox = new Label
             {
                 Size = new Point(composerPanel.Width, composerPanel.Height - 300),
-                Location = new Point(0, meterCounterBox.Top + 22 + Panel.BOTTOM_MARGIN),
+                Location = new Point(0, meterCounterBox.Top + 22 + MusicianModule.BOTTOM_MARGIN),
                 Parent = composerPanel
             };
 
@@ -420,7 +442,7 @@ namespace Musician_Module
             var saveBttn = new StandardButton()
             {
                 Text = "Save",
-                Location = new Point(composerPanel.Width - 128 - Panel.RIGHT_MARGIN, notationTextBox.Bottom + 5),
+                Location = new Point(composerPanel.Width - 128 - MusicianModule.RIGHT_MARGIN, notationTextBox.Bottom + 5),
                 Width = 128,
                 Height = 26,
                 Parent = composerPanel

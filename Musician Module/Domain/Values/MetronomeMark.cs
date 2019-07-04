@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Blish_HUD;
+using System;
 
 namespace Musician_Module.Domain.Values
 {

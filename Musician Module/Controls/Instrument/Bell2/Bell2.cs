@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading;
 using Musician_Module.Domain.Values;
 using Blish_HUD.Controls.Intern;
+using Blish_HUD;
+
 namespace Musician_Module.Controls.Instrument
 {
     public class Bell2 : Instrument

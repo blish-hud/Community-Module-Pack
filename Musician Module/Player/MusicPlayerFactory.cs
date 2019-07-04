@@ -6,6 +6,8 @@ using Musician_Module.Notation.Persistance;
 using Musician_Module.Player.Algorithms;
 using Musician_Module.Controls;
 using Blish_HUD.Controls.Intern;
+using Blish_HUD;
+
 namespace Musician_Module.Player
 {
     public enum KeyboardType

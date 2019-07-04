@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Blish_HUD;
 using Blish_HUD.Controls.Intern;
 using Musician_Module.Domain.Values;
 namespace Musician_Module.Controls.Instrument
