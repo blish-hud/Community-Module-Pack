@@ -75,14 +75,20 @@ namespace Universal_Search_Module.Controls {
             get => _landmark;
             set {
                 if (SetProperty(ref _landmark, value)) {
-                    GetTextureForLandmarkAsync(_landmark).ContinueWith(texture => this.Icon = texture.Result);
+                    if (_landmark != null) {
+                        GetTextureForLandmarkAsync(_landmark).ContinueWith(texture => this.Icon = texture.Result);
+                        _name        = _landmark.Name;
+                        _description = _landmark.ChatLink;
+
+                        this.Show();
+                    } else {
+                        this.Hide();
+                    }
                 }
             }
         }
 
         private async Task<Texture2D> GetTextureForLandmarkAsync(ContinentFloorRegionMapPoi landmark) {
-            if (landmark == null) return null;
-
             string imgUrl = string.Empty;
 
             switch (landmark.Type.Value) {
@@ -139,7 +145,9 @@ namespace Universal_Search_Module.Controls {
                 spriteBatch.DrawOnCtrl(this, _textureItemHover, bounds, Microsoft.Xna.Framework.Color.White * 0.5f);
             }
 
-            spriteBatch.DrawOnCtrl(this, _icon, _layoutIconBounds);
+            if (_icon != null) {
+                spriteBatch.DrawOnCtrl(this, _icon, _layoutIconBounds);
+            }
 
             spriteBatch.DrawStringOnCtrl(this, _name,        Content.DefaultFont14, _layoutNameBounds,        Microsoft.Xna.Framework.Color.White, false, false, verticalAlignment: VerticalAlignment.Bottom);
             spriteBatch.DrawStringOnCtrl(this, _description, Content.DefaultFont14, _layoutDescriptionBounds, ContentService.Colors.Chardonnay,    false, false, verticalAlignment: VerticalAlignment.Top);

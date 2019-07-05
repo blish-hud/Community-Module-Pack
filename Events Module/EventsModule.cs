@@ -116,7 +116,7 @@ namespace Events_Module {
                     Parent          = etPanel
                 };
 
-                searchBox.OnTextChanged += delegate(object sender, EventArgs args) {
+                searchBox.TextChanged += delegate(object sender, EventArgs args) {
                     eventPanel.FilterChildren<DetailsButton>(db => db.Text.ToLower().Contains(searchBox.Text.ToLower()));
                 };
             });
