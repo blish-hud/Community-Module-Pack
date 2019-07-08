@@ -7,8 +7,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using Blish_HUD.Annotations;
-using Blish_HUD.Custom.Collections;
 using Blish_HUD.Entities;
 using Blish_HUD.Pathing;
 using Humanizer;
@@ -191,7 +189,6 @@ namespace Markers_and_Paths_Module.PackFormat.TacO {
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        [NotifyPropertyChangedInvocator]
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null) {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

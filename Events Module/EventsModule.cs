@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Controls;
+using Blish_HUD.GameServices.Content;
 using Blish_HUD.Modules;
 using Blish_HUD.Modules.Managers;
 using Blish_HUD.Settings;
@@ -131,11 +132,14 @@ namespace Events_Module {
                     BasicTooltipText = meta.Category,
                     Text             = meta.Name,
                     IconSize         = DetailsIconSize.Small,
-                    Icon             = string.IsNullOrEmpty(meta.Icon) ? null : GameService.Content.GetTexture(meta.Icon),
                     ShowVignette     = false,
                     HighlightType    = DetailsHighlightType.LightHighlight,
                     ShowToggleButton = true
                 };
+
+                if (meta.Texture.GetTexture() != null) {
+                    es2.Icon = meta.Texture;
+                }
 
                 var nextTimeLabel = new Label() {
                     Size                = new Point(65, es2.ContentRegion.Height),
@@ -220,9 +224,6 @@ namespace Events_Module {
                 eventPanel.FilterChildren<DetailsButton>(db => true);
             };
 
-            //var summaryLink   = eventCategories.AddMenuItem("Summary");
-            //var watchListLink = eventCategories.AddMenuItem("Watch List");
-
             foreach (IGrouping<string, Meta> e in submetas) {
                 var ev = eventCategories.AddMenuItem(e.Key);
                 ev.Click += delegate {
@@ -304,7 +305,7 @@ namespace Events_Module {
         }
 
         // Utility
-        public static bool UrlIsValid(string source) => Uri.TryCreate(source, UriKind.Absolute, out Uri uriResult) && uriResult.Scheme == Uri.UriSchemeHttps;
+        private static bool UrlIsValid(string source) => Uri.TryCreate(source, UriKind.Absolute, out Uri uriResult) && uriResult.Scheme == Uri.UriSchemeHttps;
 
         protected override void Update(GameTime gameTime) {
             Meta.UpdateEventSchedules();

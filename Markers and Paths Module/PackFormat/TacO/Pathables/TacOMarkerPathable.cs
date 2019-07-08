@@ -77,11 +77,11 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
             get => _tacOBehaviorId;
             set {
                 if (SetProperty(ref _tacOBehaviorId, value)) {
-                    this.Behavior.Remove(_tacOBehavior);
+                    //this.Behavior.Remove(_tacOBehavior);
 
-                    _tacOBehavior = new BasicTacOBehavior<ManagedPathable<Marker>, Marker>(this, (TacOBehavior)_tacOBehaviorId);
+                    //_tacOBehavior = new BasicTacOBehavior<ManagedPathable<Marker>, Marker>(this, (TacOBehavior)_tacOBehaviorId);
 
-                    this.Behavior.Add(_tacOBehavior);
+                    //this.Behavior.Add(_tacOBehavior);
                 }
             }
         }

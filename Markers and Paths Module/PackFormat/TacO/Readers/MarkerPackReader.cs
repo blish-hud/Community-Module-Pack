@@ -16,7 +16,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
 
     public static class MarkerPackReader {
 
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = Logger.GetLogger(typeof(MarkerPackReader));
 
         internal static readonly PathingCategory Categories = new PathingCategory("root") { Visible = true };
 

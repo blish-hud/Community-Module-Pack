@@ -7,6 +7,7 @@ using Blish_HUD;
 using Blish_HUD.Entities;
 using Blish_HUD.Pathing;
 using Blish_HUD.Pathing.Behaviors;
+using Blish_HUD.PersistentStore;
 using Microsoft.Xna.Framework;
 
 namespace Markers_and_Paths_Module.PackFormat.TacO.Behavior {
@@ -25,7 +26,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Behavior {
         WvWObjective           = 9
     }
 
-    public class BasicTacOBehavior<TPathable, TEntity> : Default<TPathable, TEntity>
+    public class BasicTacOBehavior<TPathable, TEntity> : PathingBehavior<TPathable, TEntity>
         where TPathable : ManagedPathable<TEntity>
         where TEntity : Entity {
 
@@ -51,15 +52,15 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Behavior {
             PrepareBehavior();
         }
 
-        public override void Update(GameTime gameTime) {
+        protected override void Update(GameTime gameTime) {
             base.Update(gameTime);
 
             if (this.HiddenByBehavior)
                 UpdateBehavior();
         }
 
-        private PersistentStore _tacOBehaviorStore;
-        private PersistentStore TacOBehaviorStore => _tacOBehaviorStore ?? (_tacOBehaviorStore = this.BehaviorStore.GetSubstore(TACOBEHAVIOR_STORENAME).GetSubstore(this._behavior.ToString()));
+        private Store _tacOBehaviorStore;
+        private Store TacOBehaviorStore => _tacOBehaviorStore ?? (_tacOBehaviorStore = this.BehaviorStore.GetSubstore(TACOBEHAVIOR_STORENAME).GetSubstore(this._behavior.ToString()));
 
         private void PrepareBehavior() {
             //this.InfoText = this._behavior.ToString();

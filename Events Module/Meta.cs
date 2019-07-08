@@ -3,16 +3,21 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Modules.Managers;
+using Humanizer;
 using Newtonsoft.Json;
 
 namespace Events_Module {
 
     [JsonObject]
     public class Meta {
+
+        private static readonly Logger Logger = Logger.GetLogger(typeof(Meta));
 
         [JsonObject]
         public struct Phase {
@@ -63,7 +68,22 @@ namespace Events_Module {
         [JsonIgnore]
         protected bool HasAlerted = false;
 
-        public string Icon { get; set; }
+        private string _icon;
+        public string Icon {
+            get => _icon;
+            set {
+                if (_icon == value) return;
+
+                _icon = value;
+
+                if (!string.IsNullOrEmpty(_icon)) {
+                    this.Texture = GameService.Content.GetRenderServiceTexture(_icon);
+                }
+            }
+        }
+
+        [JsonIgnore]
+        public AsyncTexture2D Texture { get; private set; } = new AsyncTexture2D(GameService.Content.GetTexture("102377"));
 
         public static void UpdateEventSchedules() {
             if (Events == null) return;
@@ -82,7 +102,7 @@ namespace Events_Module {
                 double timeUntil = (e.NextTime - DateTime.Now).TotalMinutes;
                 if (timeUntil < (e.Reminder ?? -1) && e.IsWatched) {
                     if (!e.HasAlerted) {
-                        //Modules.EventTimers.EventNotification.ShowNotification(e.Name, string.IsNullOrEmpty(e.Icon) ? GameService.Content.GetTexture("102377") : GameService.Content.GetTexture(e.Icon), $"Starts in {timeUntil.Minutes().Humanize()}", 10f);
+                        EventNotification.ShowNotification(e.Name, e.Texture, $"Starts in {timeUntil.Minutes().Humanize()}", 10f);
                         e.HasAlerted = true;
                     }
                 } else {
@@ -92,15 +112,17 @@ namespace Events_Module {
         }
 
         public static void Load(ContentsManager cm) {
-            List<Meta> metas;
+            List<Meta> metas = null;
 
-            // TODO: Ensure events file exists before trying to open it
-            using (var eventsReader = new StreamReader(cm.GetFileStream("events.json"))) {
-                metas = JsonConvert.DeserializeObject<List<Meta>>(eventsReader.ReadToEnd());
+            try {
+                using (var eventsReader = new StreamReader(cm.GetFileStream("events.json"))) {
+                    metas = JsonConvert.DeserializeObject<List<Meta>>(eventsReader.ReadToEnd());
+                }
+            } catch (Exception e) {
+                Logger.Error(e, "Failed to load metas from events.json!");
             }
 
             if (metas == null) {
-                Debug.WriteLine("Could not load metas!");
                 return;
             }
 
@@ -133,9 +155,9 @@ namespace Events_Module {
                     uniqueEvents.Add(meta);
             }
 
-            //uniqueEvents.ForEach(x => Console.WriteLine($"{x.Category}: {x.Name} will start at {String.Join(", ", x.Times)}."));
-
             Events = uniqueEvents;
+
+            Logger.Info("Loaded {eventCount} events.", Events.Count);
 
             UpdateEventSchedules();
         }

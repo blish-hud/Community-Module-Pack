@@ -15,8 +15,7 @@
   "enabled_without_gw2": false,
   "api_permissions": {
     "account": {
-      "optional": true,
-      "details": "Needed if you want the special feature enabled."
+      "optional": true
     }
   }
 }

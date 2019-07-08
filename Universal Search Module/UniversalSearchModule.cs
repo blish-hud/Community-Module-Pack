@@ -14,13 +14,14 @@ using Blish_HUD.Modules.Managers;
 using Blish_HUD.Settings;
 using Gw2Sharp.WebApi.V2.Models;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Universal_Search_Module.Controls;
 
 namespace Universal_Search_Module {
 
     [Export(typeof(Module))]
     public class UniversalSearchModule : Module {
+
+        private static readonly Logger Logger = Logger.GetLogger(typeof(UniversalSearchModule));
 
         internal static UniversalSearchModule ModuleInstance;
 
