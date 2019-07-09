@@ -115,6 +115,11 @@ namespace Musician_Module
         protected override void OnModuleLoaded(EventArgs e)
         {
             MusicianTab = GameService.Overlay.BlishHudWindow.AddTab("Musician", ICON, BuildHomePanel(GameService.Overlay.BlishHudWindow), 0);
+            var test = new Book() {
+                Parent = GameService.Graphics.SpriteScreen,
+                Location = new Point(0, 0)
+            };
+            test.Show();
             base.OnModuleLoaded(e);
         }
 
@@ -147,6 +152,7 @@ namespace Musician_Module
         {
             this.StopPlayback();
             GameService.Overlay.BlishHudWindow.RemoveTab(MusicianTab);
+            ModuleInstance = null;
         }
         private void StopPlayback()
         {
