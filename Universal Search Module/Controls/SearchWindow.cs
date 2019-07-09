@@ -55,8 +55,10 @@ namespace Universal_Search_Module.Controls {
 
         private List<SearchResultItem> _results;
 
-        private Tooltip _resultDetails;
-        private TextBox _searchbox;
+        private Tooltip        _resultDetails;
+        private TextBox        _searchbox;
+        private LoadingSpinner _spinner;
+        private Label          _noneLabel;
 
         private Label _ttDetailsName;
         private Label _ttDetailsInfRes1;
@@ -151,6 +153,20 @@ namespace Universal_Search_Module.Controls {
                 Parent = _resultDetails
             };
 
+            _spinner = new LoadingSpinner() {
+                Location = ContentRegion.Size / new Point(2) - new Point(32, 32),
+                Visible  = false,
+                Parent   = this
+            };
+
+            _noneLabel = new Label() {
+                Size                = ContentRegion.Size,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Visible             = false,
+                Text                = "No Results",
+                Parent              = this
+            };
+
             _results = new List<SearchResultItem>(MAX_RESULT_COUNT);
 
             int lastResultBottom = _searchbox.Bottom;
@@ -158,12 +174,59 @@ namespace Universal_Search_Module.Controls {
             for (int i = 0; i < MAX_RESULT_COUNT; i++) {
                 var sri = BuildSearchResultItem(i);
 
-                sri.Location = new Point(2, lastResultBottom);
-                sri.Activated += ResultActivated;
+                sri.Location = new Point(2, lastResultBottom + 3);
+                sri.Activated    += ResultActivated;
+                sri.MouseEntered += ResultActivated;
 
                 lastResultBottom = sri.Bottom;
 
                 _results.Add(sri);
+            }
+
+            _searchbox.TextChanged += SearchboxOnTextChanged;
+        }
+
+        private async void SearchboxOnTextChanged(object sender, EventArgs e) {
+            await Task.Yield();
+
+            _results.ForEach(r => r.Landmark = null);
+
+            string searchText = _searchbox.Text;
+
+            if (!(searchText.Length >= 2)) {
+                _noneLabel.Show();
+                return;
+            }
+
+            _noneLabel.Hide();
+            _spinner.Show();
+
+            var landmarkDiffs = new List<WordScoreResult>();
+
+            foreach (var landmark in UniversalSearchModule.ModuleInstance.LoadedLandmarks) {
+                int score;
+
+                if (landmark.Name.StartsWith(searchText, StringComparison.CurrentCultureIgnoreCase)) {
+                    score = 0;
+                } else if (landmark.Name.EndsWith(searchText, StringComparison.CurrentCultureIgnoreCase)) {
+                    score = 3;
+                } else {
+                    score = StringUtil.ComputeLevenshteinDistance(searchText.ToLower(), landmark.Name.Substring(0, Math.Min(searchText.Length, landmark.Name.Length)).ToLower());
+                }
+
+                landmarkDiffs.Add(new WordScoreResult(landmark, score));
+            }
+
+            var possibleLandmarks = landmarkDiffs.OrderBy(x => x.DiffScore).Take(MAX_RESULT_COUNT).ToList();
+
+            _spinner.Hide();
+
+            if (possibleLandmarks.Any()) {
+                for (int i = 0; i < Math.Max(MAX_RESULT_COUNT, possibleLandmarks.Count); i++) {
+                    _results[i].Landmark = possibleLandmarks[i].Landmark;
+                }
+            } else {
+                _noneLabel.Show();
             }
         }
 
@@ -189,6 +252,31 @@ namespace Universal_Search_Module.Controls {
                     _resultDetails.Show(activatedSearchResult.AbsoluteBounds.Location + new Point(activatedSearchResult.Width + 5, 0));
                 }
             }
+        }
+
+        private Rectangle _layoutTitleTextBounds;
+
+        /// <inheritdoc />
+        public override void RecalculateLayout() {
+            _layoutTitleTextBounds = new Rectangle(8, 0, 32, TITLEBAR_HEIGHT);
+
+            base.RecalculateLayout();
+        }
+
+        /// <inheritdoc />
+        public override void PaintBeforeChildren(SpriteBatch spriteBatch, Rectangle bounds) {
+            spriteBatch.DrawOnCtrl(this,
+                                   _textureWindowBackground,
+                                   bounds);
+
+            // Paints exit button
+            base.PaintBeforeChildren(spriteBatch, bounds);
+
+            spriteBatch.DrawStringOnCtrl(this,
+                                         "Landmark Search",
+                                         Content.DefaultFont14,
+                                         _layoutTitleTextBounds,
+                                         Color.White);
         }
 
     }

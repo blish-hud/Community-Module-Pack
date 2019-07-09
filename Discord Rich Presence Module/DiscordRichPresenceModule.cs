@@ -18,6 +18,8 @@ namespace Discord_Rich_Presence_Module {
     [Export(typeof(Module))]
     public class DiscordRichPresenceModule : Module {
 
+        private static readonly Logger Logger = Logger.GetLogger(typeof(DiscordRichPresenceModule));
+
         internal static DiscordRichPresenceModule ModuleInstance;
 
         // Service Managers
@@ -76,10 +78,10 @@ namespace Discord_Rich_Presence_Module {
             GameService.Player.MapChanged += delegate { UpdateDetails(); };
 
             // Initiate presence when the game is opened
-            GameService.GameIntegration.OnGw2Started += delegate { InitRichPresence(); };
+            GameService.GameIntegration.Gw2Started += delegate { InitRichPresence(); };
 
             // Clear presence when the game is closed
-            GameService.GameIntegration.OnGw2Closed += delegate { CleanUpRichPresence(); };
+            GameService.GameIntegration.Gw2Closed += delegate { CleanUpRichPresence(); };
 
             InitRichPresence();
         }
@@ -87,20 +89,21 @@ namespace Discord_Rich_Presence_Module {
         private void UpdateDetails() {
             if (GameService.Player.Map == null) return;
 
-            Debug.WriteLine($"Player changed maps to '{GameService.Player.Map.Name}' ({GameService.Player.Map.Id}).");
+            Logger.Debug($"Player changed maps to '{GameService.Player.Map.Name}' ({GameService.Player.Map.Id}).");
 
             // rpcClient *shouldn't* be null at this point unless a rare race condition occurs
             // In the event that this occurs, it'll be resolved by the next loop
             _rpcClient?.SetPresence(new RichPresence() {
                 // Truncate length (requirements: https://discordapp.com/developers/docs/rich-presence/how-to)
-                // Identified in: [BLISHHUD-11]
-                Details = DiscordUtil.TruncateLength(GameService.Player.CharacterName, 128),
-                State = DiscordUtil.TruncateLength($"in {GameService.Player.Map.Name}", 128),
+                Details = DiscordUtil.TruncateLength(GameService.Player.CharacterName,    128),
+                State   = DiscordUtil.TruncateLength($"in {GameService.Player.Map.Name}", 128),
                 Assets = new Assets() {
-                    LargeImageKey  = DiscordUtil.TruncateLength(_mapOverrides.ContainsKey(GameService.Player.Map.Id.ToString()) ? _mapOverrides[GameService.Player.Map.Id.ToString()] : DiscordUtil.GetDiscordSafeString(GameService.Player.Map.Name), 32),
-                    LargeImageText = DiscordUtil.TruncateLength(GameService.Player.Map.Name,                                        128),
-                    SmallImageKey  = DiscordUtil.TruncateLength(((MapType)GameService.Player.MapType).ToString().ToLower(),         32),
-                    SmallImageText = DiscordUtil.TruncateLength(((MapType)GameService.Player.MapType).ToString().Replace("_", " "), 128)
+                    LargeImageKey = DiscordUtil.TruncateLength(_mapOverrides.ContainsKey(GameService.Player.Map.Id.ToString())
+                                                                   ? _mapOverrides[GameService.Player.Map.Id.ToString()]
+                                                                   : DiscordUtil.GetDiscordSafeString(GameService.Player.Map.Name), 32),
+                    LargeImageText = DiscordUtil.TruncateLength(GameService.Player.Map.Name,                                         128),
+                    SmallImageKey  = DiscordUtil.TruncateLength(((MapType) GameService.Player.MapType).ToString().ToLower(),         32),
+                    SmallImageText = DiscordUtil.TruncateLength(((MapType) GameService.Player.MapType).ToString().Replace("_", " "), 128)
                 },
                 Timestamps = new Timestamps() {
                     Start = _startTime
@@ -131,7 +134,7 @@ namespace Discord_Rich_Presence_Module {
         }
 
         protected override void Update(GameTime gameTime) {
-
+            /* NOOP */
         }
 
         protected override void Unload() {

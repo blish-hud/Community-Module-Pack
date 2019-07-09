@@ -69,10 +69,6 @@ namespace Musician_Module
 
         private SettingEntry<bool> settingBackgroundPlayback;
 
-        /// <summary>
-        /// Define the settings you would like to use in your module.  Settings are persistent
-        /// between updates to both Blish HUD and your module.
-        /// </summary>
         protected override void DefineSettings(SettingCollection settingsManager)
         {
             settingBackgroundPlayback = settingsManager.DefineSetting<bool>("backgroundPlayback", false, "No background playback", "Stop key emulation when GW2 is in the background");
@@ -80,38 +76,21 @@ namespace Musician_Module
 
         #endregion
 
-        /// <summary>
-        /// Allows your module to perform any initialization it needs before starting to run.
-        /// Please note that Initialize is NOT asynchronous and will block Blish HUD's update
-        /// and render loop, so be sure to not do anything here that takes too long.
-        /// </summary>
         protected override void Initialize()
         {
             ICON = ICON ?? ContentsManager.GetTexture("musician_icon.png");
             xmlParser = new XmlMusicSheetReader();
             displayedSheets = new List<SheetButton>();
+
+            GameService.GameIntegration.Gw2LostFocus += GameIntegrationOnGw2LostFocus;
         }
 
-        /// <summary>
-        /// Load content and more here. This call is asynchronous, so it is a good time to
-        /// run any long running steps for your module. Be careful when instancing
-        /// <see cref="Blish_HUD.Entities.Entity"/> and <see cref="Blish_HUD.Controls.Control"/>.
-        /// Setting their parent is not thread-safe and can cause the application to crash.
-        /// You will want to queue them to add later while on the main thread or in a delegate queued
-        /// with <see cref="Blish_HUD.DirectorService.QueueMainThreadUpdate(Action{GameTime})"/>.
-        /// </summary>
         protected override async Task LoadAsync()
         {
             // Load local sheet music (*.xml) files.
             await Task.Run(() => Sheets = xmlParser.LoadDirectory(DirectoriesManager.GetFullDirectoryPath("musician")));
         }
 
-        /// <summary>
-        /// Allows you to perform an action once your module has finished loading (once
-        /// <see cref="LoadAsync"/> has completed).  You must call "base.OnModuleLoaded(e)" at the
-        /// end for the <see cref="ExternalModule.ModuleLoaded"/> event to fire and for
-        /// <see cref="ExternalModule.Loaded" /> to update correctly.
-        /// </summary>
         protected override void OnModuleLoaded(EventArgs e)
         {
             MusicianTab = GameService.Overlay.BlishHudWindow.AddTab("Musician", ICON, BuildHomePanel(GameService.Overlay.BlishHudWindow), 0);
@@ -123,37 +102,19 @@ namespace Musician_Module
             base.OnModuleLoaded(e);
         }
 
-        /// <summary>
-        /// Allows your module to run logic such as updating UI elements,
-        /// checking for conditions, playing audio, calculating changes, etc.
-        /// This method will block the primary Blish HUD loop, so any long
-        /// running tasks should be executed on a separate thread to prevent
-        /// slowing down the overlay.
-        /// </summary>
-        protected override void Update(GameTime gameTime)
-        {
-            if (settingBackgroundPlayback.Value && GameService.GameIntegration.Gw2IsRunning)
-            {
-                if (Blish_HUD.WindowUtil.OnTop)
-                {
-                    this.StopPlayback();
-                    return;
-                }
+        private void GameIntegrationOnGw2LostFocus(object sender, EventArgs e) {
+            if (settingBackgroundPlayback.Value) {
+                this.StopPlayback();
             }
-            base.Update(gameTime);
         }
 
-        /// <summary>
-        /// For a good module experience, your module should clean up ANY and ALL entities
-        /// and controls that were created and added to either the World or SpriteScreen.
-        /// Be sure to remove any tabs added to the Director window, CornerIcons, etc.
-        /// </summary>
         protected override void Unload()
         {
             this.StopPlayback();
             GameService.Overlay.BlishHudWindow.RemoveTab(MusicianTab);
             ModuleInstance = null;
         }
+
         private void StopPlayback()
         {
             if (StopButton != null)
@@ -223,11 +184,12 @@ namespace Musician_Module
                 Parent = lPanel,
                 Location = new Point(20, 20),
             };
-            var melodyPanel = new TintedPanel()
+            var melodyPanel = new Panel()
             {
                 Location = new Point(0, MusicianModule.BOTTOM_MARGIN + backButton.Bottom),
                 Size = new Point(lPanel.Width, lPanel.Size.Y - 50 - MusicianModule.BOTTOM_MARGIN),
                 Parent = lPanel,
+                ShowTint = true,
                 ShowBorder = true,
                 CanScroll = true
             };

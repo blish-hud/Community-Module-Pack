@@ -10,7 +10,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Defeat_the_Ley-Line_Anomaly_to_disperse_its_destructive_energy_before_it_overloads#Walkthrough",
     "duration": "",
     "alert": 10,
-    "icon": "1769807"
+    "icon": "2F030A07047DF63DE8F5DD3E5B7F0106FF4EB1ED/1769803"
   },
   {
     "name": "Ley-Line Anomaly (Iron Marches)",
@@ -23,7 +23,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Defeat_the_Ley-Line_Anomaly_to_disperse_its_destructive_energy_before_it_overloads#Walkthrough",
     "duration": "",
     "alert": 10,
-    "icon": "1769807"
+    "icon": "2F030A07047DF63DE8F5DD3E5B7F0106FF4EB1ED/1769803"
   },
   {
     "name": "Ley-Line Anomaly (Gendarran Fields)",
@@ -36,7 +36,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Defeat_the_Ley-Line_Anomaly_to_disperse_its_destructive_energy_before_it_overloads#Walkthrough",
     "duration": "",
     "alert": 10,
-    "icon": "1769807"
+    "icon": "2F030A07047DF63DE8F5DD3E5B7F0106FF4EB1ED/1769803"
   },
   {
     "name": "The Oil Floes",
@@ -49,7 +49,8 @@
     "waypoint": "[&BKYLAAA=]",
     "wiki": "https://wiki.guildwars2.com/wiki/The_Oil_Floes",
     "duration": "15",
-    "alert": 10
+    "alert": 10,
+	"icon": "9F2162C048B268C30F1172C71DB107A45BCEF905/2084714"
   },
   {
     "name": "Thunderhead Keep",
@@ -62,7 +63,8 @@
     "waypoint": "[&BLsLAAA=]",
     "wiki": "https://wiki.guildwars2.com/wiki/Thunderhead_Keep_(meta_event)",
     "duration": "20",
-    "alert": 10
+    "alert": 10,
+	"icon": "9F2162C048B268C30F1172C71DB107A45BCEF905/2084714"
   },
   {
     "name": "Admiral Taidha Covington",
@@ -76,7 +78,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Admiral_Taidha_Covington",
     "duration": "10",
     "alert": 10,
-    "icon": "498983"
+    "icon": "7554DCAF5A1EA1BDF5297352A203AF2357BE2B5B/498983"
   },
   {
     "name": "Casino Blitz",
@@ -89,7 +91,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Casino_Blitz",
     "duration": "15",
     "alert": 5,
-    "icon": "1769811"
+    "icon": "55D703EF65C8317C36A837A7E162BE907492AE53/1769811"
   },
   {
     "name": "Choya Pinata",
@@ -102,7 +104,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Choya_Pinata",
     "duration": "5",
     "alert": 10,
-    "icon": "1769811"
+    "icon": "55D703EF65C8317C36A837A7E162BE907492AE53/1769811"
   },
   {
     "name": "Claw of Jormag",
@@ -115,7 +117,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Claw_of_Jormag",
     "alert": 10,
     "duration": "30",
-    "icon": "498983"
+    "icon": "7554DCAF5A1EA1BDF5297352A203AF2357BE2B5B/498983"
   },
   {
     "name": "Crash Site",
@@ -128,7 +130,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Crash_Site_(meta_event)",
     "alert": 5,
     "duration": "40",
-    "icon": "1302677"
+    "icon": "2B38D85D12685D43E6B942AD43FFB667F73DA406/1302677"
   },
   {
     "name": "Evolved Jungle Wurm",
@@ -142,7 +144,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Triple_Trouble",
     "duration": "",
     "alert": 20,
-    "icon": "710688"
+    "icon": "B197F05D1FB333ABC87EAF09BE0A44C50B4AEC3C/710688"
   },
   {
     "name": "Evolved Jungle Wurm",
@@ -156,7 +158,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Triple_Trouble",
     "duration": "",
     "alert": 20,
-    "icon": "710688"
+    "icon": "B197F05D1FB333ABC87EAF09BE0A44C50B4AEC3C/710688"
   },
   {
     "name": "Evolved Jungle Wurm",
@@ -170,7 +172,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Triple_Trouble",
     "duration": "",
     "alert": 20,
-    "icon": "710688"
+    "icon": "B197F05D1FB333ABC87EAF09BE0A44C50B4AEC3C/710688"
   },
   {
     "name": "Evolved Jungle Wurm",
@@ -184,7 +186,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Triple_Trouble",
     "duration": "",
     "alert": 20,
-    "icon": "710688"
+    "icon": "B197F05D1FB333ABC87EAF09BE0A44C50B4AEC3C/710688"
   },
   {
     "name": "Evolved Jungle Wurm",
@@ -198,7 +200,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Triple_Trouble",
     "duration": "",
     "alert": 20,
-    "icon": "710688"
+    "icon": "B197F05D1FB333ABC87EAF09BE0A44C50B4AEC3C/710688"
   },
   {
     "name": "Evolved Jungle Wurm",
@@ -212,7 +214,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Triple_Trouble",
     "duration": "",
     "alert": 20,
-    "icon": "710688"
+    "icon": "B197F05D1FB333ABC87EAF09BE0A44C50B4AEC3C/710688"
   },
   {
     "name": "Fire Elemental",
@@ -225,7 +227,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Destroy_the_fire_elemental_created_from_chaotic_energy_fusing_with_the_C.L.E.A.N._5000%27s_energy_core",
     "duration": "15",
     "alert": 10,
-    "icon": "498983"
+    "icon": "7554DCAF5A1EA1BDF5297352A203AF2357BE2B5B/498983"
   },
   {
     "name": "Great Jungle Wurm",
@@ -238,7 +240,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Defeat_the_great_jungle_wurm",
     "duration": "15",
     "alert": 10,
-    "icon": "498983"
+    "icon": "7554DCAF5A1EA1BDF5297352A203AF2357BE2B5B/498983"
   },
   {
     "name": "Inquest Golem Mark II",
@@ -251,7 +253,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Defeat_the_Inquest%27s_golem_Mark_II",
     "duration": "15",
     "alert": 10,
-    "icon": "498983"
+    "icon": "7554DCAF5A1EA1BDF5297352A203AF2357BE2B5B/498983"
   },
   {
     "name": "Legendary Karka Queen",
@@ -264,7 +266,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Defeat_the_Karka_Queen_threatening_the_settlements",
     "duration": "10",
     "alert": 10,
-    "icon": "498983"
+    "icon": "7554DCAF5A1EA1BDF5297352A203AF2357BE2B5B/498983"
   },
   {
     "name": "Legendary Karka Queen",
@@ -277,7 +279,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Defeat_the_Karka_Queen_threatening_the_settlements",
     "duration": "10",
     "alert": 10,
-    "icon": "498983"
+    "icon": "7554DCAF5A1EA1BDF5297352A203AF2357BE2B5B/498983"
   },
   {
     "name": "Legendary Karka Queen",
@@ -290,7 +292,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Defeat_the_Karka_Queen_threatening_the_settlements",
     "duration": "10",
     "alert": 10,
-    "icon": "498983"
+    "icon": "7554DCAF5A1EA1BDF5297352A203AF2357BE2B5B/498983"
   },
   {
     "name": "Legendary Karka Queen",
@@ -303,7 +305,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Defeat_the_Karka_Queen_threatening_the_settlements",
     "duration": "10",
     "alert": 10,
-    "icon": "498983"
+    "icon": "7554DCAF5A1EA1BDF5297352A203AF2357BE2B5B/498983"
   },
   {
     "name": "Legendary Karka Queen",
@@ -316,7 +318,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Defeat_the_Karka_Queen_threatening_the_settlements",
     "duration": "10",
     "alert": 10,
-    "icon": "498983"
+    "icon": "7554DCAF5A1EA1BDF5297352A203AF2357BE2B5B/498983"
   },
   {
     "name": "Legendary Karka Queen",
@@ -329,7 +331,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Defeat_the_Karka_Queen_threatening_the_settlements",
     "duration": "10",
     "alert": 10,
-    "icon": "498983"
+    "icon": "7554DCAF5A1EA1BDF5297352A203AF2357BE2B5B/498983"
   },
   {
     "name": "Megadestroyer",
@@ -342,7 +344,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Kill_the_megadestroyer_before_it_blows_everyone_up",
     "duration": "15",
     "alert": 10,
-    "icon": "498983"
+    "icon": "7554DCAF5A1EA1BDF5297352A203AF2357BE2B5B/498983"
   },
   {
     "name": "Modniir Ulgoth",
@@ -355,7 +357,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Defeat_Ulgoth_the_Modniir_and_his_minions",
     "duration": "20",
     "alert": 10,
-    "icon": "498983"
+    "icon": "7554DCAF5A1EA1BDF5297352A203AF2357BE2B5B/498983"
   },
   {
     "name": "Sandstorm",
@@ -368,7 +370,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Sandstorm!",
     "alert": 5,
     "duration": "20",
-    "icon": "1302677"
+    "icon": "B197F05D1FB333ABC87EAF09BE0A44C50B4AEC3C/710688"
   },
   {
     "name": "Shadow Behemoth",
@@ -381,7 +383,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Defeat_the_shadow_behemoth",
     "duration": "15",
     "alert": 10,
-    "icon": "498983"
+    "icon": "7554DCAF5A1EA1BDF5297352A203AF2357BE2B5B/498983"
   },
   {
     "name": "Svanir Shaman Chief",
@@ -394,7 +396,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Kill_the_Svanir_shaman_chief_to_break_his_control_over_the_ice_elemental",
     "duration": "15",
     "alert": 10,
-    "icon": "498983"
+    "icon": "7554DCAF5A1EA1BDF5297352A203AF2357BE2B5B/498983"
   },
   {
     "name": "Tequatl the Sunless",
@@ -407,7 +409,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Defeat_Tequatl_the_Sunless",
     "duration": "15",
     "alert": 15,
-    "icon": "638120"
+    "icon": "57490B059669DA64517C99BCA5A359082696DEC9/638120"
   },
   {
     "name": "Tequatl the Sunless",
@@ -420,7 +422,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Defeat_Tequatl_the_Sunless",
     "duration": "15",
     "alert": 15,
-    "icon": "638120"
+    "icon": "57490B059669DA64517C99BCA5A359082696DEC9/638120"
   },
   {
     "name": "Tequatl the Sunless",
@@ -433,7 +435,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Defeat_Tequatl_the_Sunless",
     "duration": "15",
     "alert": 15,
-    "icon": "638120"
+    "icon": "57490B059669DA64517C99BCA5A359082696DEC9/638120"
   },
   {
     "name": "Tequatl the Sunless",
@@ -446,7 +448,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Defeat_Tequatl_the_Sunless",
     "duration": "15",
     "alert": 15,
-    "icon": "638120"
+    "icon": "57490B059669DA64517C99BCA5A359082696DEC9/638120"
   },
   {
     "name": "Tequatl the Sunless",
@@ -459,7 +461,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Defeat_Tequatl_the_Sunless",
     "duration": "15",
     "alert": 15,
-    "icon": "638120"
+    "icon": "57490B059669DA64517C99BCA5A359082696DEC9/638120"
   },
   {
     "name": "Tequatl the Sunless",
@@ -472,7 +474,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Defeat_Tequatl_the_Sunless",
     "duration": "15",
     "alert": 15,
-    "icon": "638120"
+    "icon": "57490B059669DA64517C99BCA5A359082696DEC9/638120"
   },
   {
     "name": "The Search for Buried Treasure",
@@ -485,7 +487,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/The_Search_for_Buried_Treasure",
     "duration": "20",
     "alert": 5,
-    "icon": "1769809"
+    "icon": "B0A70F5A307EDD53DD462EBF517376057242AC74/1769809"
   },
   {
     "name": "The Shatterer",
@@ -498,7 +500,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Slay_the_Shatterer",
     "duration": "15",
     "alert": 10,
-    "icon": "1341585"
+    "icon": "BEBC5CBBD70DB678FA3E329D3BE59DE27CECCA14/1341585"
   },
   {
     "name": "Serpents' Ire",
@@ -511,7 +513,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Serpents%27_Ire",
     "duration": "",
     "alert": 10,
-    "icon": "1769812"
+    "icon": "02F498E62D99E55B737797B4736870CB1F76DC03/1769812"
   },
   {
     "name": "Palawadan, Jewel of Istan",
@@ -523,7 +525,8 @@
     "waypoint": "[&BAkLAAA=]",
     "wiki": "https://wiki.guildwars2.com/wiki/Palawadan,_Jewel_of_Istan_(meta_event)",
     "duration": "30",
-    "alert": 10
+    "alert": 10,
+	"icon": "056C32B97B15F04E2BD6A660FC451946ED086040/1895981"
   },
   {
     "name": "Dangerous Prey",
@@ -535,7 +538,8 @@
     "waypoint": "[&BIMLAAA=]",
     "wiki": "https://wiki.guildwars2.com/wiki/Dangerous_Prey",
     "duration": "30",
-    "alert": 10
+    "alert": 10,
+	"icon": "29C575F5601EC9D003B80BE497077E424FA2F704/2039753"
   },
   {
     "name": "Defending Tarir",
@@ -548,7 +552,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Defending_Tarir",
     "duration": "75",
     "alert": 10,
-    "icon": "1228221"
+    "icon": "7D803B05D3F932974ACA08F8725A28A491FEF0E2/1228221"
   },
     {
     "name": "Chak Gerent",
@@ -560,7 +564,8 @@
     "waypoint": "[&BPUHAAA=]",
     "wiki": "https://wiki.guildwars2.com/wiki/Against_the_Chak_Gerent",
     "duration": "",
-    "alert": 10
+    "alert": 10,
+	"icon": "A45192752E983E0AB026A8539BE601E668019840/1228232"
   },
   {
     "name": "Trial by Fire",
@@ -573,7 +578,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Trial_by_Fire",
     "duration": "15",
     "alert": 10,
-    "icon": "1228221"
+    "icon": "7D803B05D3F932974ACA08F8725A28A491FEF0E2/1228221"
   },
   {
     "name": "Battle in Tarir",
@@ -587,7 +592,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Battle_in_Tarir",
     "duration": "20",
     "alert": 10,
-    "icon": "1228221"
+    "icon": "7D803B05D3F932974ACA08F8725A28A491FEF0E2/1228221"
   },
   {
     "name": "Advancing on the Blighting Towers",
@@ -601,7 +606,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Advancing_on_the_Blighting_Towers",
     "duration": "90",
     "alert": 15,
-    "icon": "1228222"
+    "icon": "064521C3D8D9D3F6EF465EBDB4F37B707ABE1B6E/1228222"
   },
   {
     "name": "Dawn",

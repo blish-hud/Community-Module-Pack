@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,13 +14,15 @@ using Blish_HUD.Modules;
 using Blish_HUD.Modules.Managers;
 using Blish_HUD.Pathing;
 using Blish_HUD.Pathing.Content;
+using Blish_HUD.PersistentStore;
 using Blish_HUD.Settings;
-using NLog;
 
 namespace Markers_and_Paths_Module {
 
     [Export(typeof(Module))]
     public class MarkersAndPathsModule : Module {
+
+        private static readonly Logger Logger = Logger.GetLogger(typeof(MarkersAndPathsModule));
 
         internal static MarkersAndPathsModule ModuleInstance;
 
@@ -35,7 +38,7 @@ namespace Markers_and_Paths_Module {
 
         private EventHandler<EventArgs> _onNewMapLoaded;
 
-        private PersistentStore _pathableToggleStates;
+        private Store _pathableToggleStates;
 
         [ImportingConstructor]
         public MarkersAndPathsModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) {
@@ -61,6 +64,8 @@ namespace Markers_and_Paths_Module {
 
             LoadPacks();
             BuildCategoryMenus();
+            
+            Logger.Info("Loaded {pathableCount} markers!", PackFormat.TacO.Readers.MarkerPackReader.Pathables.Count);
         }
 
         private List<PathableResourceManager> _allPathableResourceManagers;
@@ -68,12 +73,14 @@ namespace Markers_and_Paths_Module {
         private void LoadPacks() {
             _allPathableResourceManagers = new List<PathableResourceManager>();
 
+            var iconProgressIndicator = new Progress<string>((report) => { GameService.Pathing.Icon.LoadingMessage = report; });
+
             var dirDataReader      = new DirectoryReader(_markerDirectory);
             var dirResourceManager = new PathableResourceManager(dirDataReader);
             _allPathableResourceManagers.Add(dirResourceManager);
             dirDataReader.LoadOnFileType((Stream fileStream, IDataReader dataReader) => {
                 PackFormat.TacO.Readers.MarkerPackReader.ReadFromXmlPack(fileStream, dirResourceManager);
-            }, ".xml");
+            }, ".xml", iconProgressIndicator);
 
             // TODO: Cleanup
             string[] packFiles = Directory.GetFiles(_markerDirectory, "*.zip", SearchOption.AllDirectories);
@@ -84,7 +91,7 @@ namespace Markers_and_Paths_Module {
                 _allPathableResourceManagers.Add(zipResourceManager);
                 zipDataReader.LoadOnFileType((Stream fileStream, IDataReader dataReader) => {
                     PackFormat.TacO.Readers.MarkerPackReader.ReadFromXmlPack(fileStream, zipResourceManager);
-                }, ".xml");
+                }, ".xml", iconProgressIndicator);
             }
         }
 

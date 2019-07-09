@@ -78,6 +78,7 @@
     <Compile Include="Controls\SearchResultItem.cs" />
     <Compile Include="FileApiExtension.cs" />
     <Compile Include="LandmarkUtil.cs" />
+    <Compile Include="StringUtil.cs" />
     <Compile Include="UniversalSearchModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
