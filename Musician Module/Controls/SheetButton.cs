@@ -17,20 +17,19 @@ namespace Musician_Module.Controls {
         private const int BOTTOMSECTION_HEIGHT = 35;
 
         public string Artist { get; set; }
-        public string Title { get; set; }
         public string User { get; set; }
-        private static Texture2D BeatmaniaSprite;
-        private static Texture2D GlowBeatmaniaSprite;
-        private static Texture2D AutoplaySprite;
-        private static Texture2D GlowAutoplaySprite;
-        private static Texture2D PlaySprite;
-        private static Texture2D GlowPlaySprite;
-        private static Texture2D StopSprite;
-        private static Texture2D GlowStopSprite;
-        private static Texture2D BackgroundSprite;
-        private static Texture2D DividerSprite;
-        private static Texture2D IconBoxSprite;
-        private Texture2D PreviewSprite;
+        private readonly Texture2D BeatmaniaSprite;
+        private readonly Texture2D GlowBeatmaniaSprite;
+        private readonly Texture2D AutoplaySprite;
+        private readonly Texture2D GlowAutoplaySprite;
+        private readonly Texture2D PlaySprite;
+        private readonly Texture2D GlowPlaySprite;
+        private readonly Texture2D StopSprite;
+        private readonly Texture2D GlowStopSprite;
+        private readonly Texture2D BackgroundSprite;
+        private readonly Texture2D DividerSprite;
+        private readonly Texture2D IconBoxSprite;
+
         private bool _isPreviewing;
         public bool IsPreviewing
         {
@@ -42,19 +41,6 @@ namespace Musician_Module.Controls {
                 Invalidate();
             }
         }
-        private Texture2D _icon;
-        public Texture2D Icon
-        {
-            get => _icon;
-            set
-            {
-                if (_icon == value) return;
-
-                _icon = value;
-                OnPropertyChanged();
-            }
-        }
-        private DetailsIconSize IconSize;
         private RawMusicSheet _musicSheet;
         public RawMusicSheet MusicSheet
         {
@@ -215,10 +201,7 @@ namespace Musician_Module.Controls {
             {
                 spriteBatch.DrawOnCtrl(this, this.Icon, new Rectangle((bounds.Height - BOTTOMSECTION_HEIGHT) / 2 - 32, (bounds.Height - 35) / 2 - 32, 64, 64), Color.White);
                 // Draw icon box
-                if (this.IconSize == DetailsIconSize.Large)
-                {
-                    spriteBatch.DrawOnCtrl(this, IconBoxSprite, new Rectangle(0, 0, iconSize, iconSize), Color.White);
-                }
+                spriteBatch.DrawOnCtrl(this, IconBoxSprite, new Rectangle(0, 0, iconSize, iconSize), Color.White);
             }
             // Wrap text
             string track = Title + @" - " + Artist;
