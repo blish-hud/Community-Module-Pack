@@ -14,6 +14,8 @@ using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using Flurl;
 using Flurl.Http;
+using System.Linq;
+
 namespace Kill_Proof_Module
 {
     [Export(typeof(Module))]
@@ -47,7 +49,7 @@ namespace Kill_Proof_Module
         private WindowTab KillProofTab;
 
         private Dictionary<string, Texture2D> TokenRenderRepository;
-        private KillProof CurrentAccount;
+        private List<KillProof> CachedKillProofs;
         private Label CurrentAccountName;
         private Label CurrentAccountLastRefresh;
         private Label CurrentAccountKpId;
@@ -74,6 +76,7 @@ namespace Kill_Proof_Module
             ICON = ICON ?? ContentsManager.GetTexture("killproof_icon.png");
             TokenRenderRepository = new Dictionary<string, Texture2D>();
             DisplayedKillProofs = new List<KillProofButton>();
+            CachedKillProofs = new List<KillProof>();
         }
 
         #region Settings
@@ -94,9 +97,23 @@ namespace Kill_Proof_Module
         /// You will want to queue them to add later while on the main thread or in a delegate queued
         /// with <see cref="Blish_HUD.DirectorService.QueueMainThreadUpdate(Action{GameTime})"/>.
         /// </summary>
-        protected override async Task LoadAsync()
-        {
-            await UpdateTokenRenderRepository();
+        protected override async Task LoadAsync() {
+            try
+            {
+                var rawJson = await (KILLPROOF_API_URL + "icons")
+                .AllowAnyHttpStatus()
+                .GetStringAsync();
+                Dictionary<string, Url> tokenRenderUrlRepository = JsonConvert.DeserializeObject<Dictionary<string, Url>>(rawJson);
+
+                foreach (KeyValuePair<string, Url> token in tokenRenderUrlRepository) {
+                    Texture2D render = GameService.Content.GetRenderServiceTexture(token.Value);
+                    TokenRenderRepository.Add(token.Key, render);
+                }
+            }
+            catch (FlurlHttpException ex)
+            {
+                Logger.Warn(ex.Message);
+            }
         }
 
         /// <summary>
@@ -131,29 +148,49 @@ namespace Kill_Proof_Module
             ModuleInstance = null;
         }
 
-        private async Task UpdateTokenRenderRepository()
+        private async Task<Texture2D> GetTokenRender(string key)
+        {
+            if (TokenRenderRepository.Any(x => x.Key.Equals(key, StringComparison.InvariantCultureIgnoreCase)))
+            {
+                return TokenRenderRepository[key];
+            }
+            else
+            {
+                try
+                {
+                    var rawJson = await (KILLPROOF_API_URL + "icons")
+                    .AllowAnyHttpStatus()
+                    .GetStringAsync();
+                    Dictionary<string, Url> tokenRenderUrlRepository = JsonConvert.DeserializeObject<Dictionary<string, Url>>(rawJson);
+
+                    Url renderUrl = tokenRenderUrlRepository.First(x => x.Key.Equals(key, StringComparison.InvariantCultureIgnoreCase)).Value;
+                    Texture2D render = GameService.Content.GetRenderServiceTexture(renderUrl);
+                    TokenRenderRepository.Add(key, render);
+
+                    return render;
+                }
+                catch (FlurlHttpException ex)
+                {
+                    Logger.Warn(ex.Message);
+                    return GameService.Content.GetTexture("deleted_item");
+                }
+            }
+        }
+        private async Task<string> GetKillProofContent(string _account)
         {
             try
             {
-                var rawJson = await (KILLPROOF_API_URL + $"icons")
-                .AllowAnyHttpStatus()
-                .GetStringAsync();
-
-                Dictionary<string, Url> tokenRenderUrlRepository = JsonConvert.DeserializeObject<Dictionary<string, Url>>(rawJson);
-
-                foreach (KeyValuePair<string, Url> token in tokenRenderUrlRepository)
-                {
-                    if (!TokenRenderRepository.ContainsKey(token.Key))
-                    {
-                        Texture2D render = GameService.Content.GetRenderServiceTexture(token.Value);
-                        TokenRenderRepository.Add(token.Key, render);
-                    }
-                }
+                var rawJson = await (KILLPROOF_API_URL + $"kp/{_account}")
+                    .AllowAnyHttpStatus()
+                    .GetStringAsync();
+                return rawJson;
             }
             catch (FlurlHttpException ex)
             {
-                Logger.Error(ex.Message);
+                Logger.Warn(ex.Message);
+                return "{'error':'API connection failed.'}";
             }
+
         }
         /*######################################
           # PANEL RELATED STUFF BELOW.
@@ -265,6 +302,13 @@ namespace Kill_Proof_Module
                 CanScroll = true,
                 ShowTint = true
             };
+            LoadingSpinner PageLoading = new LoadingSpinner()
+            {
+                Parent = hPanel,
+                Visible = false
+            };
+            PageLoading.Location = new Point(hPanel.Size.X / 2 - PageLoading.Size.X / 2, hPanel.Size.Y / 2 - PageLoading.Size.Y / 2);
+
             // Encapsule TextBox because not thread safe.
             GameService.Overlay.QueueMainThreadUpdate((gameTime) => {
                 var tb_account_name = new TextBox()
@@ -278,72 +322,84 @@ namespace Kill_Proof_Module
                 tb_account_name.EnterPressed += delegate {
                     if (!string.Equals(tb_account_name.Text, "") && !Regex.IsMatch(tb_account_name.Text, @"[^a-zA-Z0-9.\s]|^\.*$"))
                     {
+                        PageLoading.Visible = true;
                         BuildContentPanelElements(contentPanel, tb_account_name.Text);
+                        PageLoading.Visible = false;
                         UpdateSort(ddSortMethod, EventArgs.Empty);
                     }
                 };
             });
             return hPanel;
         }
-        private async Task<string> GetKillProofContent(string _account)
-        {
-            var rawJson = await (KILLPROOF_API_URL + $"kp/{_account}")
-                .AllowAnyHttpStatus()
-                .GetStringAsync();
-            return rawJson;
-        }
         private Panel BuildContentPanelElements(Panel contentPanel, string account)
         {
-            var loader = Task.Run(() => GetKillProofContent(account));
-            loader.Wait();
+
+            KillProof currentAccount;
+            if (!CachedKillProofs.Any(x => x.account_name.Equals(account, StringComparison.InvariantCultureIgnoreCase)))
+            {
+                var loader = Task.Run(() => GetKillProofContent(account));
+                loader.Wait();
+                currentAccount = JsonConvert.DeserializeObject<KillProof>(loader.Result);
+                CachedKillProofs.Add(currentAccount);
+            }
+            else
+            {
+                currentAccount = CachedKillProofs.FirstOrDefault(x => x.account_name.Equals(account, StringComparison.InvariantCultureIgnoreCase));
+
+            }
 
             foreach (KillProofButton e1 in DisplayedKillProofs) { e1.Dispose(); }
             DisplayedKillProofs.Clear();
 
-            CurrentAccount = JsonConvert.DeserializeObject<KillProof>(loader.Result);
-
-            CurrentAccountName.Text = CurrentAccount.account_name;
-            CurrentAccountLastRefresh.Text = "Last Refresh: " + String.Format("{0:dddd, d. MMMM yyyy - HH:mm:ss}", CurrentAccount.last_refresh);
-            CurrentAccountKpId.Text = "ID: " + CurrentAccount.kpid;
-            CurrentAccountProofUrl.Text = CurrentAccount.proof_url;
-
-            var killproofs = DictionaryExtension.MergeLeft(CurrentAccount.killproofs, CurrentAccount.tokens);
-
-            foreach (KeyValuePair<string, int> token in killproofs)
+            if (currentAccount.error == null)
             {
-                if (!TokenRenderRepository.ContainsKey(token.Key))
+                CurrentAccountName.Text = currentAccount.account_name;
+                CurrentAccountLastRefresh.Text = "Last Refresh: " + String.Format("{0:dddd, d. MMMM yyyy - HH:mm:ss}", currentAccount.last_refresh);
+                CurrentAccountKpId.Text = "ID: " + currentAccount.kpid;
+                CurrentAccountProofUrl.Text = currentAccount.proof_url;
+
+                var killproofs = DictionaryExtension.MergeLeft(currentAccount.killproofs, currentAccount.tokens);
+
+                foreach (KeyValuePair<string, int> token in killproofs)
                 {
-                    UpdateTokenRenderRepository().Wait();
+                    if (token.Value > 0)
+                    {
+                        var killProofButton = new KillProofButton()
+                        {
+                            Parent = contentPanel,
+                            Icon = GetTokenRender(token.Key).Result,
+                            Font = GameService.Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size24, ContentService.FontStyle.Regular),
+                            Text = token.Value.ToString(),
+                            BottomText = token.Key
+                        };
+                        DisplayedKillProofs.Add(killProofButton);
+                    }
                 }
-                if (token.Value > 0)
+
+                foreach (KeyValuePair<string, string> token in currentAccount.titles)
                 {
-                    var killProofButton = new KillProofButton()
+                    var titleButton = new KillProofButton()
                     {
                         Parent = contentPanel,
-                        Icon = TokenRenderRepository[token.Key],
-                        Font = GameService.Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size24, ContentService.FontStyle.Regular),
-                        Text = token.Value.ToString(),
-                        BottomText = token.Key
+                        Icon = GameService.Content.GetTexture("icon_" + token.Value),
+                        Font = GameService.Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size16, ContentService.FontStyle.Regular),
+                        Text = token.Key,
+                        BottomText = token.Value,
+                        IsTitleDisplay = true
                     };
-                    DisplayedKillProofs.Add(killProofButton);
+                    DisplayedKillProofs.Add(titleButton);
                 }
-            }
 
-            foreach (KeyValuePair<string, string> token in CurrentAccount.titles)
+                RepositionKp();
+            }
+            else
             {
-                var titleButton = new KillProofButton()
-                {
-                    Parent = contentPanel,
-                    Icon = GameService.Content.GetTexture("icon_" + token.Value),
-                    Font = GameService.Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size16, ContentService.FontStyle.Regular),
-                    Text = token.Key,
-                    BottomText = token.Value,
-                    IsTitleDisplay = true
-                };
-                DisplayedKillProofs.Add(titleButton);
+                currentAccount.account_name = account; // So we can compare error 'Account not found' API replies and cache them.
+                CurrentAccountName.Text = currentAccount.error;
+                CurrentAccountLastRefresh.Text = "Last Refresh: ";
+                CurrentAccountKpId.Text = "ID: ";
+                CurrentAccountProofUrl.Text = @"https://killproof.me/proof/";
             }
-
-            RepositionKp();
             return contentPanel;
         }
         private void UpdateSort(object sender, EventArgs e)
