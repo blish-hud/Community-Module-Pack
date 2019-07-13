@@ -15,6 +15,7 @@ using System.Text.RegularExpressions;
 using Flurl;
 using Flurl.Http;
 using System.Linq;
+using Blish_HUD.Content;
 
 namespace Kill_Proof_Module
 {
@@ -48,7 +49,7 @@ namespace Kill_Proof_Module
 
         private WindowTab KillProofTab;
 
-        private Dictionary<string, Texture2D> TokenRenderRepository;
+        private Dictionary<string, AsyncTexture2D> TokenRenderRepository;
         private List<KillProof> CachedKillProofs;
         private Label CurrentAccountName;
         private Label CurrentAccountLastRefresh;
@@ -74,7 +75,7 @@ namespace Kill_Proof_Module
         protected override void Initialize()
         {
             ICON = ICON ?? ContentsManager.GetTexture("killproof_icon.png");
-            TokenRenderRepository = new Dictionary<string, Texture2D>();
+            TokenRenderRepository = new Dictionary<string, AsyncTexture2D>();
             DisplayedKillProofs = new List<KillProofButton>();
             CachedKillProofs = new List<KillProof>();
         }
@@ -106,8 +107,7 @@ namespace Kill_Proof_Module
                 Dictionary<string, Url> tokenRenderUrlRepository = JsonConvert.DeserializeObject<Dictionary<string, Url>>(rawJson);
 
                 foreach (KeyValuePair<string, Url> token in tokenRenderUrlRepository) {
-                    Texture2D render = GameService.Content.GetRenderServiceTexture(token.Value);
-                    TokenRenderRepository.Add(token.Key, render);
+                    TokenRenderRepository.Add(token.Key, GameService.Content.GetRenderServiceTexture(token.Value));
                 }
             }
             catch (FlurlHttpException ex)
@@ -148,7 +148,7 @@ namespace Kill_Proof_Module
             ModuleInstance = null;
         }
 
-        private async Task<Texture2D> GetTokenRender(string key)
+        private async Task<AsyncTexture2D> GetTokenRender(string key)
         {
             if (TokenRenderRepository.Any(x => x.Key.Equals(key, StringComparison.InvariantCultureIgnoreCase)))
             {
@@ -164,7 +164,7 @@ namespace Kill_Proof_Module
                     Dictionary<string, Url> tokenRenderUrlRepository = JsonConvert.DeserializeObject<Dictionary<string, Url>>(rawJson);
 
                     Url renderUrl = tokenRenderUrlRepository.First(x => x.Key.Equals(key, StringComparison.InvariantCultureIgnoreCase)).Value;
-                    Texture2D render = GameService.Content.GetRenderServiceTexture(renderUrl);
+                    AsyncTexture2D render = GameService.Content.GetRenderServiceTexture(renderUrl);
                     TokenRenderRepository.Add(key, render);
 
                     return render;
