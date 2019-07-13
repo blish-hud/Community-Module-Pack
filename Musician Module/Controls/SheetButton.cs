@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Blish_HUD.Controls;
 using Musician_Module.Notation.Persistance;
 using Blish_HUD;
+using Blish_HUD.Input;
 
 namespace Musician_Module.Controls {
 
