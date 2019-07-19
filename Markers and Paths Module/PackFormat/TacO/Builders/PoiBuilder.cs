@@ -23,7 +23,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
 
                     if (newPoiMarker.SuccessfullyLoaded) {
                         //Logger.Info("Marker {markerGuid} was successfully loaded!", newPoiMarker.Guid);
-                        Readers.MarkerPackReader.RegisterPathable(newPoiMarker);
+                        MarkersAndPathsModule.ModuleInstance._currentReader.RegisterPathable(newPoiMarker);
                     } else {
                         Logger.Warn("Failed to load marker!");
                     }
@@ -33,7 +33,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
 
                     if (newPathTrail.SuccessfullyLoaded) {
                         //Logger.Info("Trail {trailGuid} was successfully loaded!", newPathTrail.Guid);
-                        Readers.MarkerPackReader.RegisterPathable(newPathTrail);
+                        MarkersAndPathsModule.ModuleInstance._currentReader.RegisterPathable(newPathTrail);
                     } else {
                         Logger.Warn("Failed to load trail!");
                     }

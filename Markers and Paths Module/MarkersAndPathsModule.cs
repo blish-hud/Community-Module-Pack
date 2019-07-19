@@ -16,6 +16,7 @@ using Blish_HUD.Pathing;
 using Blish_HUD.Pathing.Content;
 using Blish_HUD.PersistentStore;
 using Blish_HUD.Settings;
+using Markers_and_Paths_Module.PackFormat.TacO.Readers;
 
 namespace Markers_and_Paths_Module {
 
@@ -40,6 +41,8 @@ namespace Markers_and_Paths_Module {
 
         private Store _pathableToggleStates;
 
+        internal MarkerPackReader _currentReader;
+
         [ImportingConstructor]
         public MarkersAndPathsModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) {
             ModuleInstance = this;
@@ -55,7 +58,13 @@ namespace Markers_and_Paths_Module {
             _moduleControls = new List<Control>();
             _pathableToggleStates = GameService.Store.RegisterStore(this.Namespace);
 
-            _onNewMapLoaded = delegate { PackFormat.TacO.Readers.MarkerPackReader.UpdatePathableStates(); };
+            _currentReader = new MarkerPackReader();
+
+            _onNewMapLoaded = delegate {
+                if (this.Loaded) {
+                    _currentReader.UpdatePathableStates();
+                }
+            };
             GameService.Pathing.NewMapLoaded += _onNewMapLoaded;
         }
 
@@ -65,7 +74,7 @@ namespace Markers_and_Paths_Module {
             LoadPacks();
             BuildCategoryMenus();
             
-            Logger.Info("Loaded {pathableCount} markers!", PackFormat.TacO.Readers.MarkerPackReader.Pathables.Count);
+            Logger.Info("Loaded {pathableCount} markers!", _currentReader.Pathables.Count);
         }
 
         private List<PathableResourceManager> _allPathableResourceManagers;
@@ -79,7 +88,7 @@ namespace Markers_and_Paths_Module {
             var dirResourceManager = new PathableResourceManager(dirDataReader);
             _allPathableResourceManagers.Add(dirResourceManager);
             dirDataReader.LoadOnFileType((Stream fileStream, IDataReader dataReader) => {
-                PackFormat.TacO.Readers.MarkerPackReader.ReadFromXmlPack(fileStream, dirResourceManager);
+                _currentReader.ReadFromXmlPack(fileStream, dirResourceManager);
             }, ".xml", iconProgressIndicator);
 
             // TODO: Cleanup
@@ -90,7 +99,7 @@ namespace Markers_and_Paths_Module {
                 var zipResourceManager = new PathableResourceManager(zipDataReader);
                 _allPathableResourceManagers.Add(zipResourceManager);
                 zipDataReader.LoadOnFileType((Stream fileStream, IDataReader dataReader) => {
-                    PackFormat.TacO.Readers.MarkerPackReader.ReadFromXmlPack(fileStream, zipResourceManager);
+                    _currentReader.ReadFromXmlPack(fileStream, zipResourceManager);
                 }, ".xml", iconProgressIndicator);
             }
         }
@@ -140,7 +149,7 @@ namespace Markers_and_Paths_Module {
 
                 _moduleControls.Add(allMarkersCMS);
 
-                foreach (var childCategory in PackFormat.TacO.Readers.MarkerPackReader.Categories) {
+                foreach (var childCategory in _currentReader.Categories) {
                     AddCategoryToMenuStrip(rootCategoryMenu, childCategory);
                 }
 
@@ -154,8 +163,8 @@ namespace Markers_and_Paths_Module {
             _allPathableResourceManagers.ForEach(GameService.Pathing.RegisterPathableResourceManager);
 
             GameService.Debug.StopTimeFuncAndOutput("Markers and Paths");
-            
-            PackFormat.TacO.Readers.MarkerPackReader.UpdatePathableStates();
+
+            _currentReader.UpdatePathableStates();
 
             base.OnModuleLoaded(e);
         }
@@ -168,12 +177,14 @@ namespace Markers_and_Paths_Module {
             _moduleControls.Clear();
             _allPathableResourceManagers.ForEach(GameService.Pathing.UnregisterPathableResourceManager);
 
-            foreach (IPathable<Entity> pathable in PackFormat.TacO.Readers.MarkerPackReader.Pathables) {
+            foreach (IPathable<Entity> pathable in _currentReader.Pathables) {
                 GameService.Pathing.UnregisterPathable(pathable);
             }
 
-            PackFormat.TacO.Readers.MarkerPackReader.Pathables.Clear();
-            PackFormat.TacO.Readers.MarkerPackReader.Categories.Clear();
+            _allPathableResourceManagers.ForEach(m => m.Dispose());
+
+            _currentReader.Dispose();
+            _currentReader = null;
         }
 
 

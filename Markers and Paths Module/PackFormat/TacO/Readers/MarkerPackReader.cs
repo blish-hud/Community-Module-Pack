@@ -14,27 +14,27 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
 
     // TODO: Use XmlReader to speed things up https://stackoverflow.com/a/676280/595437
 
-    public static class MarkerPackReader {
+    public sealed class MarkerPackReader : IDisposable {
 
         private static readonly Logger Logger = Logger.GetLogger(typeof(MarkerPackReader));
 
-        internal static readonly PathingCategory Categories = new PathingCategory("root") { Visible = true };
+        internal readonly PathingCategory Categories = new PathingCategory("root") { Visible = true };
 
-        internal static readonly SynchronizedCollection<IPathable<Entity>> Pathables = new SynchronizedCollection<IPathable<Entity>>();
+        internal readonly SynchronizedCollection<IPathable<Entity>> Pathables = new SynchronizedCollection<IPathable<Entity>>();
 
-        public static void RegisterPathable(IPathable<Entity> pathable) {
+        public void RegisterPathable(IPathable<Entity> pathable) {
             if (pathable == null) return;
 
-            Pathables.Add(pathable);
+            this.Pathables.Add(pathable);
         }
 
-        public static void UpdatePathableStates() {
+        public void UpdatePathableStates() {
             foreach (var pathable in Pathables.ToArray()) {
-                ProcessPathableState(pathable);
+                this.ProcessPathableState(pathable);
             }
         }
 
-        private static void ProcessPathableState(IPathable<Entity> pathable) {
+        private void ProcessPathableState(IPathable<Entity> pathable) {
             if (pathable.MapId == GameService.Player.MapId || pathable.MapId == -1) {
                 pathable.Active = true;
                 GameService.Pathing.RegisterPathable(pathable);
@@ -44,7 +44,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
             }
         }
 
-        public static void ReadFromXmlPack(Stream xmlPackStream, PathableResourceManager pathableResourceManager) {
+        public void ReadFromXmlPack(Stream xmlPackStream, PathableResourceManager pathableResourceManager) {
             string xmlPackContents;
 
             using (var xmlReader = new StreamReader(xmlPackStream)) {
@@ -70,7 +70,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
             }
         }
 
-        private static void TryLoadCategories(XmlDocument packDocument) {
+        private void TryLoadCategories(XmlDocument packDocument) {
             var categoryNodes = packDocument.DocumentElement?.SelectNodes("/OverlayData/MarkerCategory");
             if (categoryNodes == null) return;
 
@@ -79,7 +79,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
             }
         }
 
-        private static void TryLoadPOIs(XmlDocument packDocument, PathableResourceManager pathableResourceManager, PathingCategory rootCategory) {
+        private void TryLoadPOIs(XmlDocument packDocument, PathableResourceManager pathableResourceManager, PathingCategory rootCategory) {
             var poiNodes = packDocument.DocumentElement?.SelectSingleNode("/OverlayData/POIs");
             if (poiNodes == null) return;
 
@@ -90,7 +90,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
             }
         }
 
-        private static string SanitizeXml(string xmlDoc) {
+        private string SanitizeXml(string xmlDoc) {
             // TODO: Ask Tekkit (and others) to fix syntax
             // FYI, '>' does not need to be encoded in attribute values
             return xmlDoc
@@ -98,6 +98,12 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
                   .Replace("=\"<", "=\"&lt;")
                   .Replace("*", "")
                   .Replace("0behavior", "behavior");
+        }
+
+        /// <inheritdoc />
+        public void Dispose() {
+            this.Pathables.Clear();
+            this.Categories.Clear();
         }
 
     }
