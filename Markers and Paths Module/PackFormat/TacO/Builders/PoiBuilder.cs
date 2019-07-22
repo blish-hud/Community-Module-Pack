@@ -22,30 +22,28 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
                     var newPoiMarker = new Pathables.TacOMarkerPathable(pathableNode, pathableResourceManager, rootCategory);
 
                     if (newPoiMarker.SuccessfullyLoaded) {
-                        //Logger.Info("Marker {markerGuid} was successfully loaded!", newPoiMarker.Guid);
                         MarkersAndPathsModule.ModuleInstance._currentReader.RegisterPathable(newPoiMarker);
                     } else {
                         Logger.Warn("Failed to load marker!");
                     }
                     break;
+
                 case ELEMENT_POITYPE_TRAIL:
                     var newPathTrail = new Pathables.TacOTrailPathable(pathableNode, pathableResourceManager, rootCategory);
 
                     if (newPathTrail.SuccessfullyLoaded) {
-                        //Logger.Info("Trail {trailGuid} was successfully loaded!", newPathTrail.Guid);
                         MarkersAndPathsModule.ModuleInstance._currentReader.RegisterPathable(newPathTrail);
                     } else {
                         Logger.Warn("Failed to load trail!");
                     }
-
                     break;
+
                 case ELEMENT_POITYPE_ROUTE:
                     Logger.Warn("Support for routes has not been added yet. They have been skipped.");
-
                     break;
+
                 default:
                     Logger.Warn("Tried to pack {pathableNodeName} as a POI!", pathableNode.Name);
-
                     break;
             }
         }
