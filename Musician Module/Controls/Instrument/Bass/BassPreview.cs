@@ -22,6 +22,7 @@ namespace Musician_Module.Controls.Instrument
                 case GuildWarsControls.HealingSkill:
                 case GuildWarsControls.UtilitySkill1:
                 case GuildWarsControls.UtilitySkill2:
+                    AudioPlaybackEngine.Instance.StopSound();
                     AudioPlaybackEngine.Instance.PlaySound(_soundRepository.Get(key, _octave));
                     break;
                 case GuildWarsControls.UtilitySkill3:

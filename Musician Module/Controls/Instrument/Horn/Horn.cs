@@ -11,7 +11,6 @@ namespace Musician_Module.Controls.Instrument
     {
         private static readonly TimeSpan NoteTimeout = TimeSpan.FromMilliseconds(5);
         private static readonly TimeSpan OctaveTimeout = TimeSpan.FromTicks(500);
-
         private static readonly Dictionary<HornNote.Keys, GuildWarsControls> NoteMap = new Dictionary<HornNote.Keys, GuildWarsControls>
         {
             {HornNote.Keys.Note1, GuildWarsControls.WeaponSkill1},
@@ -23,16 +22,8 @@ namespace Musician_Module.Controls.Instrument
             {HornNote.Keys.Note7, GuildWarsControls.UtilitySkill1},
             {HornNote.Keys.Note8, GuildWarsControls.UtilitySkill2}
         };
-
-        private readonly IKeyboard _keyboard;
-
-        private HornNote.Octaves _currentOctave = HornNote.Octaves.Low;
-
-        public Horn(IKeyboard keyboard)
-        {
-            _keyboard = keyboard;
-        }
-
+        private HornNote.Octaves CurrentOctave = HornNote.Octaves.Low;
+        public Horn(IKeyboard previewkeyboard) : base(previewkeyboard) { /** NOOP **/ }
         public override void PlayNote(Note note)
         {
             var hornNote = HornNote.From(note);
@@ -50,7 +41,6 @@ namespace Musician_Module.Controls.Instrument
                 }
             }
         }
-
         public override void GoToOctave(Note note)
         {
             var hornNote = HornNote.From(note);
@@ -59,9 +49,9 @@ namespace Musician_Module.Controls.Instrument
             {
                 hornNote = OptimizeNote(hornNote);
 
-                while (_currentOctave != hornNote.Octave)
+                while (CurrentOctave != hornNote.Octave)
                 {
-                    if (_currentOctave < hornNote.Octave)
+                    if (CurrentOctave < hornNote.Octave)
                     {
                         IncreaseOctave();
                     }
@@ -72,45 +62,39 @@ namespace Musician_Module.Controls.Instrument
                 }
             }
         }
-
         private static bool RequiresAction(HornNote hornNote)
         {
             return hornNote.Key != HornNote.Keys.None;
         }
-
         private HornNote OptimizeNote(HornNote note)
         {
-            if (note.Equals(new HornNote(HornNote.Keys.Note1, HornNote.Octaves.High)) && _currentOctave == HornNote.Octaves.Middle)
+            if (note.Equals(new HornNote(HornNote.Keys.Note1, HornNote.Octaves.High)) && CurrentOctave == HornNote.Octaves.Middle)
             {
                 note = new HornNote(HornNote.Keys.Note8, HornNote.Octaves.Middle);
             }
-            else if (note.Equals(new HornNote(HornNote.Keys.Note8, HornNote.Octaves.Middle)) && _currentOctave == HornNote.Octaves.High)
+            else if (note.Equals(new HornNote(HornNote.Keys.Note8, HornNote.Octaves.Middle)) && CurrentOctave == HornNote.Octaves.High)
             {
                 note = new HornNote(HornNote.Keys.Note1, HornNote.Octaves.High);
             }
-            else if (note.Equals(new HornNote(HornNote.Keys.Note1, HornNote.Octaves.Middle)) && _currentOctave == HornNote.Octaves.Low)
+            else if (note.Equals(new HornNote(HornNote.Keys.Note1, HornNote.Octaves.Middle)) && CurrentOctave == HornNote.Octaves.Low)
             {
                 note = new HornNote(HornNote.Keys.Note8, HornNote.Octaves.Low);
             }
-            else if (note.Equals(new HornNote(HornNote.Keys.Note8, HornNote.Octaves.Low)) && _currentOctave == HornNote.Octaves.Middle)
+            else if (note.Equals(new HornNote(HornNote.Keys.Note8, HornNote.Octaves.Low)) && CurrentOctave == HornNote.Octaves.Middle)
             {
                 note = new HornNote(HornNote.Keys.Note1, HornNote.Octaves.Middle);
             }
             return note;
         }
-
         private void IncreaseOctave()
         {
-            var noteType = InstrumentSkillType.IncreaseOctaveToHigh;
-            switch (_currentOctave)
+            switch (CurrentOctave)
             {
                 case HornNote.Octaves.Low:
-                    noteType = InstrumentSkillType.IncreaseOctaveToMiddle;
-                    _currentOctave = HornNote.Octaves.Middle;
+                    CurrentOctave = HornNote.Octaves.Middle;
                     break;
                 case HornNote.Octaves.Middle:
-                    noteType = InstrumentSkillType.IncreaseOctaveToHigh;
-                    _currentOctave = HornNote.Octaves.High;
+                    CurrentOctave = HornNote.Octaves.High;
                     break;
                 case HornNote.Octaves.High:
                     break;
@@ -118,58 +102,35 @@ namespace Musician_Module.Controls.Instrument
                     throw new ArgumentOutOfRangeException();
             }
 
-            _keyboard.Press(GuildWarsControls.EliteSkill);
-            _keyboard.Release(GuildWarsControls.EliteSkill);
+            PressKey(GuildWarsControls.EliteSkill, CurrentOctave.ToString());
 
             Thread.Sleep(OctaveTimeout);
         }
 
         private void DecreaseOctave()
         {
-            var noteType = InstrumentSkillType.DecreaseOctaveToLow;
-            switch (_currentOctave)
+            switch (CurrentOctave)
             {
                 case HornNote.Octaves.Low:
                     break;
                 case HornNote.Octaves.Middle:
-                    noteType = InstrumentSkillType.DecreaseOctaveToLow;
-                    _currentOctave = HornNote.Octaves.Low;
+                    CurrentOctave = HornNote.Octaves.Low;
                     break;
                 case HornNote.Octaves.High:
-                    noteType = InstrumentSkillType.DecreaseOctaveToMiddle;
-                    _currentOctave = HornNote.Octaves.Middle;
+                    CurrentOctave = HornNote.Octaves.Middle;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
 
-            _keyboard.Press(GuildWarsControls.UtilitySkill3);
-            _keyboard.Release(GuildWarsControls.UtilitySkill3);
+            PressKey(GuildWarsControls.UtilitySkill3, CurrentOctave.ToString());
 
             Thread.Sleep(OctaveTimeout);
         }
 
         private void PressNote(GuildWarsControls key)
         {
-            var noteType = InstrumentSkillType.MiddleNote;
-            switch (_currentOctave)
-            {
-                case HornNote.Octaves.Low:
-                    noteType = InstrumentSkillType.LowNote;
-                    break;
-                case HornNote.Octaves.Middle:
-                    noteType = InstrumentSkillType.MiddleNote;
-                    break;
-                case HornNote.Octaves.High:
-                    noteType = InstrumentSkillType.HighNote;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            _keyboard.Press(key);
-            _keyboard.Release(key);
-
+            PressKey(key, CurrentOctave.ToString());
             Thread.Sleep(NoteTimeout);
         }
     }

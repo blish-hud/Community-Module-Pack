@@ -1,4 +1,7 @@
-﻿namespace Musician_Module.Domain.Values
+﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
+
+namespace Musician_Module.Domain.Values
 {
     public class Note
     {
@@ -13,7 +16,6 @@
             A,
             B
         }
-
         public enum Octaves
         {
             None,
@@ -23,15 +25,22 @@
             High,
             Highest
         }
-
+        public static Dictionary<string, Color> OctaveColors = new Dictionary<string, Color>{
+            { "None", Color.Black },
+            { "Lowest", Color.Purple },
+            { "Low", Color.LightBlue },
+            { "Middle", Color.LightGreen },
+            { "High", Color.Gold },
+            { "Highest", Color.OrangeRed }
+        };
         public Note(Keys key, Octaves octave)
         {
             Key = key;
             Octave = octave;
         }
 
-        public Keys Key { get; }
-        public Octaves Octave { get; }
+        public Keys Key { get; set; }
+        public Octaves Octave { get; set; }
 
         public override string ToString()
         {

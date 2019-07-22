@@ -11,7 +11,6 @@ namespace Musician_Module.Controls.Instrument
     {
         private static readonly TimeSpan NoteTimeout = TimeSpan.FromMilliseconds(5);
         private static readonly TimeSpan OctaveTimeout = TimeSpan.FromTicks(500);
-
         private static readonly Dictionary<LuteNote.Keys, GuildWarsControls> NoteMap = new Dictionary<LuteNote.Keys, GuildWarsControls>
         {
             {LuteNote.Keys.Note1, GuildWarsControls.WeaponSkill1},
@@ -23,16 +22,8 @@ namespace Musician_Module.Controls.Instrument
             {LuteNote.Keys.Note7, GuildWarsControls.UtilitySkill1},
             {LuteNote.Keys.Note8, GuildWarsControls.UtilitySkill2}
         };
-
-        private readonly IKeyboard _keyboard;
-
-        private LuteNote.Octaves _currentOctave = LuteNote.Octaves.Low;
-
-        public Lute(IKeyboard keyboard)
-        {
-            _keyboard = keyboard;
-        }
-
+        private LuteNote.Octaves CurrentOctave = LuteNote.Octaves.Low;
+        public Lute(IKeyboard previewkeyboard) : base(previewkeyboard) { /** NOOP **/ }
         public override void PlayNote(Note note)
         {
             var luteNote = LuteNote.From(note);
@@ -59,9 +50,9 @@ namespace Musician_Module.Controls.Instrument
             {
                 luteNote = OptimizeNote(luteNote);
 
-                while (_currentOctave != luteNote.Octave)
+                while (CurrentOctave != luteNote.Octave)
                 {
-                    if (_currentOctave < luteNote.Octave)
+                    if (CurrentOctave < luteNote.Octave)
                     {
                         IncreaseOctave();
                     }
@@ -72,45 +63,39 @@ namespace Musician_Module.Controls.Instrument
                 }
             }
         }
-
         private static bool RequiresAction(LuteNote luteNote)
         {
             return luteNote.Key != LuteNote.Keys.None;
         }
-
         private LuteNote OptimizeNote(LuteNote note)
         {
-            if (note.Equals(new LuteNote(LuteNote.Keys.Note1, LuteNote.Octaves.High)) && _currentOctave == LuteNote.Octaves.Middle)
+            if (note.Equals(new LuteNote(LuteNote.Keys.Note1, LuteNote.Octaves.High)) && CurrentOctave == LuteNote.Octaves.Middle)
             {
                 note = new LuteNote(LuteNote.Keys.Note8, LuteNote.Octaves.Middle);
             }
-            else if (note.Equals(new LuteNote(LuteNote.Keys.Note8, LuteNote.Octaves.Middle)) && _currentOctave == LuteNote.Octaves.High)
+            else if (note.Equals(new LuteNote(LuteNote.Keys.Note8, LuteNote.Octaves.Middle)) && CurrentOctave == LuteNote.Octaves.High)
             {
                 note = new LuteNote(LuteNote.Keys.Note1, LuteNote.Octaves.High);
             }
-            else if (note.Equals(new LuteNote(LuteNote.Keys.Note1, LuteNote.Octaves.Middle)) && _currentOctave == LuteNote.Octaves.Low)
+            else if (note.Equals(new LuteNote(LuteNote.Keys.Note1, LuteNote.Octaves.Middle)) && CurrentOctave == LuteNote.Octaves.Low)
             {
                 note = new LuteNote(LuteNote.Keys.Note8, LuteNote.Octaves.Low);
             }
-            else if (note.Equals(new LuteNote(LuteNote.Keys.Note8, LuteNote.Octaves.Low)) && _currentOctave == LuteNote.Octaves.Middle)
+            else if (note.Equals(new LuteNote(LuteNote.Keys.Note8, LuteNote.Octaves.Low)) && CurrentOctave == LuteNote.Octaves.Middle)
             {
                 note = new LuteNote(LuteNote.Keys.Note1, LuteNote.Octaves.Middle);
             }
             return note;
         }
-
         private void IncreaseOctave()
         {
-            var noteType = InstrumentSkillType.IncreaseOctaveToHigh;
-            switch (_currentOctave)
+            switch (CurrentOctave)
             {
                 case LuteNote.Octaves.Low:
-                    noteType = InstrumentSkillType.IncreaseOctaveToMiddle;
-                    _currentOctave = LuteNote.Octaves.Middle;
+                    CurrentOctave = LuteNote.Octaves.Middle;
                     break;
                 case LuteNote.Octaves.Middle:
-                    noteType = InstrumentSkillType.IncreaseOctaveToHigh;
-                    _currentOctave = LuteNote.Octaves.High;
+                    CurrentOctave = LuteNote.Octaves.High;
                     break;
                 case LuteNote.Octaves.High:
                     break;
@@ -118,57 +103,33 @@ namespace Musician_Module.Controls.Instrument
                     throw new ArgumentOutOfRangeException();
             }
 
-            _keyboard.Press(GuildWarsControls.EliteSkill);
-            _keyboard.Release(GuildWarsControls.EliteSkill);
+            PressKey(GuildWarsControls.EliteSkill, CurrentOctave.ToString());
 
             Thread.Sleep(OctaveTimeout);
         }
-
         private void DecreaseOctave()
         {
-            var noteType = InstrumentSkillType.DecreaseOctaveToLow;
-            switch (_currentOctave)
+            switch (CurrentOctave)
             {
                 case LuteNote.Octaves.Low:
                     break;
                 case LuteNote.Octaves.Middle:
-                    noteType = InstrumentSkillType.DecreaseOctaveToLow;
-                    _currentOctave = LuteNote.Octaves.Low;
+                    CurrentOctave = LuteNote.Octaves.Low;
                     break;
                 case LuteNote.Octaves.High:
-                    noteType = InstrumentSkillType.DecreaseOctaveToMiddle;
-                    _currentOctave = LuteNote.Octaves.Middle;
+                    CurrentOctave = LuteNote.Octaves.Middle;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
 
-            _keyboard.Press(GuildWarsControls.UtilitySkill3);
-            _keyboard.Release(GuildWarsControls.UtilitySkill3);
+            PressKey(GuildWarsControls.UtilitySkill3, CurrentOctave.ToString());
 
             Thread.Sleep(OctaveTimeout);
         }
-
         private void PressNote(GuildWarsControls key)
         {
-            var noteType = InstrumentSkillType.MiddleNote;
-            switch (_currentOctave)
-            {
-                case LuteNote.Octaves.Low:
-                    noteType = InstrumentSkillType.LowNote;
-                    break;
-                case LuteNote.Octaves.Middle:
-                    noteType = InstrumentSkillType.MiddleNote;
-                    break;
-                case LuteNote.Octaves.High:
-                    noteType = InstrumentSkillType.HighNote;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            _keyboard.Press(key);
-            _keyboard.Release(key);
+            PressKey(key, CurrentOctave.ToString());
 
             Thread.Sleep(NoteTimeout);
         }

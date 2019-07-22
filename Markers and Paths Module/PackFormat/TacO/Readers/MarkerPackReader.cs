@@ -59,9 +59,9 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
                 packDocument.LoadXml(packSrc);
                 packLoaded = true;
             } catch (XmlException ex) {
-                Logger.Error(ex, "Could not load tacO overlay file {pathableResourceManager} from {xmlPackContentsType} due to an XML error.", pathableResourceManager, xmlPackContents);
+                Logger.Warn(ex, "Could not load tacO overlay file {pathableResourceManager} from {xmlPackContentsType} due to an XML error.", pathableResourceManager, xmlPackContents);
             } catch (Exception ex) {
-                Logger.Error(ex, "Could not load tacO overlay file {pathableResourceManager} from {xmlPackContentsType} due to an unexpected exception.", pathableResourceManager, xmlPackContents);
+                Logger.Warn(ex, "Could not load tacO overlay file {pathableResourceManager} from {xmlPackContentsType} due to an unexpected exception.", pathableResourceManager, xmlPackContents);
             }
 
             if (packLoaded) {

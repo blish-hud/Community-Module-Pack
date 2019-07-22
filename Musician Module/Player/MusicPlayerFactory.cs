@@ -1,10 +1,9 @@
 ﻿using System;
-using System.IO;
 using Musician_Module.Controls.Instrument;
 using Musician_Module.Notation.Parsers;
 using Musician_Module.Notation.Persistance;
 using Musician_Module.Player.Algorithms;
-using Musician_Module.Controls;
+using System.Collections.Generic;
 using Blish_HUD.Controls.Intern;
 using Blish_HUD;
 
@@ -18,31 +17,21 @@ namespace Musician_Module.Player
     }
     internal static class MusicPlayerFactory
     {
+        private static KeyboardPractice PracticeKeyboard = new KeyboardPractice();
+        private static Keyboard EmulatedKeyboard = new Keyboard();
+        private static Dictionary<string, Instrument> InstrumentRepository = new Dictionary<string, Instrument>()
+        {
+            { "harp", new Harp(new HarpPreview()) },
+            { "flute", new Flute(new FlutePreview()) },
+            { "lute", new Lute(new LutePreview()) },
+            { "horn", new Horn(new HornPreview()) },
+            { "bass", new Bass(new BassPreview()) },
+            { "bell", new Bell(new BellPreview()) },
+            { "bell2", new Bell2(new Bell2Preview()) },
+        };
         internal static MusicPlayer Create(RawMusicSheet rawMusicSheet, KeyboardType type)
         {
             return MusicBoxNotationMusicPlayerFactory(rawMusicSheet, type);
-        }
-        private static Instrument GetInstrument(string rawInstrument, KeyboardType type)
-        {
-            switch (rawInstrument)
-            {
-                case "harp":
-                    return new Harp(type == KeyboardType.Preview ? new HarpPreview() : GetKeyboard(type));
-                case "flute":
-                    return new Flute(type == KeyboardType.Preview ? new FlutePreview() : GetKeyboard(type));
-                case "lute":
-                    return new Lute(type == KeyboardType.Preview ? new LutePreview() : GetKeyboard(type));
-                case "horn":
-                    return new Horn(type == KeyboardType.Preview ? new HornPreview() : GetKeyboard(type));
-                case "bass":
-                    return new Bass(type == KeyboardType.Preview ? new BassPreview() : GetKeyboard(type));
-                case "bell":
-                    return new Bell(type == KeyboardType.Preview ? new BellPreview() : GetKeyboard(type));
-                case "bell2":
-                    return new Bell2(type == KeyboardType.Preview ? new Bell2Preview() : GetKeyboard(type));
-                default:
-                    throw new NotSupportedException(rawInstrument);
-            }
         }
         private static MusicPlayer MusicBoxNotationMusicPlayerFactory(RawMusicSheet rawMusicSheet, KeyboardType type)
         {
@@ -56,22 +45,28 @@ namespace Musician_Module.Player
             var algorithm = rawMusicSheet.Algorithm == "favor notes"
                 ? new FavorNotesAlgorithm() : (IPlayAlgorithm)new FavorChordsAlgorithm();
 
-            return new MusicPlayer(
-                musicSheet,
-                GetInstrument(rawMusicSheet.Instrument, type),
-                algorithm);
-        }
-        private static IKeyboard GetKeyboard(KeyboardType type)
-        {
+            Instrument instrument = InstrumentRepository[rawMusicSheet.Instrument];
             switch (type)
             {
+                case KeyboardType.Preview:
+                    MusicianModule.ModuleInstance.Conveyor.Visible = false;
+                    instrument.Keyboard = instrument.PreviewKeyboard;
+                    break;
                 case KeyboardType.Practice:
-                    return (IKeyboard)new KeyboardPractice();
+                    MusicianModule.ModuleInstance.Conveyor.Visible = true;
+                    instrument.Keyboard = PracticeKeyboard;
+                    break;
                 case KeyboardType.Emulated:
-                    return (IKeyboard)new Keyboard();
+                    MusicianModule.ModuleInstance.Conveyor.Visible = false;
+                    instrument.Keyboard = EmulatedKeyboard;
+                    break;
                 default:
                     throw new NotSupportedException();
             }
+            return new MusicPlayer(
+                musicSheet,
+                instrument,
+                algorithm);
         }
     }
 }
