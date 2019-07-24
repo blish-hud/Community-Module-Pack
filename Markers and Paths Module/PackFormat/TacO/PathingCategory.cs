@@ -4,9 +4,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 using Blish_HUD.Entities;
 using Blish_HUD.Pathing;
 using Humanizer;
@@ -108,6 +105,11 @@ namespace Markers_and_Paths_Module.PackFormat.TacO {
             }
         }
 
+        private readonly PathableAttributeCollection _attributes = new PathableAttributeCollection();
+        public PathableAttributeCollection Attributes {
+            get => _attributes;
+        }
+
         //public float       Size         = 1.0f;
         //public float       Alpha        = 1.0f;
         //public float       FadeNear     = -1.0f;
@@ -130,8 +132,6 @@ namespace Markers_and_Paths_Module.PackFormat.TacO {
         //public float       TrailScale = 1;
         //public string      ToggleCategory;
 
-        public XmlNode SourceXmlNode { get; set; }
-
         public PathingCategory(string name) : base(StringComparer.OrdinalIgnoreCase) {
             _name = name;
         }
@@ -146,6 +146,10 @@ namespace Markers_and_Paths_Module.PackFormat.TacO {
 
         public void AddPathable(IPathable pathable) {
             _pathables.Add(pathable);
+        }
+
+        public void SetAttributes(PathableAttributeCollection attributes) {
+            _attributes.AddOrUpdateAttributes(attributes);
         }
 
         public PathingCategory GetOrAddCategoryFromNamespace(string @namespace) {

@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Blish_HUD.Pathing.Content;
+using NanoXml;
 
 namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
 
@@ -51,53 +52,47 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
                 xmlPackContents = xmlReader.ReadToEnd();
             }
 
-            var packDocument = new XmlDocument();
-            string packSrc = SanitizeXml(xmlPackContents);
+            NanoXml.NanoXmlDocument packDocument = null;
+
             bool packLoaded = false;
 
             try {
-                packDocument.LoadXml(packSrc);
+                packDocument = new NanoXml.NanoXmlDocument(xmlPackContents);
                 packLoaded = true;
             } catch (XmlException ex) {
-                Logger.Error(ex, "Could not load tacO overlay file {pathableResourceManager} from {xmlPackContentsType} due to an XML error.", pathableResourceManager, xmlPackContents);
+                Logger.Error(ex, "Could not load tacO overlay file {pathableResourceManager} at line: {xmlExceptionLine} position: {xmlExceptionPosition} due to an XML error.", pathableResourceManager.DataReader.GetPathRepresentation(), ex.LineNumber, ex.LinePosition);
             } catch (Exception ex) {
-                Logger.Error(ex, "Could not load tacO overlay file {pathableResourceManager} from {xmlPackContentsType} due to an unexpected exception.", pathableResourceManager, xmlPackContents);
+                Logger.Error(ex, "Could not load tacO overlay file {pathableResourceManager} due to an unexpected exception.", pathableResourceManager.DataReader.GetPathRepresentation());
             }
 
             if (packLoaded) {
+                int currentPathablesCount = this.Pathables.Count;
+
                 TryLoadCategories(packDocument);
                 TryLoadPOIs(packDocument, pathableResourceManager, Categories);
+
+                Logger.Info("{pathableDelta} pathables were loaded from {pathableResourceManager}.", this.Pathables.Count - currentPathablesCount, pathableResourceManager.DataReader.GetPathRepresentation());
             }
         }
 
-        private void TryLoadCategories(XmlDocument packDocument) {
-            var categoryNodes = packDocument.DocumentElement?.SelectNodes("/OverlayData/MarkerCategory");
+        private void TryLoadCategories(NanoXmlDocument packDocument) {
+            var categoryNodes = packDocument.RootNode.SelectNodes("MarkerCategory");
             if (categoryNodes == null) return;
 
-            foreach (XmlNode categoryNode in categoryNodes) {
+            foreach (var categoryNode in categoryNodes) {
                 Builders.PathingCategoryBuilder.UnpackCategory(categoryNode, Categories);
             }
         }
 
-        private void TryLoadPOIs(XmlDocument packDocument, PathableResourceManager pathableResourceManager, PathingCategory rootCategory) {
-            var poiNodes = packDocument.DocumentElement?.SelectSingleNode("/OverlayData/POIs");
+        private void TryLoadPOIs(NanoXmlDocument packDocument, PathableResourceManager pathableResourceManager, PathingCategory rootCategory) {
+            var poiNodes = packDocument.RootNode["POIs"];
             if (poiNodes == null) return;
 
-            Logger.Info("Found {poiCount} markers to load.", poiNodes.ChildNodes.Count);
+            Logger.Info("Found {poiCount} POIs to load.", poiNodes.SubNodes.Count());
 
-            foreach (XmlNode poiNode in poiNodes) {
+            foreach (var poiNode in poiNodes.SubNodes) {
                 Builders.PoiBuilder.UnpackPathable(poiNode, pathableResourceManager, rootCategory);
             }
-        }
-
-        private string SanitizeXml(string xmlDoc) {
-            // TODO: Ask Tekkit (and others) to fix syntax
-            // FYI, '>' does not need to be encoded in attribute values
-            return xmlDoc
-                  .Replace("& ", "&amp; ") // Space added to avoid replacing correctly encoded attribute values
-                  .Replace("=\"<", "=\"&lt;")
-                  .Replace("*", "")
-                  .Replace("0behavior", "behavior");
         }
 
         /// <inheritdoc />

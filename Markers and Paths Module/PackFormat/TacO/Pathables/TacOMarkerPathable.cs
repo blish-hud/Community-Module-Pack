@@ -14,7 +14,7 @@ using Markers_and_Paths_Module.PackFormat.TacO.Behavior;
 using Microsoft.Xna.Framework;
 
 namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
-    public class TacOMarkerPathable : LoadedMarkerPathable, ITacOPathable {
+    public sealed class TacOMarkerPathable : LoadedMarkerPathable, ITacOPathable {
 
         private const float DEFAULT_HEIGHTOFFSET = 1.5f;
         private const float DEFAULT_ICONSIZE = 2f;
@@ -86,20 +86,18 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
             }
         }
 
-        private readonly XmlNode _sourceNode;
-        private readonly PathingCategory _rootCategory;
+        private readonly PathableAttributeCollection _sourceAttributes;
+        private readonly PathingCategory             _rootCategory;
 
-        public TacOMarkerPathable(XmlNode sourceNode, PathableResourceManager packContext, PathingCategory rootCategory) : base(packContext) {
-            _sourceNode = sourceNode;
-            _rootCategory = rootCategory;
+        public TacOMarkerPathable(PathableAttributeCollection sourceAttributes, PathableResourceManager packContext, PathingCategory rootCategory) : base(packContext) {
+            _sourceAttributes = sourceAttributes;
+            _rootCategory     = rootCategory;
 
             BeginLoad();
         }
 
-        // TODO: Use this method as an opportunity to convert attributes to some sort of IPathingAttribute to keep things
-        // consistent between imported file formats
         protected override void BeginLoad() {
-            LoadAttributes(_sourceNode);
+            LoadAttributes(_sourceAttributes);
         }
 
         protected override void PrepareAttributes() {
@@ -107,7 +105,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
             RegisterAttribute("type", attribute => (!string.IsNullOrEmpty(this.Type = attribute.Value.Trim())));
 
             // Alpha (alias:Opacity)
-            RegisterAttribute("alpha", delegate (XmlAttribute attribute) {
+            RegisterAttribute("alpha", delegate (PathableAttribute attribute) {
                 if (!InvariantUtil.TryParseFloat(attribute.Value, out float fOut)) return false;
 
                 this.Opacity = fOut;
@@ -115,7 +113,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
             });
 
             // FadeNear
-            RegisterAttribute("fadeNear", delegate (XmlAttribute attribute) {
+            RegisterAttribute("fadeNear", delegate (PathableAttribute attribute) {
                 if (!InvariantUtil.TryParseFloat(attribute.Value, out float fOut)) return false;
 
                 this.ManagedEntity.FadeNear = fOut;
@@ -123,7 +121,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
             });
 
             // FadeFar
-            RegisterAttribute("fadeFar", delegate (XmlAttribute attribute) {
+            RegisterAttribute("fadeFar", delegate (PathableAttribute attribute) {
                 if (!InvariantUtil.TryParseFloat(attribute.Value, out float fOut)) return false;
 
                 this.ManagedEntity.FadeFar = fOut;
@@ -131,7 +129,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
             });
 
             // IconSize
-            RegisterAttribute("iconSize", delegate (XmlAttribute attribute) {
+            RegisterAttribute("iconSize", delegate (PathableAttribute attribute) {
                 if (!InvariantUtil.TryParseFloat(attribute.Value, out float fOut)) return false;
 
                 this.ManagedEntity.AutoResize = false;
@@ -140,7 +138,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
             });
 
             // HeightOffset
-            RegisterAttribute("heightOffset", delegate (XmlAttribute attribute) {
+            RegisterAttribute("heightOffset", delegate (PathableAttribute attribute) {
                 if (!InvariantUtil.TryParseFloat(attribute.Value, out float fOut)) return false;
 
                 this.HeightOffset = fOut;
@@ -148,7 +146,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
             });
 
             // ResetLength
-            RegisterAttribute("resetLength", delegate (XmlAttribute attribute) {
+            RegisterAttribute("resetLength", delegate (PathableAttribute attribute) {
                 if (!InvariantUtil.TryParseInt(attribute.Value, out int iOut)) return false;
 
                 this.ResetLength = iOut;
@@ -156,28 +154,28 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
             });
 
             // AutoTrigger
-            RegisterAttribute("autoTrigger", delegate (XmlAttribute attribute) {
+            RegisterAttribute("autoTrigger", delegate (PathableAttribute attribute) {
                 this.AutoTrigger = (attribute.Value == "0");
                 return true;
             });
 
             // AutoTrigger
-            RegisterAttribute("hasCountdown", delegate (XmlAttribute attribute) {
+            RegisterAttribute("hasCountdown", delegate (PathableAttribute attribute) {
                 this.HasCountdown = (attribute.Value == "0");
                 return true;
             });
 
             // TriggerRange
-            RegisterAttribute("triggerRange", delegate (XmlAttribute attribute) {
-                if (!float.TryParse(attribute.Value, NumberStyles.Any, CultureInfo.InvariantCulture, out float fOut)) return false;
+            RegisterAttribute("triggerRange", delegate (PathableAttribute attribute) {
+                if (!InvariantUtil.TryParseFloat(attribute.Value, out float fOut)) return false;
 
                 this.TriggerRange = fOut;
                 return true;
             });
 
             // Taco Behavior
-            RegisterAttribute("behavior", delegate (XmlAttribute attribute) {
-                if (!int.TryParse(attribute.Value, out int iOut)) return false;
+            RegisterAttribute("behavior", delegate (PathableAttribute attribute) {
+                if (!InvariantUtil.TryParseInt(attribute.Value, out int iOut)) return false;
 
                 this.TacOBehaviorId = iOut;
                 return true;
@@ -188,8 +186,8 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
 
         protected override bool FinalizeAttributes(Dictionary<string, LoadedPathableAttributeDescription> attributeLoaders) {
             // Process attributes from type category first
-            if (_category?.SourceXmlNode?.Attributes != null) {
-                ProcessAttributes(_category.SourceXmlNode.Attributes);
+            if (_category != null) {
+                ProcessAttributes(_category.Attributes);
             }
 
             _category?.AddPathable(this);
@@ -201,6 +199,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
                     this.ManagedEntity.VerticalConstraint = BillboardVerticalConstraint.CameraPosition;
                 }
             }
+
             if (attributeLoaders.ContainsKey("iconsize")) {
                 if (!attributeLoaders["iconsize"].Loaded) {
                     this.ManagedEntity.Size = new Vector2(DEFAULT_ICONSIZE);

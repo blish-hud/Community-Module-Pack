@@ -109,9 +109,12 @@ namespace Markers_and_Paths_Module {
                 _currentReader.ReadFromXmlPack(fileStream, dirResourceManager);
             }, ".xml", iconProgressIndicator);
 
-            // TODO: Cleanup
-            string[] packFiles = Directory.GetFiles(_markerDirectory, "*.zip", SearchOption.AllDirectories);
-            foreach (string packFile in packFiles) {
+            // Load archive marker packs
+            List<string> zipPackFiles = new List<string>();
+            zipPackFiles.AddRange(Directory.GetFiles(_markerDirectory, "*.zip",  SearchOption.AllDirectories));
+            zipPackFiles.AddRange(Directory.GetFiles(_markerDirectory, "*.taco", SearchOption.AllDirectories));
+
+            foreach (string packFile in zipPackFiles) {
                 // Potentially contains many packs within
                 var zipDataReader      = new ZipArchiveReader(packFile);
                 var zipResourceManager = new PathableResourceManager(zipDataReader);

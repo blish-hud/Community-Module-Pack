@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Blish_HUD;
+using NanoXml;
 
 namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
     public static class PathingCategoryBuilder {
@@ -14,23 +15,26 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
 
         private const string ELEMENT_CATEGORY = "markercategory";
 
-        public static void UnpackCategory(XmlNode categoryNode, PathingCategory categoryParent) {
-            if (!string.Equals(categoryNode.Name, ELEMENT_CATEGORY, StringComparison.OrdinalIgnoreCase) && categoryNode.NodeType == XmlNodeType.Element) {
-                Logger.Warn("Tried to unpack {categoryNodeName} (type: {nodeType}) as category!", categoryNode.Name, categoryNode.NodeType);
+        private const string MARKERCATEGORY_NAME_ATTR        = "name";
+        private const string MARKERCATEGORY_DISPLAYNAME_ATTR = "displayname";
+
+        public static void UnpackCategory(NanoXmlNode categoryNode, PathingCategory categoryParent) {
+            if (!string.Equals(categoryNode.Name, ELEMENT_CATEGORY, StringComparison.OrdinalIgnoreCase)) {
+                Logger.Warn("Tried to unpack {categoryNodeName} as a MarkerCategory!", categoryNode.Name);
                 return;
             }
 
-            var loadedCategory = FromXmlNode(categoryNode, categoryParent);
+            var loadedCategory = FromNanoXmlNode(categoryNode, categoryParent);
 
             if (loadedCategory == null) return;
 
-            foreach (XmlNode childCategoryNode in categoryNode) {
+            foreach (NanoXmlNode childCategoryNode in categoryNode.SubNodes) {
                 UnpackCategory(childCategoryNode, loadedCategory);
             }
         }
 
-        public static PathingCategory FromXmlNode(XmlNode categoryNode, PathingCategory parent) {
-            string categoryName = categoryNode.Attributes["name"]?.Value;
+        public static PathingCategory FromNanoXmlNode(NanoXmlNode categoryNode, PathingCategory parent) {
+            string categoryName = categoryNode.GetAttribute(MARKERCATEGORY_NAME_ATTR)?.Value;
 
             // Can't define a marker category without a name
             if (string.IsNullOrEmpty(categoryName)) return null;
@@ -41,9 +45,9 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
                                    // We're adding a new category
                                    : parent.GetOrAddCategoryFromNamespace(categoryName);
 
-            subjCategory.DisplayName = categoryNode.Attributes["DisplayName"]?.Value;
+            subjCategory.DisplayName = categoryNode.GetAttribute(MARKERCATEGORY_DISPLAYNAME_ATTR)?.Value;
 
-            subjCategory.SourceXmlNode = categoryNode;
+            subjCategory.SetAttributes(AttributeBuilder.FromNanoXmlNode(categoryNode));
 
             return subjCategory;
         }

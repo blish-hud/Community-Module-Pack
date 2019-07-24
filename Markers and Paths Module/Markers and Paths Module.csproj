@@ -24,7 +24,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Blish HUD">
-      <HintPath>..\..\blish-hud\Blish HUD\bin\x64\Debug\Blish HUD.exe</HintPath>
+      <HintPath>..\..\dlamkins\Blish-HUD\Blish HUD\bin\x64\Debug\Blish HUD.exe</HintPath>
     </Reference>
     <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -42,8 +42,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Library\NanoXmlExtensions.cs" />
+    <Compile Include="Library\NanoXml\NanoXmlAttribute.cs" />
+    <Compile Include="Library\NanoXml\NanoXmlBase.cs" />
+    <Compile Include="Library\NanoXml\NanoXmlDocument.cs" />
+    <Compile Include="Library\NanoXml\NanoXmlNode.cs" />
+    <Compile Include="Library\NanoXml\NanoXmlParsingException.cs" />
     <Compile Include="MarkersAndPathsModule.cs" />
     <Compile Include="PackFormat\TacO\Behavior\BasicTacOBehavior.cs" />
+    <Compile Include="PackFormat\TacO\Builders\AttributeBuilder.cs" />
     <Compile Include="PackFormat\TacO\Builders\PathingCategoryBuilder.cs" />
     <Compile Include="PackFormat\TacO\Builders\PoiBuilder.cs" />
     <Compile Include="PackFormat\TacO\Pathables\ITacOPathable.cs" />
