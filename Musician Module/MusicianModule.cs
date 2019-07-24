@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Controls;
+using Blish_HUD.Input;
 using Blish_HUD.Modules;
 using Blish_HUD.Settings;
 using Blish_HUD.Modules.Managers;
@@ -22,6 +23,8 @@ namespace Musician_Module
     [Export(typeof(Module))]
     public class MusicianModule : Module
     {
+        private static readonly Logger Logger = Logger.GetLogger(typeof(MusicianModule));
+
         internal static MusicianModule ModuleInstance;
 
         // Service Managers
@@ -45,15 +48,18 @@ namespace Musician_Module
         private const string DD_BASS = "Bass";
         private const string DD_BELL = "Bell";
         private const string DD_BELL2 = "Bell2";
-        private List<string> Instruments = new List<string>{
+        private readonly List<string> Instruments = new List<string>{
            "Harp", "Flute", "Lute", "Horn", "Bell", "Bell2", "Bass"
         };
+
         private WindowTab MusicianTab;
         private MusicPlayer MusicPlayer;
         private HealthPoolButton StopButton;
         private XmlMusicSheetReader xmlParser;
         private List<SheetButton> displayedSheets;
         private List<RawMusicSheet> Sheets;
+
+        public Conveyor Conveyor { get; private set; }
 
         /// <summary>
         /// Ideally you should keep the constructor as is.
@@ -79,9 +85,20 @@ namespace Musician_Module
         protected override void Initialize()
         {
             ICON = ICON ?? ContentsManager.GetTexture("musician_icon.png");
+            Conveyor = new Conveyor() { Parent = ContentService.Graphics.SpriteScreen, Visible = false };
             xmlParser = new XmlMusicSheetReader();
             displayedSheets = new List<SheetButton>();
-
+            StopButton = new HealthPoolButton()
+            {
+                Parent = GameService.Graphics.SpriteScreen,
+                Text = "Stop Playback",
+                ZIndex = -1,
+                Visible = false
+            };
+            StopButton.LeftMouseButtonReleased += delegate
+            {
+                this.StopPlayback();
+            };
             GameService.GameIntegration.Gw2LostFocus += GameIntegrationOnGw2LostFocus;
         }
 
@@ -105,21 +122,33 @@ namespace Musician_Module
 
         protected override void Unload()
         {
+            this.StopButton.Dispose();
+            this.StopButton = null;
+            this.Conveyor.Dispose();
+            this.Conveyor = null;
             this.StopPlayback();
             GameService.Overlay.BlishHudWindow.RemoveTab(MusicianTab);
+            ModuleInstance = null;
         }
 
         private void StopPlayback()
         {
+            if (Conveyor != null)
+            {
+                Conveyor.Visible = false;
+            }
             if (StopButton != null)
             {
-                StopButton.Dispose();
-                StopButton = null;
+                StopButton.Visible = false;
             }
             if (MusicPlayer != null)
             {
                 MusicPlayer.Dispose();
                 MusicPlayer = null;
+            }
+            foreach (SheetButton sheetButton in displayedSheets)
+            {
+                sheetButton.IsPreviewing = false;
             }
         }
 
@@ -195,6 +224,7 @@ namespace Musician_Module
                 {
                     Parent = melodyPanel,
                     Icon = GameService.Content.GetTexture(@"instruments\" + sheet.Instrument.ToLower()),
+                    IconSize = DetailsIconSize.Small,
                     Artist = sheet.Artist,
                     Title = sheet.Title,
                     // TODO: Use ApiService to get fixed, non-editable account name for User.
@@ -203,48 +233,40 @@ namespace Musician_Module
                 };
                 displayedSheets.Add(melody);
                 melody.LeftMouseButtonPressed += delegate
-                {
+                { 
                     if (melody.MouseOverPlay)
                     {
+                        this.StopPlayback();
                         GameService.Overlay.BlishHudWindow.Hide();
                         MusicPlayer = MusicPlayerFactory.Create(
                             melody.MusicSheet,
                             KeyboardType.Practice
                         );
                         MusicPlayer.Worker.Start();
+                        Conveyor.Visible = true;
+                        StopButton.Visible = true;
                     }
                     if (melody.MouseOverEmulate)
                     {
+                        this.StopPlayback();
                         GameService.Overlay.BlishHudWindow.Hide();
                         MusicPlayer = MusicPlayerFactory.Create(
                             melody.MusicSheet,
                             KeyboardType.Emulated
                         );
                         MusicPlayer.Worker.Start();
-                        StopButton = new HealthPoolButton()
-                        {
-                            Parent = GameService.Graphics.SpriteScreen,
-                            Text = "Stop Playback"
-                        };
-                        StopButton.LeftMouseButtonReleased += delegate
-                        {
-                            this.StopPlayback();
-                        };
+                        StopButton.Visible = true;
                     }
                     if (melody.MouseOverPreview)
                     {
                         if (melody.IsPreviewing)
                         {
                             this.StopPlayback();
-                            melody.IsPreviewing = false;
                         }
                         else
                         {
-                            foreach (SheetButton other in displayedSheets)
-                            {
-                                other.IsPreviewing = other == melody ? true : false;
-                            }
-                            if (MusicPlayer != null) { this.StopPlayback(); }
+                            this.StopPlayback();
+                            melody.IsPreviewing = true;
                             MusicPlayer = MusicPlayerFactory.Create(
                                 melody.MusicSheet,
                                 KeyboardType.Preview

@@ -23,16 +23,8 @@ namespace Musician_Module.Controls.Instrument
             {FluteNote.Keys.Note7, GuildWarsControls.UtilitySkill1},
             {FluteNote.Keys.Note8, GuildWarsControls.UtilitySkill2}
         };
-
-        private readonly IKeyboard _keyboard;
-
-        private FluteNote.Octaves _currentOctave = FluteNote.Octaves.Low;
-
-        public Flute(IKeyboard keyboard)
-        {
-            _keyboard = keyboard;
-        }
-
+        private FluteNote.Octaves CurrentOctave = FluteNote.Octaves.Low;
+        public Flute(IKeyboard previewkeyboard) : base(previewkeyboard) { /** NOOP **/ }
         public override void PlayNote(Note note)
         {
             var fluteNote = FluteNote.From(note);
@@ -50,7 +42,6 @@ namespace Musician_Module.Controls.Instrument
                 }
             }
         }
-
         public override void GoToOctave(Note note)
         {
             var fluteNote = FluteNote.From(note);
@@ -59,9 +50,9 @@ namespace Musician_Module.Controls.Instrument
             {
                 fluteNote = OptimizeNote(fluteNote);
 
-                while (_currentOctave != fluteNote.Octave)
+                while (CurrentOctave != fluteNote.Octave)
                 {
-                    if (_currentOctave < fluteNote.Octave)
+                    if (CurrentOctave < fluteNote.Octave)
                     {
                         IncreaseOctave();
                     }
@@ -72,33 +63,28 @@ namespace Musician_Module.Controls.Instrument
                 }
             }
         }
-
         private static bool RequiresAction(FluteNote fluteNote)
         {
             return fluteNote.Key != FluteNote.Keys.None;
         }
-
         private FluteNote OptimizeNote(FluteNote note)
         {
-            if (note.Equals(new FluteNote(FluteNote.Keys.Note1, FluteNote.Octaves.High)) && _currentOctave == FluteNote.Octaves.Low)
+            if (note.Equals(new FluteNote(FluteNote.Keys.Note1, FluteNote.Octaves.High)) && CurrentOctave == FluteNote.Octaves.Low)
             {
                 note = new FluteNote(FluteNote.Keys.Note8, FluteNote.Octaves.Low);
             }
-            else if (note.Equals(new FluteNote(FluteNote.Keys.Note8, FluteNote.Octaves.Low)) && _currentOctave == FluteNote.Octaves.High)
+            else if (note.Equals(new FluteNote(FluteNote.Keys.Note8, FluteNote.Octaves.Low)) && CurrentOctave == FluteNote.Octaves.High)
             {
                 note = new FluteNote(FluteNote.Keys.Note1, FluteNote.Octaves.High);
             }
             return note;
         }
-
         private void IncreaseOctave()
         {
-            var noteType = InstrumentSkillType.IncreaseOctaveToHigh;
-            switch (_currentOctave)
+            switch (CurrentOctave)
             {
                 case FluteNote.Octaves.Low:
-                    noteType = InstrumentSkillType.IncreaseOctaveToHigh;
-                    _currentOctave = FluteNote.Octaves.High;
+                    CurrentOctave = FluteNote.Octaves.High;
                     break;
                 case FluteNote.Octaves.High:
                     break;
@@ -106,52 +92,57 @@ namespace Musician_Module.Controls.Instrument
                     throw new ArgumentOutOfRangeException();
             }
 
-            _keyboard.Press(GuildWarsControls.UtilitySkill3);
-            _keyboard.Release(GuildWarsControls.UtilitySkill3);
+            PressKey(GuildWarsControls.UtilitySkill3, CurrentOctave.ToString());
 
             Thread.Sleep(OctaveTimeout);
         }
-
         private void DecreaseOctave()
         {
-            var noteType = InstrumentSkillType.DecreaseOctaveToLow;
-            switch (_currentOctave)
+            switch (CurrentOctave)
             {
                 case FluteNote.Octaves.Low:
                     break;
                 case FluteNote.Octaves.High:
-                    noteType = InstrumentSkillType.DecreaseOctaveToLow;
-                    _currentOctave = FluteNote.Octaves.Low;
+                    CurrentOctave = FluteNote.Octaves.Low;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
 
-            _keyboard.Press(GuildWarsControls.UtilitySkill3);
-            _keyboard.Release(GuildWarsControls.UtilitySkill3);
+            PressKey(GuildWarsControls.UtilitySkill3, CurrentOctave.ToString());
 
             Thread.Sleep(OctaveTimeout);
         }
-
         private void PressNote(GuildWarsControls key)
         {
-            var noteType = InstrumentSkillType.LowNote;
-            switch (_currentOctave)
-            {
-                case FluteNote.Octaves.Low:
-                    noteType = InstrumentSkillType.LowNote;
-                    break;
-                case FluteNote.Octaves.High:
-                    noteType = InstrumentSkillType.HighNote;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            _keyboard.Press(key);
-            _keyboard.Release(key);
+            PressKey(key, CurrentOctave.ToString());
 
             Thread.Sleep(NoteTimeout);
+        }
+        protected override void PressKey(GuildWarsControls key, string octave)
+        {
+            if (Keyboard is KeyboardPractice)
+            {
+                InstrumentSkillType noteType;
+                switch (key)
+                {
+                    case GuildWarsControls.EliteSkill:
+                        noteType = InstrumentSkillType.StopPlaying;
+                        break;
+                    case GuildWarsControls.UtilitySkill3:
+                        noteType =
+                            CurrentOctave == FluteNote.Octaves.Low ?
+                            InstrumentSkillType.IncreaseOctave :
+                            InstrumentSkillType.DecreaseOctave;
+                        break;
+                    default:
+                        noteType = InstrumentSkillType.Note;
+                        break;
+                }
+                MusicianModule.ModuleInstance.Conveyor.SpawnNoteBlock(key, noteType, Note.OctaveColors[octave]);
+            }
+            Keyboard.Press(key);
+            Keyboard.Release(key);
         }
     }
 }

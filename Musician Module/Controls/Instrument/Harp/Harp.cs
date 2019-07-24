@@ -10,7 +10,6 @@ namespace Musician_Module.Controls.Instrument
     {
         private static readonly TimeSpan NoteTimeout = TimeSpan.FromMilliseconds(5);
         private static readonly TimeSpan OctaveTimeout = TimeSpan.FromTicks(500);
-
         private static readonly Dictionary<HarpNote.Keys, GuildWarsControls> NoteMap = new Dictionary<HarpNote.Keys, GuildWarsControls>
         {
             {HarpNote.Keys.Note1, GuildWarsControls.WeaponSkill1},
@@ -22,16 +21,8 @@ namespace Musician_Module.Controls.Instrument
             {HarpNote.Keys.Note7, GuildWarsControls.UtilitySkill1},
             {HarpNote.Keys.Note8, GuildWarsControls.UtilitySkill2}
         };
-
-        private readonly IKeyboard _keyboard;
-
-        private HarpNote.Octaves _currentOctave = HarpNote.Octaves.Middle;
-
-        public Harp(IKeyboard keyboard)
-        {
-            _keyboard = keyboard;
-        }
-
+        private HarpNote.Octaves CurrentOctave = HarpNote.Octaves.Middle;
+        public Harp(IKeyboard previewkeyboard) : base(previewkeyboard) { /** NOOP **/ }
         public override void PlayNote(Note note)
         {
             var harpNote = HarpNote.From(note);
@@ -42,7 +33,6 @@ namespace Musician_Module.Controls.Instrument
                 PressNote(NoteMap[harpNote.Key]);
             }
         }
-
         public override void GoToOctave(Note note)
         {
             var harpNote = HarpNote.From(note);
@@ -51,9 +41,9 @@ namespace Musician_Module.Controls.Instrument
             {
                 harpNote = OptimizeNote(harpNote);
 
-                while (_currentOctave != harpNote.Octave)
+                while (CurrentOctave != harpNote.Octave)
                 {
-                    if (_currentOctave < harpNote.Octave)
+                    if (CurrentOctave < harpNote.Octave)
                     {
                         IncreaseOctave();
                     }
@@ -64,37 +54,31 @@ namespace Musician_Module.Controls.Instrument
                 }
             }
         }
-
         private static bool RequiresAction(HarpNote harpNote)
         {
             return harpNote.Key != HarpNote.Keys.None;
         }
-
         private HarpNote OptimizeNote(HarpNote note)
         {
-            if (note.Equals(new HarpNote(HarpNote.Keys.Note1, HarpNote.Octaves.Middle)) && _currentOctave == HarpNote.Octaves.Low)
+            if (note.Equals(new HarpNote(HarpNote.Keys.Note1, HarpNote.Octaves.Middle)) && CurrentOctave == HarpNote.Octaves.Low)
             {
                 note = new HarpNote(HarpNote.Keys.Note8, HarpNote.Octaves.Low);
             }
-            else if (note.Equals(new HarpNote(HarpNote.Keys.Note1, HarpNote.Octaves.High)) && _currentOctave == HarpNote.Octaves.Middle)
+            else if (note.Equals(new HarpNote(HarpNote.Keys.Note1, HarpNote.Octaves.High)) && CurrentOctave == HarpNote.Octaves.Middle)
             {
                 note = new HarpNote(HarpNote.Keys.Note8, HarpNote.Octaves.Middle);
             }
             return note;
         }
-
         private void IncreaseOctave()
         {
-            var noteType = InstrumentSkillType.IncreaseOctaveToHigh;
-            switch (_currentOctave)
+            switch (CurrentOctave)
             {
                 case HarpNote.Octaves.Low:
-                    noteType = InstrumentSkillType.IncreaseOctaveToMiddle;
-                    _currentOctave = HarpNote.Octaves.Middle;
+                    CurrentOctave = HarpNote.Octaves.Middle;
                     break;
                 case HarpNote.Octaves.Middle:
-                    noteType = InstrumentSkillType.IncreaseOctaveToHigh;
-                    _currentOctave = HarpNote.Octaves.High;
+                    CurrentOctave = HarpNote.Octaves.High;
                     break;
                 case HarpNote.Octaves.High:
                     break;
@@ -102,58 +86,32 @@ namespace Musician_Module.Controls.Instrument
                     throw new ArgumentOutOfRangeException();
             }
 
-            _keyboard.Press(GuildWarsControls.EliteSkill);
-            _keyboard.Release(GuildWarsControls.EliteSkill);
+            PressKey(GuildWarsControls.EliteSkill, CurrentOctave.ToString());
 
             Thread.Sleep(OctaveTimeout);
         }
-
         private void DecreaseOctave()
         {
-            var noteType = InstrumentSkillType.DecreaseOctaveToLow;
-            switch (_currentOctave)
+            switch (CurrentOctave)
             {
                 case HarpNote.Octaves.Low:
                     break;
                 case HarpNote.Octaves.Middle:
-                    noteType = InstrumentSkillType.DecreaseOctaveToLow;
-                    _currentOctave = HarpNote.Octaves.Low;
+                    CurrentOctave = HarpNote.Octaves.Low;
                     break;
                 case HarpNote.Octaves.High:
-                    noteType = InstrumentSkillType.DecreaseOctaveToMiddle;
-                    _currentOctave = HarpNote.Octaves.Middle;
+                    CurrentOctave = HarpNote.Octaves.Middle;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
-            _keyboard.Press(GuildWarsControls.UtilitySkill3);
-            _keyboard.Release(GuildWarsControls.UtilitySkill3);
+            PressKey(GuildWarsControls.UtilitySkill3, CurrentOctave.ToString());
 
             Thread.Sleep(OctaveTimeout);
         }
-
         private void PressNote(GuildWarsControls key)
         {
-            var noteType = InstrumentSkillType.MiddleNote;
-            switch (_currentOctave)
-            {
-                case HarpNote.Octaves.Low:
-                    noteType = InstrumentSkillType.LowNote;
-                    break;
-                case HarpNote.Octaves.Middle:
-                    noteType = InstrumentSkillType.MiddleNote;
-                    break;
-                case HarpNote.Octaves.High:
-                    noteType = InstrumentSkillType.HighNote;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            _keyboard.Press(key);
-            _keyboard.Release(key);
-
+            PressKey(key, CurrentOctave.ToString());
             Thread.Sleep(NoteTimeout);
         }
     }

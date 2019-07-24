@@ -13,8 +13,6 @@ using NanoXml;
 
 namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
 
-    // TODO: Use XmlReader to speed things up https://stackoverflow.com/a/676280/595437
-
     public sealed class MarkerPackReader : IDisposable {
 
         private static readonly Logger Logger = Logger.GetLogger(typeof(MarkerPackReader));
@@ -60,9 +58,9 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
                 packDocument = new NanoXml.NanoXmlDocument(xmlPackContents);
                 packLoaded = true;
             } catch (XmlException ex) {
-                Logger.Error(ex, "Could not load tacO overlay file {pathableResourceManager} at line: {xmlExceptionLine} position: {xmlExceptionPosition} due to an XML error.", pathableResourceManager.DataReader.GetPathRepresentation(), ex.LineNumber, ex.LinePosition);
+                Logger.Warn(ex, "Could not load tacO overlay file {pathableResourceManager} at line: {xmlExceptionLine} position: {xmlExceptionPosition} due to an XML error.", pathableResourceManager.DataReader.GetPathRepresentation(), ex.LineNumber, ex.LinePosition);
             } catch (Exception ex) {
-                Logger.Error(ex, "Could not load tacO overlay file {pathableResourceManager} due to an unexpected exception.", pathableResourceManager.DataReader.GetPathRepresentation());
+                Logger.Warn(ex, "Could not load tacO overlay file {pathableResourceManager} due to an unexpected exception.", pathableResourceManager.DataReader.GetPathRepresentation());
             }
 
             if (packLoaded) {

@@ -4,6 +4,7 @@ using System.Threading;
 using Musician_Module.Domain.Values;
 using Blish_HUD.Controls.Intern;
 using Blish_HUD;
+using Microsoft.Xna.Framework;
 
 namespace Musician_Module.Controls.Instrument
 {
@@ -11,7 +12,6 @@ namespace Musician_Module.Controls.Instrument
     {
         private static readonly TimeSpan NoteTimeout = TimeSpan.FromMilliseconds(5);
         private static readonly TimeSpan OctaveTimeout = TimeSpan.FromTicks(500);
-
         private static readonly Dictionary<BassNote.Keys, GuildWarsControls> NoteMap = new Dictionary<BassNote.Keys, GuildWarsControls>
         {
             {BassNote.Keys.Note1, GuildWarsControls.WeaponSkill1},
@@ -23,16 +23,8 @@ namespace Musician_Module.Controls.Instrument
             {BassNote.Keys.Note7, GuildWarsControls.UtilitySkill1},
             {BassNote.Keys.Note8, GuildWarsControls.UtilitySkill2}
         };
-
-        private readonly IKeyboard _keyboard;
-
-        private BassNote.Octaves _currentOctave = BassNote.Octaves.Low;
-
-        public Bass(IKeyboard keyboard)
-        {
-            _keyboard = keyboard;
-        }
-
+        private BassNote.Octaves CurrentOctave = BassNote.Octaves.Low;
+        public Bass(IKeyboard previewkeyboard) : base(previewkeyboard) { /** NOOP **/ }
         public override void PlayNote(Note note)
         {
             var bassNote = BassNote.From(note);
@@ -59,9 +51,9 @@ namespace Musician_Module.Controls.Instrument
             {
                 bassNote = OptimizeNote(bassNote);
 
-                while (_currentOctave != bassNote.Octave)
+                while (CurrentOctave != bassNote.Octave)
                 {
-                    if (_currentOctave < bassNote.Octave)
+                    if (CurrentOctave < bassNote.Octave)
                     {
                         IncreaseOctave();
                     }
@@ -80,11 +72,11 @@ namespace Musician_Module.Controls.Instrument
 
         private BassNote OptimizeNote(BassNote note)
         {
-            if (note.Equals(new BassNote(BassNote.Keys.Note1, BassNote.Octaves.High)) && _currentOctave == BassNote.Octaves.Low)
+            if (note.Equals(new BassNote(BassNote.Keys.Note1, BassNote.Octaves.High)) && CurrentOctave == BassNote.Octaves.Low)
             {
                 note = new BassNote(BassNote.Keys.Note8, BassNote.Octaves.Low);
             }
-            else if (note.Equals(new BassNote(BassNote.Keys.Note8, BassNote.Octaves.Low)) && _currentOctave == BassNote.Octaves.High)
+            else if (note.Equals(new BassNote(BassNote.Keys.Note8, BassNote.Octaves.Low)) && CurrentOctave == BassNote.Octaves.High)
             {
                 note = new BassNote(BassNote.Keys.Note1, BassNote.Octaves.High);
             }
@@ -93,12 +85,10 @@ namespace Musician_Module.Controls.Instrument
 
         private void IncreaseOctave()
         {
-            var noteType = InstrumentSkillType.IncreaseOctaveToHigh;
-            switch (_currentOctave)
+            switch (CurrentOctave)
             {
                 case BassNote.Octaves.Low:
-                    noteType = InstrumentSkillType.IncreaseOctaveToHigh;
-                    _currentOctave = BassNote.Octaves.High;
+                    CurrentOctave = BassNote.Octaves.High;
                     break;
                 case BassNote.Octaves.High:
                     break;
@@ -106,50 +96,32 @@ namespace Musician_Module.Controls.Instrument
                     throw new ArgumentOutOfRangeException();
             }
 
-            _keyboard.Press(GuildWarsControls.EliteSkill);
-            _keyboard.Release(GuildWarsControls.EliteSkill);
+            PressKey(GuildWarsControls.EliteSkill, CurrentOctave.ToString());
 
             Thread.Sleep(OctaveTimeout);
         }
 
         private void DecreaseOctave()
         {
-            var noteType = InstrumentSkillType.DecreaseOctaveToLow;
-            switch (_currentOctave)
+            switch (CurrentOctave)
             {
                 case BassNote.Octaves.Low:
                     break;
                 case BassNote.Octaves.High:
-                    noteType = InstrumentSkillType.DecreaseOctaveToLow;
-                    _currentOctave = BassNote.Octaves.Low;
+                    CurrentOctave = BassNote.Octaves.Low;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
 
-            _keyboard.Press(GuildWarsControls.UtilitySkill3);
-            _keyboard.Release(GuildWarsControls.UtilitySkill3);
+            PressKey(GuildWarsControls.UtilitySkill3, CurrentOctave.ToString());
 
             Thread.Sleep(OctaveTimeout);
         }
 
         private void PressNote(GuildWarsControls key)
         {
-            var noteType = InstrumentSkillType.LowNote;
-            switch (_currentOctave)
-            {
-                case BassNote.Octaves.Low:
-                    noteType = InstrumentSkillType.LowNote;
-                    break;
-                case BassNote.Octaves.High:
-                    noteType = InstrumentSkillType.HighNote;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            _keyboard.Press(key);
-            _keyboard.Release(key);
+            PressKey(key, CurrentOctave.ToString());
 
             Thread.Sleep(NoteTimeout);
         }

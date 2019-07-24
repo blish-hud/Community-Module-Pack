@@ -24,7 +24,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Blish HUD">
-      <HintPath>..\..\dlamkins\Blish-HUD\Blish HUD\bin\x64\Debug\Blish HUD.exe</HintPath>
+      <HintPath>..\..\Blish-HUD\Blish HUD\bin\x64\Debug\Blish HUD.exe</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

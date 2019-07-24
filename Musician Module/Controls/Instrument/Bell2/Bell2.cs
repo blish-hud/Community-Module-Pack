@@ -11,7 +11,6 @@ namespace Musician_Module.Controls.Instrument
     {
         private static readonly TimeSpan NoteTimeout = TimeSpan.FromMilliseconds(5);
         private static readonly TimeSpan OctaveTimeout = TimeSpan.FromTicks(500);
-
         private static readonly Dictionary<Bell2Note.Keys, GuildWarsControls> NoteMap = new Dictionary<Bell2Note.Keys, GuildWarsControls>
         {
             {Bell2Note.Keys.Note1, GuildWarsControls.WeaponSkill1},
@@ -23,16 +22,8 @@ namespace Musician_Module.Controls.Instrument
             {Bell2Note.Keys.Note7, GuildWarsControls.UtilitySkill1},
             {Bell2Note.Keys.Note8, GuildWarsControls.UtilitySkill2}
         };
-
-        private readonly IKeyboard _keyboard;
-
-        private Bell2Note.Octaves _currentOctave = Bell2Note.Octaves.Low;
-
-        public Bell2(IKeyboard keyboard)
-        {
-            _keyboard = keyboard;
-        }
-
+        private Bell2Note.Octaves CurrentOctave = Bell2Note.Octaves.Low;
+        public Bell2(IKeyboard previewkeyboard) : base(previewkeyboard) { /** NOOP **/ }
         public override void PlayNote(Note note)
         {
             var bell2Note = Bell2Note.From(note);
@@ -50,7 +41,6 @@ namespace Musician_Module.Controls.Instrument
                 }
             }
         }
-
         public override void GoToOctave(Note note)
         {
             var bell2Note = Bell2Note.From(note);
@@ -59,9 +49,9 @@ namespace Musician_Module.Controls.Instrument
             {
                 bell2Note = OptimizeNote(bell2Note);
 
-                while (_currentOctave != bell2Note.Octave)
+                while (CurrentOctave != bell2Note.Octave)
                 {
-                    if (_currentOctave < bell2Note.Octave)
+                    if (CurrentOctave < bell2Note.Octave)
                     {
                         IncreaseOctave();
                     }
@@ -72,33 +62,28 @@ namespace Musician_Module.Controls.Instrument
                 }
             }
         }
-
         private static bool RequiresAction(Bell2Note bell2Note)
         {
             return bell2Note.Key != Bell2Note.Keys.None;
         }
-
         private Bell2Note OptimizeNote(Bell2Note note)
         {
-            if (note.Equals(new Bell2Note(Bell2Note.Keys.Note1, Bell2Note.Octaves.High)) && _currentOctave == Bell2Note.Octaves.Low)
+            if (note.Equals(new Bell2Note(Bell2Note.Keys.Note1, Bell2Note.Octaves.High)) && CurrentOctave == Bell2Note.Octaves.Low)
             {
                 note = new Bell2Note(Bell2Note.Keys.Note8, Bell2Note.Octaves.Low);
             }
-            else if (note.Equals(new Bell2Note(Bell2Note.Keys.Note8, Bell2Note.Octaves.Low)) && _currentOctave == Bell2Note.Octaves.High)
+            else if (note.Equals(new Bell2Note(Bell2Note.Keys.Note8, Bell2Note.Octaves.Low)) && CurrentOctave == Bell2Note.Octaves.High)
             {
                 note = new Bell2Note(Bell2Note.Keys.Note1, Bell2Note.Octaves.High);
             }
             return note;
         }
-
         private void IncreaseOctave()
         {
-            var noteType = InstrumentSkillType.IncreaseOctaveToHigh;
-            switch (_currentOctave)
+            switch (CurrentOctave)
             {
                 case Bell2Note.Octaves.Low:
-                    noteType = InstrumentSkillType.IncreaseOctaveToHigh;
-                    _currentOctave = Bell2Note.Octaves.High;
+                    CurrentOctave = Bell2Note.Octaves.High;
                     break;
                 case Bell2Note.Octaves.High:
                     break;
@@ -106,51 +91,30 @@ namespace Musician_Module.Controls.Instrument
                     throw new ArgumentOutOfRangeException();
             }
 
-            _keyboard.Press(GuildWarsControls.EliteSkill);
-            _keyboard.Release(GuildWarsControls.EliteSkill);
+            PressKey(GuildWarsControls.EliteSkill, CurrentOctave.ToString());
 
             Thread.Sleep(OctaveTimeout);
         }
-
         private void DecreaseOctave()
         {
-            var noteType = InstrumentSkillType.DecreaseOctaveToLow;
-            switch (_currentOctave)
+            switch (CurrentOctave)
             {
                 case Bell2Note.Octaves.Low:
                     break;
                 case Bell2Note.Octaves.High:
-                    noteType = InstrumentSkillType.DecreaseOctaveToLow;
-                    _currentOctave = Bell2Note.Octaves.Low;
+                    CurrentOctave = Bell2Note.Octaves.Low;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
 
-            _keyboard.Press(GuildWarsControls.UtilitySkill3);
-            _keyboard.Release(GuildWarsControls.UtilitySkill3);
+            PressKey(GuildWarsControls.UtilitySkill3, CurrentOctave.ToString());
 
             Thread.Sleep(OctaveTimeout);
         }
-
         private void PressNote(GuildWarsControls key)
         {
-            var noteType = InstrumentSkillType.MiddleNote;
-            switch (_currentOctave)
-            {
-                case Bell2Note.Octaves.Low:
-                    noteType = InstrumentSkillType.LowNote;
-                    break;
-                case Bell2Note.Octaves.High:
-                    noteType = InstrumentSkillType.HighNote;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            _keyboard.Press(key);
-            _keyboard.Release(key);
-
+            PressKey(key, CurrentOctave.ToString());
             Thread.Sleep(NoteTimeout);
         }
     }
