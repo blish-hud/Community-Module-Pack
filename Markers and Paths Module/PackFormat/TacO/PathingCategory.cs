@@ -107,7 +107,15 @@ namespace Markers_and_Paths_Module.PackFormat.TacO {
 
         private readonly PathableAttributeCollection _attributes = new PathableAttributeCollection();
         public PathableAttributeCollection Attributes {
-            get => _attributes;
+            get {
+                if (_parent == null) return _attributes;
+
+                var builtAttributes = new PathableAttributeCollection(_parent.Attributes);
+
+                builtAttributes.AddOrUpdateAttributes(_attributes);
+
+                return builtAttributes;
+            }
         }
 
         //public float       Size         = 1.0f;

@@ -42,7 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Library\NanoXmlExtensions.cs" />
     <Compile Include="Library\NanoXml\NanoXmlAttribute.cs" />
     <Compile Include="Library\NanoXml\NanoXmlBase.cs" />
     <Compile Include="Library\NanoXml\NanoXmlDocument.cs" />
