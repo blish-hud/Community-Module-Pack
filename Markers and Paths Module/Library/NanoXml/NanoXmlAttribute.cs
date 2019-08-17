@@ -1,32 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NanoXml {
+﻿namespace NanoXml {
     /// <summary>
-    /// XML element attribute
+    /// An XML element attribute.
     /// </summary>
     public class NanoXmlAttribute {
-        private string name;
-        private string value;
+
+        private readonly string _name;
+        private readonly string _value;
+
         /// <summary>
-        /// Attribute name
+        /// The name of the attribute.
         /// </summary>
-        public string Name {
-            get { return name; }
-        }
+        public string Name => _name;
+
         /// <summary>
-        /// Attribtue value
+        /// The value of the attribute.
         /// </summary>
-        public string Value {
-            get { return value; }
-        }
+        public string Value => _value;
 
         internal NanoXmlAttribute(string name, string value) {
-            this.name = name;
-            this.value = value;
+            _name  = name;
+            _value = value;
         }
+
     }
 }

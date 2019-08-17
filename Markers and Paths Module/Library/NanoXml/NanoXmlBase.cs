@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace NanoXml {
+
     /// <summary>
-    /// Base class containing usefull features for all XML classes
+    /// Base class containing calls for all XML class types.
     /// </summary>
-    public class NanoXmlBase {
+    public abstract class NanoXmlBase {
+
         protected static bool IsSpace(char c) {
             return c == ' ' || c == '\t' || c == '\n' || c == '\r';
         }
@@ -51,7 +49,7 @@ namespace NanoXml {
             SkipSpaces(str, ref i);
 
             while (str[i] != endChar && str[i] != endChar2) {
-                string attrName = CleanName(GetValue(str, ref i, '=', '\0', true).Replace("*", ""));
+                string attrName = CleanName(GetValue(str, ref i, '=', '\0', true));
 
                 SkipSpaces(str, ref i);
                 i++; // skip '='
@@ -77,7 +75,8 @@ namespace NanoXml {
             // COMPAT: Some packs have random invalid characters
             // COMPAT: Tekkit packs have 0 before behavior in some places
             return str.Replace("*", "")
-                      .TrimStart('0');
+                      .TrimStart('0')
+                      .ToLower();
         }
 
         protected static string CleanValue(string str) {
