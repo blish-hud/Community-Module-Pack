@@ -102,7 +102,7 @@ namespace NanoXml {
 
             for (int i = 0; i < _subNodes.Count; i++) {
                 if (_subNodes[i].Name == nodeName) {
-                    matchedNodes[++numberOfMatches] = _subNodes[i];
+                    matchedNodes[numberOfMatches++] = _subNodes[i];
                 }
             }
 

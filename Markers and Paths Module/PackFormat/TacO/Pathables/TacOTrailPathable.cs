@@ -60,13 +60,11 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
 
         public TacOTrailPathable(PathableAttributeCollection sourceAttributes, PathableResourceManager pathableResourceManager, PathingCategory rootCategory) : base(pathableResourceManager) {
             _sourceAttributes = sourceAttributes;
-            _rootCategory = rootCategory;
+            _rootCategory     = rootCategory;
 
             BeginLoad();
         }
 
-        // TODO: Use this method as an opportunity to convert attributes to some sort of IPathingAttribute to keep things
-        // consistent between imported file formats
         protected override void BeginLoad() {
             LoadAttributes(_sourceAttributes);
         }
@@ -80,7 +78,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
                               false);
 
             // [Required] TrailData
-            RegisterAttribute("trailData",
+            RegisterAttribute("traildata",
                               attribute => (!string.IsNullOrEmpty(this.TrlFilePath = attribute.Value.Trim())),
                               true);
 
@@ -93,7 +91,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
             });
 
             // FadeNear
-            RegisterAttribute("fadeNear", delegate (PathableAttribute attribute) {
+            RegisterAttribute("fadenear", delegate (PathableAttribute attribute) {
                 if (!InvariantUtil.TryParseFloat(attribute.Value, out float fOut)) return false;
 
                 this.FadeNear = fOut;
@@ -101,7 +99,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
             });
 
             // FadeFar
-            RegisterAttribute("fadeFar", delegate (PathableAttribute attribute) {
+            RegisterAttribute("fadefar", delegate (PathableAttribute attribute) {
                 if (!InvariantUtil.TryParseFloat(attribute.Value, out float fOut)) return false;
 
                 this.FadeFar = fOut;
@@ -109,7 +107,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
             });
 
             // AnimationSpeed
-            RegisterAttribute("animSpeed", delegate (PathableAttribute attribute) {
+            RegisterAttribute("animspeed", delegate (PathableAttribute attribute) {
                 if (!InvariantUtil.TryParseFloat(attribute.Value, out float fOut)) return false;
 
                 this.ManagedEntity.AnimationSpeed = fOut;
@@ -117,7 +115,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
             });
 
             // TrailScale
-            RegisterAttribute("trailScale", delegate (PathableAttribute attribute) {
+            RegisterAttribute("trailscale", delegate (PathableAttribute attribute) {
                 if (!InvariantUtil.TryParseFloat(attribute.Value, out float fOut)) return false;
 
                 this.Scale = fOut;
