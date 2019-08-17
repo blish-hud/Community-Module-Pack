@@ -9,58 +9,67 @@ namespace NanoXml {
     /// Class representing whole DOM XML document
     /// </summary>
     public class NanoXmlDocument : NanoXmlBase {
-        private NanoXmlNode rootNode;
-        private List<NanoXmlAttribute> declarations = new List<NanoXmlAttribute>();
-        /// <summary>
-        /// Public constructor. Loads xml document from raw string
-        /// </summary>
-        /// <param name="xmlString">String with xml</param>
-        public NanoXmlDocument(string xmlString) {
+
+        private          NanoXmlNode            _rootNode;
+        private readonly List<NanoXmlAttribute> _declarations = new List<NanoXmlAttribute>();
+
+        protected NanoXmlDocument(string rawXml) {
             int i = 0;
 
             while (true) {
-                SkipSpaces(xmlString, ref i);
+                SkipSpaces(rawXml, ref i);
 
-                if (xmlString[i] != '<')
+                if (rawXml[i] != '<')
                     throw new NanoXmlParsingException("Unexpected token");
 
                 i++; // skip <
 
-                if (xmlString[i] == '?') // declaration
+                if (rawXml[i] == '?') // declaration
                 {
                     i++; // skip ?
-                    ParseAttributes(xmlString, ref i, declarations, '?', '>');
+                    ParseAttributes(rawXml, ref i, _declarations, '?', '>');
                     i++; // skip ending ?
                     i++; // skip ending >
 
                     continue;
                 }
 
-                if (xmlString[i] == '!') // doctype
-                {
-                    while (xmlString[i] != '>') // skip doctype
+                if (rawXml[i] == '!') { // doctype
+                    while (rawXml[i] != '>') { // skip doctype
                         i++;
+                    }
 
                     i++; // skip >
 
                     continue;
                 }
 
-                rootNode = new NanoXmlNode(xmlString, ref i);
+                _rootNode = new NanoXmlNode(rawXml, ref i);
                 break;
             }
         }
+
+
         /// <summary>
-        /// Root document element
+        /// Creates a new <see cref="NanoXmlDocument"/> and populates it with the provided <param name="rawXml">raw XML</param>.
+        /// </summary>
+        /// <param name="rawXml">The XML string to load the document from.</param>
+        public static NanoXmlDocument LoadFromXml(string rawXml) {
+            return new NanoXmlDocument(rawXml);
+        }
+
+        /// <summary>
+        /// Root node of the document.
         /// </summary>
         public NanoXmlNode RootNode {
-            get { return rootNode; }
+            get => _rootNode;
+            set => _rootNode = value;
         }
+
         /// <summary>
-        /// List of XML Declarations as <see cref="NanoXmlAttribute"/>
+        /// List of all XML Declarations as <see cref="NanoXmlAttribute"/>.
         /// </summary>
-        public IEnumerable<NanoXmlAttribute> Declarations {
-            get { return declarations; }
-        }
+        public List<NanoXmlAttribute> Declarations => _declarations;
+
     }
 }

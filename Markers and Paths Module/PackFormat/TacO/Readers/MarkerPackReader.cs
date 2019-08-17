@@ -55,7 +55,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
             bool packLoaded = false;
 
             try {
-                packDocument = new NanoXml.NanoXmlDocument(xmlPackContents);
+                packDocument = NanoXmlDocument.LoadFromXml(xmlPackContents);
                 packLoaded = true;
             } catch (XmlException ex) {
                 Logger.Warn(ex, "Could not load tacO overlay file {pathableResourceManager} at line: {xmlExceptionLine} position: {xmlExceptionPosition} due to an XML error.", pathableResourceManager.DataReader.GetPathRepresentation(), ex.LineNumber, ex.LinePosition);
@@ -74,22 +74,25 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
         }
 
         private void TryLoadCategories(NanoXmlDocument packDocument) {
-            var categoryNodes = packDocument.RootNode.SelectNodes("MarkerCategory");
-            if (categoryNodes == null) return;
+            var categoryNodes = packDocument.RootNode.SelectNodes("markercategory");
 
-            foreach (var categoryNode in categoryNodes) {
-                Builders.PathingCategoryBuilder.UnpackCategory(categoryNode, Categories);
+            for (int i = 0; i < categoryNodes.Length; i++) {
+                Builders.PathingCategoryBuilder.UnpackCategory(categoryNodes[i], Categories);
             }
         }
 
         private void TryLoadPOIs(NanoXmlDocument packDocument, PathableResourceManager pathableResourceManager, PathingCategory rootCategory) {
-            var poiNodes = packDocument.RootNode["POIs"];
-            if (poiNodes == null) return;
+            var poisNodes = packDocument.RootNode.SelectNodes("pois");
 
-            Logger.Info("Found {poiCount} POIs to load.", poiNodes.SubNodes.Count());
+            for (int pSet = 0; pSet < poisNodes.Length; pSet++) {
+                //ref var poisNode = ref poisNodes[pSet];
+                var poisNode = poisNodes[pSet];
 
-            foreach (var poiNode in poiNodes.SubNodes) {
-                Builders.PoiBuilder.UnpackPathable(poiNode, pathableResourceManager, rootCategory);
+                Logger.Info("Found {poiCount} POIs to load.", poisNode.SubNodes.Count());
+
+                for (int i = 0; i < poisNode.SubNodes.Count; i++) {
+                    Builders.PoiBuilder.UnpackPathable(poisNode.SubNodes[i], pathableResourceManager, rootCategory);
+                }
             }
         }
 
