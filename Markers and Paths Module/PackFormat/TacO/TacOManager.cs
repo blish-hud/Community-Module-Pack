@@ -89,11 +89,12 @@ namespace Markers_and_Paths_Module.PackFormat.TacO {
         public override void FinalizeLoad() {
             _allPathableResourceManagers.ForEach(GameService.Pathing.RegisterPathableResourceManager);
 
-            _currentReader.UpdatePathableStates();
+            _currentReader.UpdatePrototypePathableStates();
         }
 
         public override void UpdateState() {
-            _currentReader.UpdatePathableStates();
+            //_currentReader.UpdatePathableStates();
+            _currentReader.UpdatePrototypePathableStates();
         }
 
         public override void UnloadPacks() {
@@ -101,9 +102,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO {
             _allPathableResourceManagers.ForEach(GameService.Pathing.UnregisterPathableResourceManager);
 
             // Unregister all pathables
-            foreach (IPathable<Entity> pathable in _currentReader.Pathables) {
-                GameService.Pathing.UnregisterPathable(pathable);
-            }
+            _currentReader.UnloadPack();
 
             // Dispose all pathable resource managers
             _allPathableResourceManagers.ForEach(m => m.Dispose());

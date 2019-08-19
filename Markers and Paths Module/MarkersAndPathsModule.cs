@@ -35,8 +35,6 @@ namespace Markers_and_Paths_Module {
 
         private string _markerDirectory;
 
-        private List<Control> _moduleControls;
-
         private EventHandler<EventArgs> _onNewMapLoaded;
 
         private Store _persistentStore;
@@ -57,8 +55,6 @@ namespace Markers_and_Paths_Module {
 
         protected override void Initialize() {
             _markerDirectory = DirectoriesManager.GetFullDirectoryPath("markers");
-
-            _moduleControls = new List<Control>();
             _persistentStore = GameService.Store.RegisterStore(this.Namespace);
 
             _mapIcon = new CornerIcon() {
@@ -100,9 +96,7 @@ namespace Markers_and_Paths_Module {
         }
 
         private void ClearMenu() {
-            foreach (var control in _mapIconMenu.Children) {
-                control.Dispose();
-            }
+            // TODO: Actually clear the menu
         }
 
         private void BuildMenu() {
@@ -170,13 +164,8 @@ namespace Markers_and_Paths_Module {
             GameService.Pathing.NewMapLoaded -= _onNewMapLoaded;
 
             // Dispose all controls
-            _moduleControls.ForEach(c => c.Dispose());
-            _moduleControls.Clear();
             _mapIcon.Dispose();
             _mapIconMenu.Dispose();
-
-            _mapIcon     = null;
-            _mapIconMenu = null;
 
             // Unload and dispose all loaded pathables
             UnloadAllPackManagers();

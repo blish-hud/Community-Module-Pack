@@ -18,21 +18,52 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
 
         private static readonly Logger Logger = Logger.GetLogger(typeof(MarkerPackReader));
 
-        internal readonly PathingCategory Categories = new PathingCategory("root") { Visible = true };
+        public PathingCategory Categories { get; } = new PathingCategory("root") { Visible = true };
 
-        internal readonly SynchronizedCollection<IPathable<Entity>> Pathables = new SynchronizedCollection<IPathable<Entity>>();
+        private readonly SynchronizedCollection<IPathable<Entity>> _pathables = new SynchronizedCollection<IPathable<Entity>>();
 
-        internal readonly SynchronizedCollection<Prototypes.PrototypePathable> PathablePrototypes = new SynchronizedCollection<PrototypePathable>();
+        private readonly List<PrototypePathable> _prototypePathables = new List<PrototypePathable>();
 
         private void RegisterPathable(IPathable<Entity> pathable) {
             if (pathable == null) return;
 
-            this.Pathables.Add(pathable);
+            _pathables.Add(pathable);
+        }
+
+        private void RegisterPrototypePathable(PrototypePathable prototypePathable) {
+            if (prototypePathable == null) return;
+
+            _prototypePathables.Add(prototypePathable);
         }
 
         public void UpdatePathableStates() {
-            foreach (var pathable in Pathables.ToArray()) {
+            foreach (var pathable in _pathables) {
                 this.ProcessPathableState(pathable);
+            }
+        }
+
+        public void UpdatePrototypePathableStates() {
+            UnloadAndUnregisterAllPathables();
+
+            for (int i = 0; i < _prototypePathables.Count; i++) {
+                if (_prototypePathables[i].MapId == GameService.Player.MapId || _prototypePathables[i].MapId == -1) {
+                    LoadAndRegisterPathable(_prototypePathables[i]);
+                }
+            }
+        }
+
+        private void LoadAndRegisterPathable(PrototypePathable prototypePathable) {
+            var loadedPathable = prototypePathable.LoadPathable(this.Categories);
+
+            if (loadedPathable != null) {
+                loadedPathable.Active = true;
+                GameService.Pathing.RegisterPathable(loadedPathable);
+            }
+        }
+
+        private void UnloadAndUnregisterAllPathables() {
+            for (int i = 0; i < GameService.Pathing.Pathables.Count; i++) {
+                GameService.Pathing.UnregisterPathable(GameService.Pathing.Pathables[i]);
             }
         }
 
@@ -67,12 +98,12 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
             }
 
             if (packLoaded) {
-                int currentPathablesCount = this.Pathables.Count;
+                int currentPathablesCount = _prototypePathables.Count;
 
                 TryLoadCategories(packDocument);
                 TryLoadPOIs(packDocument, pathableResourceManager, Categories);
 
-                Logger.Info("{pathableDelta} pathables were loaded from {pathableResourceManager}.", this.Pathables.Count - currentPathablesCount, pathableResourceManager.DataReader.GetPathRepresentation());
+                Logger.Info("{pathableDelta} pathables were loaded from {pathableResourceManager}.", _prototypePathables.Count - currentPathablesCount, pathableResourceManager.DataReader.GetPathRepresentation());
             }
         }
 
@@ -93,9 +124,13 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
                 Logger.Info("Found {poiCount} POIs to load.", poisNode.SubNodes.Count());
 
                 for (int i = 0; i < poisNode.SubNodes.Count; i++) {
-                    this.RegisterPathable(Builders.PoiBuilder.UnpackPathable(poisNode.SubNodes[i], pathableResourceManager, rootCategory));
+                    this.RegisterPrototypePathable(Builders.PoiBuilder.UnpackPathable(poisNode.SubNodes[i], pathableResourceManager, rootCategory));
                 }
             }
+        }
+
+        public void UnloadPack() {
+            this.UnloadAndUnregisterAllPathables();
         }
 
     }

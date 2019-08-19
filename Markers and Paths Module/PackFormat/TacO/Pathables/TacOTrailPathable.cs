@@ -9,6 +9,7 @@ using System.Xml;
 using Blish_HUD;
 using Blish_HUD.Pathing;
 using Blish_HUD.Pathing.Content;
+using Blish_HUD.Pathing.Entities;
 
 namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
     public sealed class TacOTrailPathable : LoadedTrailPathable, ITacOPathable {
@@ -140,7 +141,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
 
                 sectionData.ForEach(t => {
                     this.MapId = t.MapId;
-                    //this.ManagedEntity.AddSection(t.TrailPoints);
+                    this.ManagedEntity.AddSection(new ScrollingTrailSection(t.TrailPoints.ToList()));
                 });
             }
 

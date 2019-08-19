@@ -1,7 +1,9 @@
-﻿using Blish_HUD;
+﻿using System.Collections.Generic;
+using Blish_HUD;
 using Blish_HUD.Entities;
 using Blish_HUD.Pathing;
 using Blish_HUD.Pathing.Content;
+using Markers_and_Paths_Module.PackFormat.TacO.Prototypes;
 using NanoXml;
 
 namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
@@ -13,34 +15,37 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
         private const string ELEMENT_POITYPE_TRAIL = "trail";
         private const string ELEMENT_POITYPE_ROUTE = "route";
 
-        public static IPathable<Entity> UnpackPathable(NanoXmlNode pathableNode, PathableResourceManager pathableResourceManager, PathingCategory rootCategory) {
+        private const string REQUIRED_ATTRIBUTE_MAPID     = "mapid";
+        private const string REQUIRED_ATTRIBUTE_TRAILDATA = "traildata";
+
+        public static PrototypePathable UnpackPathable(NanoXmlNode pathableNode, PathableResourceManager pathableResourceManager, PathingCategory rootCategory) {
             switch (pathableNode.Name.ToLower()) {
                 case ELEMENT_POITYPE_POI:
                     var poiAttributes = AttributeBuilder.FromNanoXmlNode(pathableNode);
 
-                    if (poiAttributes.Contains("mapid")) {
-
+                    if (poiAttributes.Contains(REQUIRED_ATTRIBUTE_MAPID)) {
+                        return new PrototypePathable(pathableResourceManager, PathableType.Marker, int.Parse(poiAttributes[REQUIRED_ATTRIBUTE_MAPID].Value), poiAttributes);
                     }
 
-                    //var newPoiMarker = new Pathables.TacOMarkerPathable(poiAttributes, pathableResourceManager, rootCategory);
-
-                    //if (newPoiMarker.SuccessfullyLoaded) {
-                    //    return newPoiMarker;
-                    //} else {
-                    //    Logger.Warn("Failed to load marker: {markerInfo}", poiAttributes);
-                    //}
                     break;
 
                 case ELEMENT_POITYPE_TRAIL:
                     var trailAttributes = AttributeBuilder.FromNanoXmlNode(pathableNode);
 
-                    var newPathTrail = new Pathables.TacOTrailPathable(trailAttributes, pathableResourceManager, rootCategory);
+                    if (trailAttributes.Contains(REQUIRED_ATTRIBUTE_TRAILDATA)) {
+                        string trailDataPath = trailAttributes[REQUIRED_ATTRIBUTE_TRAILDATA].Value.Trim();
 
-                    if (newPathTrail.SuccessfullyLoaded) {
-                        return newPathTrail;
-                    } else {
-                        Logger.Warn("Failed to load trail: {trailInfo}", trailAttributes);
+                        using (var trlStream = pathableResourceManager.DataReader.GetFileStream(trailDataPath)) {
+                            if (trlStream != null) {
+                                List<PrototypeTrailSection> sectionData = Readers.TrlReader.ReadStream(trlStream);
+
+                                if (sectionData.Count > 0) {
+                                    return new PrototypePathable(pathableResourceManager, PathableType.Trail, sectionData[0].MapId, trailAttributes);
+                                }
+                            }
+                        }
                     }
+
                     break;
 
                 case ELEMENT_POITYPE_ROUTE:
