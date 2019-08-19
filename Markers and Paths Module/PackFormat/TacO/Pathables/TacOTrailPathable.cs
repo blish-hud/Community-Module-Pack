@@ -73,9 +73,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
             base.PrepareAttributes();
 
             // Type
-            RegisterAttribute("type",
-                              attribute => (!string.IsNullOrEmpty(this.Type = attribute.Value.Trim())),
-                              false);
+            RegisterAttribute("type", attribute => (!string.IsNullOrEmpty(this.Type = attribute.Value.Trim())));
 
             // [Required] TrailData
             RegisterAttribute("traildata",
@@ -142,7 +140,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
 
                 sectionData.ForEach(t => {
                     this.MapId = t.MapId;
-                    this.ManagedEntity.AddSection(t.TrailPoints);
+                    //this.ManagedEntity.AddSection(t.TrailPoints);
                 });
             }
 

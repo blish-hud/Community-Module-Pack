@@ -8,22 +8,11 @@ using System.Threading.Tasks;
 using Blish_HUD;
 
 namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
-    public struct TrlSection {
 
-        public int MapId;
-        public List<Vector3> TrailPoints;
+    public static class TrlReader {
 
-        public TrlSection(int mapId, List<Vector3> trailPoints) {
-            MapId = mapId;
-            TrailPoints = trailPoints.ToList();
-        }
-
-    }
-
-    public class TrlReader {
-
-        public static List<TrlSection> ReadStream(Stream trlStream) {
-            var trlSections = new List<TrlSection>();
+        public static List<Prototypes.PrototypeTrailSection> ReadStream(Stream trlStream) {
+            var trlSections = new List<Prototypes.PrototypeTrailSection>();
 
             // Ensure this stream can seek
             using (var srcStream = trlStream.CanSeek ? trlStream : trlStream.ReplaceWithMemoryStream()) {
@@ -45,7 +34,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
                         float y = trlReader.ReadSingle();
 
                         if (z == 0 && x == 0 && y == 0) {
-                            trlSections.Add(new TrlSection(mapId, trailPoints));
+                            trlSections.Add(new Prototypes.PrototypeTrailSection(mapId, trailPoints.ToArray()));
                             trailPoints.Clear();
                         } else {
                             trailPoints.Add(new Vector3(x, y, z));
@@ -54,7 +43,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
 
                     if (trailPoints.Any()) {
                         // Record the last trail segment
-                        trlSections.Add(new TrlSection(mapId, trailPoints));
+                        trlSections.Add(new Prototypes.PrototypeTrailSection(mapId, trailPoints.ToArray()));
                     }
                 }
             }
@@ -62,14 +51,14 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
             return trlSections;
         }
 
-        public static List<TrlSection> ReadBytes(byte[] rawTrlData) {
+        public static List<Prototypes.PrototypeTrailSection> ReadBytes(byte[] rawTrlData) {
             return ReadStream(new MemoryStream(rawTrlData));
         }
 
-        public static List<TrlSection> ReadFile(string trlPath) {
+        public static List<Prototypes.PrototypeTrailSection> ReadFile(string trlPath) {
             if (!File.Exists(trlPath)) {
                 Console.WriteLine("No trl file found at " + trlPath);
-                return new List<TrlSection>();
+                return new List<Prototypes.PrototypeTrailSection>();
             }
 
             return ReadStream(new FileStream(trlPath, FileMode.Open));

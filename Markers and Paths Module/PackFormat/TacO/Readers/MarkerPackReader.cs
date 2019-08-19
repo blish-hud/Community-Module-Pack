@@ -9,11 +9,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Blish_HUD.Pathing.Content;
+using Markers_and_Paths_Module.PackFormat.TacO.Prototypes;
 using NanoXml;
 
 namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
 
-    public sealed class MarkerPackReader : IDisposable {
+    public sealed class MarkerPackReader {
 
         private static readonly Logger Logger = Logger.GetLogger(typeof(MarkerPackReader));
 
@@ -21,7 +22,9 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
 
         internal readonly SynchronizedCollection<IPathable<Entity>> Pathables = new SynchronizedCollection<IPathable<Entity>>();
 
-        public void RegisterPathable(IPathable<Entity> pathable) {
+        internal readonly SynchronizedCollection<Prototypes.PrototypePathable> PathablePrototypes = new SynchronizedCollection<PrototypePathable>();
+
+        private void RegisterPathable(IPathable<Entity> pathable) {
             if (pathable == null) return;
 
             this.Pathables.Add(pathable);
@@ -50,7 +53,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
                 xmlPackContents = xmlReader.ReadToEnd();
             }
 
-            NanoXml.NanoXmlDocument packDocument = null;
+            NanoXmlDocument packDocument = null;
 
             bool packLoaded = false;
 
@@ -85,21 +88,14 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
             var poisNodes = packDocument.RootNode.SelectNodes("pois");
 
             for (int pSet = 0; pSet < poisNodes.Length; pSet++) {
-                //ref var poisNode = ref poisNodes[pSet];
-                var poisNode = poisNodes[pSet];
+                ref var poisNode = ref poisNodes[pSet];
 
                 Logger.Info("Found {poiCount} POIs to load.", poisNode.SubNodes.Count());
 
                 for (int i = 0; i < poisNode.SubNodes.Count; i++) {
-                    Builders.PoiBuilder.UnpackPathable(poisNode.SubNodes[i], pathableResourceManager, rootCategory);
+                    this.RegisterPathable(Builders.PoiBuilder.UnpackPathable(poisNode.SubNodes[i], pathableResourceManager, rootCategory));
                 }
             }
-        }
-
-        /// <inheritdoc />
-        public void Dispose() {
-            this.Pathables.Clear();
-            this.Categories.Clear();
         }
 
     }

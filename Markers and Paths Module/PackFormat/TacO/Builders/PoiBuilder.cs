@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-using Blish_HUD;
+﻿using Blish_HUD;
+using Blish_HUD.Entities;
+using Blish_HUD.Pathing;
 using Blish_HUD.Pathing.Content;
 using NanoXml;
 
@@ -17,18 +13,22 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
         private const string ELEMENT_POITYPE_TRAIL = "trail";
         private const string ELEMENT_POITYPE_ROUTE = "route";
 
-        public static void UnpackPathable(NanoXmlNode pathableNode, PathableResourceManager pathableResourceManager, PathingCategory rootCategory) {
+        public static IPathable<Entity> UnpackPathable(NanoXmlNode pathableNode, PathableResourceManager pathableResourceManager, PathingCategory rootCategory) {
             switch (pathableNode.Name.ToLower()) {
                 case ELEMENT_POITYPE_POI:
                     var poiAttributes = AttributeBuilder.FromNanoXmlNode(pathableNode);
 
-                    var newPoiMarker = new Pathables.TacOMarkerPathable(poiAttributes, pathableResourceManager, rootCategory);
+                    if (poiAttributes.Contains("mapid")) {
 
-                    if (newPoiMarker.SuccessfullyLoaded) {
-                        MarkersAndPathsModule.ModuleInstance._currentReader.RegisterPathable(newPoiMarker);
-                    } else {
-                        Logger.Warn("Failed to load marker: {markerInfo}", poiAttributes);
                     }
+
+                    //var newPoiMarker = new Pathables.TacOMarkerPathable(poiAttributes, pathableResourceManager, rootCategory);
+
+                    //if (newPoiMarker.SuccessfullyLoaded) {
+                    //    return newPoiMarker;
+                    //} else {
+                    //    Logger.Warn("Failed to load marker: {markerInfo}", poiAttributes);
+                    //}
                     break;
 
                 case ELEMENT_POITYPE_TRAIL:
@@ -37,7 +37,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
                     var newPathTrail = new Pathables.TacOTrailPathable(trailAttributes, pathableResourceManager, rootCategory);
 
                     if (newPathTrail.SuccessfullyLoaded) {
-                        MarkersAndPathsModule.ModuleInstance._currentReader.RegisterPathable(newPathTrail);
+                        return newPathTrail;
                     } else {
                         Logger.Warn("Failed to load trail: {trailInfo}", trailAttributes);
                     }
@@ -48,9 +48,11 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
                     break;
 
                 default:
-                    Logger.Warn("Tried to pack {pathableNodeName} as a POI!", pathableNode.Name);
+                    Logger.Warn("Tried to load {pathableNodeName} as a POI!", pathableNode.Name);
                     break;
             }
+
+            return null;
         }
 
     }

@@ -49,6 +49,7 @@
     <Compile Include="Library\NanoXml\NanoXmlNode.cs" />
     <Compile Include="Library\NanoXml\NanoXmlParsingException.cs" />
     <Compile Include="MarkersAndPathsModule.cs" />
+    <Compile Include="PackFormat\PackManager.cs" />
     <Compile Include="PackFormat\TacO\Behavior\BasicTacOBehavior.cs" />
     <Compile Include="PackFormat\TacO\Builders\AttributeBuilder.cs" />
     <Compile Include="PackFormat\TacO\Builders\PathingCategoryBuilder.cs" />
@@ -57,8 +58,12 @@
     <Compile Include="PackFormat\TacO\Pathables\TacOMarkerPathable.cs" />
     <Compile Include="PackFormat\TacO\Pathables\TacOTrailPathable.cs" />
     <Compile Include="PackFormat\TacO\PathingCategory.cs" />
+    <Compile Include="PackFormat\TacO\Prototypes\PathableType.cs" />
+    <Compile Include="PackFormat\TacO\Prototypes\PrototypePathable.cs" />
+    <Compile Include="PackFormat\TacO\Prototypes\PrototypeTrailSection.cs" />
     <Compile Include="PackFormat\TacO\Readers\MarkerPackReader.cs" />
     <Compile Include="PackFormat\TacO\Readers\TrlReader.cs" />
+    <Compile Include="PackFormat\TacO\TacOManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

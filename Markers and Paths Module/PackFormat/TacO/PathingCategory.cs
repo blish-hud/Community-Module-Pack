@@ -37,7 +37,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO {
                 ? $"{this.Parent.Namespace}.{this.Name}"
                 : this.Name;
 
-        private List<IPathable> _pathables = new List<IPathable>();
+        private readonly List<IPathable> _pathables = new List<IPathable>();
 
         public ReadOnlyCollection<IPathable> Pathables => _pathables.AsReadOnly();
 
@@ -154,6 +154,10 @@ namespace Markers_and_Paths_Module.PackFormat.TacO {
 
         public void AddPathable(IPathable pathable) {
             _pathables.Add(pathable);
+        }
+
+        public void RemovePathable(IPathable pathable) {
+            _pathables.Remove(pathable);
         }
 
         public void SetAttributes(PathableAttributeCollection attributes) {
