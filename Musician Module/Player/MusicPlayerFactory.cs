@@ -9,31 +9,23 @@ using Blish_HUD;
 
 namespace Musician_Module.Player
 {
-    public enum KeyboardType
-    {
-        Emulated,
-        Preview,
-        Practice
-    }
     internal static class MusicPlayerFactory
     {
-        private static KeyboardPractice PracticeKeyboard = new KeyboardPractice();
-        private static Keyboard EmulatedKeyboard = new Keyboard();
         private static Dictionary<string, Instrument> InstrumentRepository = new Dictionary<string, Instrument>()
         {
-            { "harp", new Harp(new HarpPreview()) },
-            { "flute", new Flute(new FlutePreview()) },
-            { "lute", new Lute(new LutePreview()) },
-            { "horn", new Horn(new HornPreview()) },
-            { "bass", new Bass(new BassPreview()) },
-            { "bell", new Bell(new BellPreview()) },
-            { "bell2", new Bell2(new Bell2Preview()) },
+            { "harp", new Harp() },
+            { "flute", new Flute() },
+            { "lute", new Lute() },
+            { "horn", new Horn() },
+            { "bass", new Bass() },
+            { "bell", new Bell() },
+            { "bell2", new Bell2() },
         };
-        internal static MusicPlayer Create(RawMusicSheet rawMusicSheet, KeyboardType type)
+        internal static MusicPlayer Create(RawMusicSheet rawMusicSheet, InstrumentMode mode)
         {
-            return MusicBoxNotationMusicPlayerFactory(rawMusicSheet, type);
+            return MusicBoxNotationMusicPlayerFactory(rawMusicSheet, mode);
         }
-        private static MusicPlayer MusicBoxNotationMusicPlayerFactory(RawMusicSheet rawMusicSheet, KeyboardType type)
+        private static MusicPlayer MusicBoxNotationMusicPlayerFactory(RawMusicSheet rawMusicSheet, InstrumentMode mode)
         {
             var musicSheet = new MusicSheetParser(new ChordParser(new NoteParser(), rawMusicSheet.Instrument)).Parse(
                 rawMusicSheet.Melody,
@@ -46,23 +38,9 @@ namespace Musician_Module.Player
                 ? new FavorNotesAlgorithm() : (IPlayAlgorithm)new FavorChordsAlgorithm();
 
             Instrument instrument = InstrumentRepository[rawMusicSheet.Instrument];
-            switch (type)
-            {
-                case KeyboardType.Preview:
-                    MusicianModule.ModuleInstance.Conveyor.Visible = false;
-                    instrument.Keyboard = instrument.PreviewKeyboard;
-                    break;
-                case KeyboardType.Practice:
-                    MusicianModule.ModuleInstance.Conveyor.Visible = true;
-                    instrument.Keyboard = PracticeKeyboard;
-                    break;
-                case KeyboardType.Emulated:
-                    MusicianModule.ModuleInstance.Conveyor.Visible = false;
-                    instrument.Keyboard = EmulatedKeyboard;
-                    break;
-                default:
-                    throw new NotSupportedException();
-            }
+            instrument.Mode = mode;
+            MusicianModule.ModuleInstance.Conveyor.Visible = mode == InstrumentMode.Practice;
+
             return new MusicPlayer(
                 musicSheet,
                 instrument,

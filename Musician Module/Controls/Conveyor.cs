@@ -10,6 +10,19 @@ using Blish_HUD;
 namespace Musician_Module.Controls {
 
     public class Conveyor : Container {
+        public static readonly Dictionary<GuildWarsControls, int> LaneCoordinatesX = new Dictionary<GuildWarsControls, int>
+        {
+            {GuildWarsControls.WeaponSkill1, 13},
+            {GuildWarsControls.WeaponSkill2, 75},
+            {GuildWarsControls.WeaponSkill3, 136},
+            {GuildWarsControls.WeaponSkill4, 197},
+            {GuildWarsControls.WeaponSkill5, 260},
+            {GuildWarsControls.HealingSkill, 429},
+            {GuildWarsControls.UtilitySkill1, 491},
+            {GuildWarsControls.UtilitySkill2, 552},
+            {GuildWarsControls.UtilitySkill3, 614},
+            {GuildWarsControls.EliteSkill, 675}
+        };
         private readonly Texture2D ConveyorTopSprite;
         private readonly Texture2D ConveyorBottomSprite;
         public Conveyor() {

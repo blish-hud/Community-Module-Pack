@@ -16,6 +16,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Musician_Module.Controls;
 using Musician_Module.Notation.Persistance;
 using Musician_Module.Player;
+using Musician_Module.Controls.Instrument;
 
 namespace Musician_Module
 {
@@ -53,7 +54,7 @@ namespace Musician_Module
         };
 
         private WindowTab MusicianTab;
-        private MusicPlayer MusicPlayer;
+        public MusicPlayer MusicPlayer;
         private HealthPoolButton StopButton;
         private XmlMusicSheetReader xmlParser;
         private List<SheetButton> displayedSheets;
@@ -240,7 +241,7 @@ namespace Musician_Module
                         GameService.Overlay.BlishHudWindow.Hide();
                         MusicPlayer = MusicPlayerFactory.Create(
                             melody.MusicSheet,
-                            KeyboardType.Practice
+                            InstrumentMode.Preview
                         );
                         MusicPlayer.Worker.Start();
                         Conveyor.Visible = true;
@@ -252,7 +253,7 @@ namespace Musician_Module
                         GameService.Overlay.BlishHudWindow.Hide();
                         MusicPlayer = MusicPlayerFactory.Create(
                             melody.MusicSheet,
-                            KeyboardType.Emulated
+                            InstrumentMode.Emulate
                         );
                         MusicPlayer.Worker.Start();
                         StopButton.Visible = true;
@@ -269,7 +270,7 @@ namespace Musician_Module
                             melody.IsPreviewing = true;
                             MusicPlayer = MusicPlayerFactory.Create(
                                 melody.MusicSheet,
-                                KeyboardType.Preview
+                                InstrumentMode.Preview
                             );
                             MusicPlayer.Worker.Start();
                         }
