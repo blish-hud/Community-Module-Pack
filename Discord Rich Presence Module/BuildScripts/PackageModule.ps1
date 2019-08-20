@@ -12,6 +12,7 @@ Write-Output "$($modulesDest)"
 
 Write-Output "Building $($noModuleName).bhm..."
 
+Remove-Item -Path "$($project)obj\$($noModuleName).zip" -Force
 Compress-Archive -Path "$($project)$($output)*" -DestinationPath "$($project)obj\$($noModuleName).zip" -Update
 Copy-Item "$($project)obj\$($noModuleName).zip" "$($modulesDest)$($noModuleName).bhm" -Force
 
