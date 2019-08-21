@@ -9,32 +9,31 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Blish_HUD.Pathing.Content;
+using NanoXml;
 
 namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
 
-    // TODO: Use XmlReader to speed things up https://stackoverflow.com/a/676280/595437
-
-    public static class MarkerPackReader {
+    public sealed class MarkerPackReader : IDisposable {
 
         private static readonly Logger Logger = Logger.GetLogger(typeof(MarkerPackReader));
 
-        internal static readonly PathingCategory Categories = new PathingCategory("root") { Visible = true };
+        internal readonly PathingCategory Categories = new PathingCategory("root") { Visible = true };
 
-        internal static readonly SynchronizedCollection<IPathable<Entity>> Pathables = new SynchronizedCollection<IPathable<Entity>>();
+        internal readonly SynchronizedCollection<IPathable<Entity>> Pathables = new SynchronizedCollection<IPathable<Entity>>();
 
-        public static void RegisterPathable(IPathable<Entity> pathable) {
+        public void RegisterPathable(IPathable<Entity> pathable) {
             if (pathable == null) return;
 
-            Pathables.Add(pathable);
+            this.Pathables.Add(pathable);
         }
 
-        public static void UpdatePathableStates() {
+        public void UpdatePathableStates() {
             foreach (var pathable in Pathables.ToArray()) {
-                ProcessPathableState(pathable);
+                this.ProcessPathableState(pathable);
             }
         }
 
-        private static void ProcessPathableState(IPathable<Entity> pathable) {
+        private void ProcessPathableState(IPathable<Entity> pathable) {
             if (pathable.MapId == GameService.Player.MapId || pathable.MapId == -1) {
                 pathable.Active = true;
                 GameService.Pathing.RegisterPathable(pathable);
@@ -44,60 +43,63 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
             }
         }
 
-        public static void ReadFromXmlPack(Stream xmlPackStream, PathableResourceManager pathableResourceManager) {
+        public void ReadFromXmlPack(Stream xmlPackStream, PathableResourceManager pathableResourceManager) {
             string xmlPackContents;
 
             using (var xmlReader = new StreamReader(xmlPackStream)) {
                 xmlPackContents = xmlReader.ReadToEnd();
             }
 
-            var packDocument = new XmlDocument();
-            string packSrc = SanitizeXml(xmlPackContents);
+            NanoXml.NanoXmlDocument packDocument = null;
+
             bool packLoaded = false;
 
             try {
-                packDocument.LoadXml(packSrc);
+                packDocument = NanoXmlDocument.LoadFromXml(xmlPackContents);
                 packLoaded = true;
             } catch (XmlException ex) {
-                Logger.Warn(ex, "Could not load tacO overlay file {pathableResourceManager} from {xmlPackContentsType} due to an XML error.", pathableResourceManager, xmlPackContents);
+                Logger.Warn(ex, "Could not load tacO overlay file {pathableResourceManager} at line: {xmlExceptionLine} position: {xmlExceptionPosition} due to an XML error.", pathableResourceManager.DataReader.GetPathRepresentation(), ex.LineNumber, ex.LinePosition);
             } catch (Exception ex) {
-                Logger.Warn(ex, "Could not load tacO overlay file {pathableResourceManager} from {xmlPackContentsType} due to an unexpected exception.", pathableResourceManager, xmlPackContents);
+                Logger.Warn(ex, "Could not load tacO overlay file {pathableResourceManager} due to an unexpected exception.", pathableResourceManager.DataReader.GetPathRepresentation());
             }
 
             if (packLoaded) {
+                int currentPathablesCount = this.Pathables.Count;
+
                 TryLoadCategories(packDocument);
                 TryLoadPOIs(packDocument, pathableResourceManager, Categories);
+
+                Logger.Info("{pathableDelta} pathables were loaded from {pathableResourceManager}.", this.Pathables.Count - currentPathablesCount, pathableResourceManager.DataReader.GetPathRepresentation());
             }
         }
 
-        private static void TryLoadCategories(XmlDocument packDocument) {
-            var categoryNodes = packDocument.DocumentElement?.SelectNodes("/OverlayData/MarkerCategory");
-            if (categoryNodes == null) return;
+        private void TryLoadCategories(NanoXmlDocument packDocument) {
+            var categoryNodes = packDocument.RootNode.SelectNodes("markercategory");
 
-            foreach (XmlNode categoryNode in categoryNodes) {
-                Builders.PathingCategoryBuilder.UnpackCategory(categoryNode, Categories);
+            for (int i = 0; i < categoryNodes.Length; i++) {
+                Builders.PathingCategoryBuilder.UnpackCategory(categoryNodes[i], Categories);
             }
         }
 
-        private static void TryLoadPOIs(XmlDocument packDocument, PathableResourceManager pathableResourceManager, PathingCategory rootCategory) {
-            var poiNodes = packDocument.DocumentElement?.SelectSingleNode("/OverlayData/POIs");
-            if (poiNodes == null) return;
+        private void TryLoadPOIs(NanoXmlDocument packDocument, PathableResourceManager pathableResourceManager, PathingCategory rootCategory) {
+            var poisNodes = packDocument.RootNode.SelectNodes("pois");
 
-            Logger.Info("Found {poiCount} markers to load.", poiNodes.ChildNodes.Count);
+            for (int pSet = 0; pSet < poisNodes.Length; pSet++) {
+                //ref var poisNode = ref poisNodes[pSet];
+                var poisNode = poisNodes[pSet];
 
-            foreach (XmlNode poiNode in poiNodes) {
-                Builders.PoiBuilder.UnpackPathable(poiNode, pathableResourceManager, rootCategory);
+                Logger.Info("Found {poiCount} POIs to load.", poisNode.SubNodes.Count());
+
+                for (int i = 0; i < poisNode.SubNodes.Count; i++) {
+                    Builders.PoiBuilder.UnpackPathable(poisNode.SubNodes[i], pathableResourceManager, rootCategory);
+                }
             }
         }
 
-        private static string SanitizeXml(string xmlDoc) {
-            // TODO: Ask Tekkit (and others) to fix syntax
-            // FYI, '>' does not need to be encoded in attribute values
-            return xmlDoc
-                  .Replace("& ", "&amp; ") // Space added to avoid replacing correctly encoded attribute values
-                  .Replace("=\"<", "=\"&lt;")
-                  .Replace("*", "")
-                  .Replace("0behavior", "behavior");
+        /// <inheritdoc />
+        public void Dispose() {
+            this.Pathables.Clear();
+            this.Categories.Clear();
         }
 
     }

@@ -16,6 +16,7 @@ using Blish_HUD.Pathing;
 using Blish_HUD.Pathing.Content;
 using Blish_HUD.PersistentStore;
 using Blish_HUD.Settings;
+using Markers_and_Paths_Module.PackFormat.TacO.Readers;
 
 namespace Markers_and_Paths_Module {
 
@@ -40,6 +41,13 @@ namespace Markers_and_Paths_Module {
 
         private Store _pathableToggleStates;
 
+        internal MarkerPackReader _currentReader;
+
+        private CornerIcon _mapIcon;
+        private ContextMenuStrip _mapIconMenu;
+
+        private bool _packsLoaded;
+
         [ImportingConstructor]
         public MarkersAndPathsModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) {
             ModuleInstance = this;
@@ -55,44 +63,68 @@ namespace Markers_and_Paths_Module {
             _moduleControls = new List<Control>();
             _pathableToggleStates = GameService.Store.RegisterStore(this.Namespace);
 
-            _onNewMapLoaded = delegate { PackFormat.TacO.Readers.MarkerPackReader.UpdatePathableStates(); };
-            GameService.Pathing.NewMapLoaded += _onNewMapLoaded;
+            _mapIcon = new CornerIcon() {
+                BasicTooltipText = "Markers & Paths",
+                Icon             = ContentsManager.GetTexture("marker-pathing-icon.png"),
+                Priority         = "Markers & Paths".GetHashCode(),
+                Parent           = GameService.Graphics.SpriteScreen
+            };
+
+            _onNewMapLoaded = delegate {
+                if (this.Loaded && _packsLoaded) {
+                    _currentReader?.UpdatePathableStates();
+                }
+            };
+
+            _mapIconMenu = new ContextMenuStrip();
+
+            _mapIcon.Click += delegate { _mapIconMenu.Show(_mapIcon); };
+
+            var loadingMenuItem = _mapIconMenu.AddMenuItem("Loading...");
+            loadingMenuItem.Enabled = false;
         }
 
         protected override async Task LoadAsync() {
             GameService.Debug.StartTimeFunc("Markers and Paths");
 
             LoadPacks();
-            BuildCategoryMenus();
+            BuildMenu();
             
-            Logger.Info("Loaded {pathableCount} markers!", PackFormat.TacO.Readers.MarkerPackReader.Pathables.Count);
+            Logger.Info("Loaded {pathableCount} markers!", _currentReader.Pathables.Count);
         }
 
         private List<PathableResourceManager> _allPathableResourceManagers;
 
         private void LoadPacks() {
+            _currentReader = new MarkerPackReader();
+
             _allPathableResourceManagers = new List<PathableResourceManager>();
 
-            var iconProgressIndicator = new Progress<string>((report) => { GameService.Pathing.Icon.LoadingMessage = report; });
+            var iconProgressIndicator = new Progress<string>((report) => { _mapIcon.LoadingMessage = report; });
 
             var dirDataReader      = new DirectoryReader(_markerDirectory);
             var dirResourceManager = new PathableResourceManager(dirDataReader);
             _allPathableResourceManagers.Add(dirResourceManager);
             dirDataReader.LoadOnFileType((Stream fileStream, IDataReader dataReader) => {
-                PackFormat.TacO.Readers.MarkerPackReader.ReadFromXmlPack(fileStream, dirResourceManager);
+                _currentReader.ReadFromXmlPack(fileStream, dirResourceManager);
             }, ".xml", iconProgressIndicator);
 
-            // TODO: Cleanup
-            string[] packFiles = Directory.GetFiles(_markerDirectory, "*.zip", SearchOption.AllDirectories);
-            foreach (string packFile in packFiles) {
+            // Load archive marker packs
+            List<string> zipPackFiles = new List<string>();
+            zipPackFiles.AddRange(Directory.GetFiles(_markerDirectory, "*.zip",  SearchOption.AllDirectories));
+            zipPackFiles.AddRange(Directory.GetFiles(_markerDirectory, "*.taco", SearchOption.AllDirectories));
+
+            foreach (string packFile in zipPackFiles) {
                 // Potentially contains many packs within
                 var zipDataReader      = new ZipArchiveReader(packFile);
                 var zipResourceManager = new PathableResourceManager(zipDataReader);
                 _allPathableResourceManagers.Add(zipResourceManager);
                 zipDataReader.LoadOnFileType((Stream fileStream, IDataReader dataReader) => {
-                    PackFormat.TacO.Readers.MarkerPackReader.ReadFromXmlPack(fileStream, zipResourceManager);
+                    _currentReader.ReadFromXmlPack(fileStream, zipResourceManager);
                 }, ".xml", iconProgressIndicator);
             }
+
+            _packsLoaded = true;
         }
 
         private void AddCategoryToMenuStrip(ContextMenuStrip parentMenuStrip, PackFormat.TacO.PathingCategory newCategory) {
@@ -124,56 +156,108 @@ namespace Markers_and_Paths_Module {
             }
         }
 
-        private void BuildCategoryMenus() {
-            GameService.Pathing.Icon.LoadingMessage = "Building category menus...";
-
-            GameService.Overlay.QueueMainThreadUpdate((gameTime) => {
-                var rootCategoryMenu = new ContextMenuStrip();
-
-                _moduleControls.Add(rootCategoryMenu);
-
-                var allMarkersCMS = new ContextMenuStripItem() {
-                    Text     = "All markers",
-                    Submenu  = rootCategoryMenu,
-                    CanCheck = false
-                };
-
-                _moduleControls.Add(allMarkersCMS);
-
-                foreach (var childCategory in PackFormat.TacO.Readers.MarkerPackReader.Categories) {
-                    AddCategoryToMenuStrip(rootCategoryMenu, childCategory);
-                }
-
-                allMarkersCMS.Parent = GameService.Pathing.IconContextMenu;
-            });
+        private void ClearMenu() {
+            foreach (var control in _mapIconMenu.Children.ToArray()) {
+                control.Dispose();
+            }
         }
 
-        protected override void OnModuleLoaded(EventArgs e) {
-            GameService.Pathing.Icon.LoadingMessage = null;
+        private void BuildMenu() {
+            ClearMenu();
+
+            BuildCategoryMenus();
+            BuildOptionMenus();
+        }
+
+        private void BuildOptionMenus() {
+            var reloadMarkersItem = _mapIconMenu.AddMenuItem("Reload All");
+
+            reloadMarkersItem.Click += delegate {
+                ClearMenu();
+
+                UnloadAllPathables();
+
+                var loadTask = Task.Factory.StartNew(LoadAsync, TaskCreationOptions.LongRunning);
+                loadTask.ContinueWith((taskResult) => { GameService.Overlay.QueueMainThreadUpdate((gameTime) => { FinalizeLoad(); }); });
+            };
+        }
+
+        private void BuildCategoryMenus() {
+            _mapIcon.LoadingMessage = "Building category menus...";
+
+            var rootCategoryMenu = new ContextMenuStrip();
+
+            _moduleControls.Add(rootCategoryMenu);
+
+            var allMarkersCMS = new ContextMenuStripItem() {
+                Text     = "All markers",
+                Submenu  = rootCategoryMenu,
+                CanCheck = false
+            };
+
+            _moduleControls.Add(allMarkersCMS);
+
+            foreach (var childCategory in _currentReader.Categories) {
+                AddCategoryToMenuStrip(rootCategoryMenu, childCategory);
+            }
+
+            allMarkersCMS.Parent = _mapIconMenu;
+        }
+
+        private void FinalizeLoad() {
+            _mapIcon.LoadingMessage = null;
 
             _allPathableResourceManagers.ForEach(GameService.Pathing.RegisterPathableResourceManager);
 
+            _currentReader.UpdatePathableStates();
+            GameService.Pathing.NewMapLoaded += _onNewMapLoaded;
+
             GameService.Debug.StopTimeFuncAndOutput("Markers and Paths");
-            
-            PackFormat.TacO.Readers.MarkerPackReader.UpdatePathableStates();
+        }
+
+        protected override void OnModuleLoaded(EventArgs e) {
+            FinalizeLoad();
 
             base.OnModuleLoaded(e);
         }
 
-        protected override void Unload() {
-            ModuleInstance = null;
+        private void UnloadAllPathables() {
+            _packsLoaded = false;
 
-            GameService.Pathing.NewMapLoaded -= _onNewMapLoaded;
-            _moduleControls.ForEach(c => c.Dispose());
-            _moduleControls.Clear();
+            // Unregister all pathable resource managers
             _allPathableResourceManagers.ForEach(GameService.Pathing.UnregisterPathableResourceManager);
 
-            foreach (IPathable<Entity> pathable in PackFormat.TacO.Readers.MarkerPackReader.Pathables) {
+            // Unregister all pathables
+            foreach (IPathable<Entity> pathable in _currentReader.Pathables) {
                 GameService.Pathing.UnregisterPathable(pathable);
             }
 
-            PackFormat.TacO.Readers.MarkerPackReader.Pathables.Clear();
-            PackFormat.TacO.Readers.MarkerPackReader.Categories.Clear();
+            // Dispose all pathable resource managers
+            _allPathableResourceManagers.ForEach(m => m.Dispose());
+
+            // Dipose marker pack reader
+            _currentReader.Dispose();
+            _currentReader = null;
+        }
+
+        protected override void Unload() {
+            // Unsubscribe from events
+            GameService.Pathing.NewMapLoaded -= _onNewMapLoaded;
+
+            // Dispose all controls
+            _moduleControls.ForEach(c => c.Dispose());
+            _moduleControls.Clear();
+            _mapIcon.Dispose();
+            _mapIconMenu.Dispose();
+
+            _mapIcon     = null;
+            _mapIconMenu = null;
+
+            // Unload and dispose all loaded pathables
+            UnloadAllPathables();
+
+            // Release static reference to this module instance
+            ModuleInstance = null;
         }
 
 

@@ -6,10 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using Blish_HUD;
+using Blish_HUD.Pathing;
 using Blish_HUD.Pathing.Content;
 
 namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
-    public class TacOTrailPathable : LoadedTrailPathable, ITacOPathable {
+    public sealed class TacOTrailPathable : LoadedTrailPathable, ITacOPathable {
 
         private const float DEFAULT_TRAILSCALE = 1f;
         private const float DEFAULT_ANIMATIONSPEED = 0.5f;
@@ -53,20 +55,18 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
             set => SetProperty(ref _trlFilePath, value);
         }
 
-        private readonly XmlNode _sourceNode;
-        private PathingCategory _rootCategory;
+        private readonly PathableAttributeCollection _sourceAttributes;
+        private readonly PathingCategory             _rootCategory;
 
-        public TacOTrailPathable(XmlNode sourceNode, PathableResourceManager pathableResourceManager, PathingCategory rootCategory) : base(pathableResourceManager) {
-            _sourceNode = sourceNode;
-            _rootCategory = rootCategory;
+        public TacOTrailPathable(PathableAttributeCollection sourceAttributes, PathableResourceManager pathableResourceManager, PathingCategory rootCategory) : base(pathableResourceManager) {
+            _sourceAttributes = sourceAttributes;
+            _rootCategory     = rootCategory;
 
             BeginLoad();
         }
 
-        // TODO: Use this method as an opportunity to convert attributes to some sort of IPathingAttribute to keep things
-        // consistent between imported file formats
         protected override void BeginLoad() {
-            LoadAttributes(_sourceNode);
+            LoadAttributes(_sourceAttributes);
         }
 
         protected override void PrepareAttributes() {
@@ -77,46 +77,46 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
                               attribute => (!string.IsNullOrEmpty(this.Type = attribute.Value.Trim())),
                               false);
 
-            // TrailData
-            RegisterAttribute("trailData",
+            // [Required] TrailData
+            RegisterAttribute("traildata",
                               attribute => (!string.IsNullOrEmpty(this.TrlFilePath = attribute.Value.Trim())),
                               true);
 
             // Alpha (alias:Opacity)
-            RegisterAttribute("alpha", delegate (XmlAttribute attribute) {
-                if (!float.TryParse(attribute.Value, NumberStyles.Any, CultureInfo.InvariantCulture, out float fOut)) return false;
+            RegisterAttribute("alpha", delegate (PathableAttribute attribute) {
+                if (!InvariantUtil.TryParseFloat(attribute.Value, out float fOut)) return false;
 
                 this.Opacity = fOut;
                 return true;
             });
 
             // FadeNear
-            RegisterAttribute("fadeNear", delegate (XmlAttribute attribute) {
-                if (!float.TryParse(attribute.Value, NumberStyles.Any, CultureInfo.InvariantCulture, out float fOut)) return false;
+            RegisterAttribute("fadenear", delegate (PathableAttribute attribute) {
+                if (!InvariantUtil.TryParseFloat(attribute.Value, out float fOut)) return false;
 
                 this.FadeNear = fOut;
                 return true;
             });
 
             // FadeFar
-            RegisterAttribute("fadeFar", delegate (XmlAttribute attribute) {
-                if (!float.TryParse(attribute.Value, NumberStyles.Any, CultureInfo.InvariantCulture, out float fOut)) return false;
+            RegisterAttribute("fadefar", delegate (PathableAttribute attribute) {
+                if (!InvariantUtil.TryParseFloat(attribute.Value, out float fOut)) return false;
 
                 this.FadeFar = fOut;
                 return true;
             });
 
             // AnimationSpeed
-            RegisterAttribute("animSpeed", delegate (XmlAttribute attribute) {
-                if (!float.TryParse(attribute.Value, NumberStyles.Any, CultureInfo.InvariantCulture, out float fOut)) return false;
+            RegisterAttribute("animspeed", delegate (PathableAttribute attribute) {
+                if (!InvariantUtil.TryParseFloat(attribute.Value, out float fOut)) return false;
 
                 this.ManagedEntity.AnimationSpeed = fOut;
                 return true;
             });
 
             // TrailScale
-            RegisterAttribute("trailScale", delegate (XmlAttribute attribute) {
-                if (!float.TryParse(attribute.Value, NumberStyles.Any, CultureInfo.InvariantCulture, out float fOut)) return false;
+            RegisterAttribute("trailscale", delegate (PathableAttribute attribute) {
+                if (!InvariantUtil.TryParseFloat(attribute.Value, out float fOut)) return false;
 
                 this.Scale = fOut;
                 return true;
@@ -126,8 +126,8 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
 
         protected override bool FinalizeAttributes(Dictionary<string, LoadedPathableAttributeDescription> attributeLoaders) {
             // Process attributes from type category first
-            if (_category?.SourceXmlNode?.Attributes != null) {
-                ProcessAttributes(_category.SourceXmlNode.Attributes);
+            if (_category != null) {
+                ProcessAttributes(_category.Attributes);
             }
 
             _category?.AddPathable(this);
