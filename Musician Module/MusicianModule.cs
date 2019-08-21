@@ -224,11 +224,10 @@ namespace Musician_Module
                 var melody = new SheetButton
                 {
                     Parent = melodyPanel,
-                    Icon = GameService.Content.GetTexture(@"instruments\" + sheet.Instrument.ToLower()),
+                    Icon = ContentsManager.GetTexture(@"instruments\" + sheet.Instrument.ToLower() + ".png"),
                     IconSize = DetailsIconSize.Small,
                     Artist = sheet.Artist,
                     Title = sheet.Title,
-                    // TODO: Use ApiService to get fixed, non-editable account name for User.
                     User = sheet.User,
                     MusicSheet = sheet
                 };
@@ -353,7 +352,6 @@ namespace Musician_Module
                 Parent = composerPanel
             };
 
-            // TODO: Make this a non-editable Label and get account name from ApiService.
             var userTextBox = new TextBox
             {
                 Size = new Point(150, 20),
@@ -423,7 +421,6 @@ namespace Musician_Module
                 Parent = composerPanel
             };
 
-            // TODO: Upload button. Upload method that validates music sheet (=> valid account name etc.)
             var saveBttn = new StandardButton()
             {
                 Text = "Save",
