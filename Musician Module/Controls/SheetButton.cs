@@ -66,7 +66,7 @@ namespace Musician_Module.Controls {
             GlowPlaySprite = GlowPlaySprite ?? MusicianModule.ModuleInstance.ContentsManager.GetTexture("glow_play.png");
             BackgroundSprite = BackgroundSprite ?? ContentService.Textures.Pixel;
             DividerSprite = DividerSprite ?? ContentService.Content.GetTexture("157218");
-            IconBoxSprite = IconBoxSprite ?? ContentService.Content.GetTexture("605003");
+            IconBoxSprite = IconBoxSprite ?? ContentService.Content.GetTexture(@"controls\detailsbutton\605003");
             this.MouseMoved += SheetButton_MouseMoved;
             this.MouseLeft += SheetButton_MouseLeft;
             this.Size = new Point(SHEETBUTTON_WIDTH, SHEETBUTTON_HEIGHT);
