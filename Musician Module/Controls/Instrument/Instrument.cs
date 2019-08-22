@@ -13,20 +13,30 @@ namespace Musician_Module.Controls.Instrument
         DecreaseOctave,
         StopPlaying
     }
+    public enum InstrumentMode
+    {
+        None,
+        Preview,
+        Practice,
+        Emulate
+    }
     public abstract class Instrument
     {
-        public readonly IKeyboard PreviewKeyboard;
-        public IKeyboard Keyboard { get; set; }
-        public Instrument(IKeyboard previewkeyboard)
-        {
-            PreviewKeyboard = previewkeyboard;
+        protected IKeyboard PreviewKeyboard;
+        protected IKeyboard PracticeKeyboard;
+        protected IKeyboard EmulatedKeyboard;
+        public InstrumentMode Mode { get; set; }
+
+        public Instrument(){
+            PracticeKeyboard = new KeyboardPractice();
+            EmulatedKeyboard = new Keyboard();
         }
         public bool IsInstrument(string instrument) {
             return string.Equals(this.GetType().Name, instrument, StringComparison.OrdinalIgnoreCase);
         }
         protected virtual void PressKey(GuildWarsControls key, string octave)
         {
-            if (Keyboard is KeyboardPractice)
+            if (Mode == InstrumentMode.Practice)
             {
                 InstrumentSkillType noteType;
                 switch (key)
@@ -42,9 +52,18 @@ namespace Musician_Module.Controls.Instrument
                         break;
                 }
                 MusicianModule.ModuleInstance.Conveyor.SpawnNoteBlock(key, noteType, Note.OctaveColors[octave]);
+
+            } else if (Mode == InstrumentMode.Emulate) {
+
+                EmulatedKeyboard.Press(key);
+                EmulatedKeyboard.Release(key);
+
+            } else if (Mode == InstrumentMode.Preview) {
+
+                PreviewKeyboard.Press(key);
+                PreviewKeyboard.Release(key);
+
             }
-            Keyboard.Press(key);
-            Keyboard.Release(key);
         }
         public abstract void PlayNote(Note note);
         public abstract void GoToOctave(Note note);

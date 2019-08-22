@@ -16,6 +16,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Musician_Module.Controls;
 using Musician_Module.Notation.Persistance;
 using Musician_Module.Player;
+using Musician_Module.Controls.Instrument;
 
 namespace Musician_Module
 {
@@ -53,7 +54,7 @@ namespace Musician_Module
         };
 
         private WindowTab MusicianTab;
-        private MusicPlayer MusicPlayer;
+        public MusicPlayer MusicPlayer;
         private HealthPoolButton StopButton;
         private XmlMusicSheetReader xmlParser;
         private List<SheetButton> displayedSheets;
@@ -223,11 +224,10 @@ namespace Musician_Module
                 var melody = new SheetButton
                 {
                     Parent = melodyPanel,
-                    Icon = GameService.Content.GetTexture(@"instruments\" + sheet.Instrument.ToLower()),
+                    Icon = ContentsManager.GetTexture(@"instruments\" + sheet.Instrument.ToLower() + ".png"),
                     IconSize = DetailsIconSize.Small,
                     Artist = sheet.Artist,
                     Title = sheet.Title,
-                    // TODO: Use ApiService to get fixed, non-editable account name for User.
                     User = sheet.User,
                     MusicSheet = sheet
                 };
@@ -240,7 +240,7 @@ namespace Musician_Module
                         GameService.Overlay.BlishHudWindow.Hide();
                         MusicPlayer = MusicPlayerFactory.Create(
                             melody.MusicSheet,
-                            KeyboardType.Practice
+                            InstrumentMode.Preview
                         );
                         MusicPlayer.Worker.Start();
                         Conveyor.Visible = true;
@@ -252,7 +252,7 @@ namespace Musician_Module
                         GameService.Overlay.BlishHudWindow.Hide();
                         MusicPlayer = MusicPlayerFactory.Create(
                             melody.MusicSheet,
-                            KeyboardType.Emulated
+                            InstrumentMode.Emulate
                         );
                         MusicPlayer.Worker.Start();
                         StopButton.Visible = true;
@@ -269,7 +269,7 @@ namespace Musician_Module
                             melody.IsPreviewing = true;
                             MusicPlayer = MusicPlayerFactory.Create(
                                 melody.MusicSheet,
-                                KeyboardType.Preview
+                                InstrumentMode.Preview
                             );
                             MusicPlayer.Worker.Start();
                         }
@@ -352,7 +352,6 @@ namespace Musician_Module
                 Parent = composerPanel
             };
 
-            // TODO: Make this a non-editable Label and get account name from ApiService.
             var userTextBox = new TextBox
             {
                 Size = new Point(150, 20),
@@ -422,7 +421,6 @@ namespace Musician_Module
                 Parent = composerPanel
             };
 
-            // TODO: Upload button. Upload method that validates music sheet (=> valid account name etc.)
             var saveBttn = new StandardButton()
             {
                 Text = "Save",

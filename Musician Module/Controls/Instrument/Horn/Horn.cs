@@ -23,7 +23,7 @@ namespace Musician_Module.Controls.Instrument
             {HornNote.Keys.Note8, GuildWarsControls.UtilitySkill2}
         };
         private HornNote.Octaves CurrentOctave = HornNote.Octaves.Low;
-        public Horn(IKeyboard previewkeyboard) : base(previewkeyboard) { /** NOOP **/ }
+        public Horn() { this.PreviewKeyboard = new HornPreview(); }
         public override void PlayNote(Note note)
         {
             var hornNote = HornNote.From(note);
