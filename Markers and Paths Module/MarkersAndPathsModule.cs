@@ -64,10 +64,9 @@ namespace Markers_and_Paths_Module {
             _pathableToggleStates = GameService.Store.RegisterStore(this.Namespace);
 
             _mapIcon = new CornerIcon() {
-                BasicTooltipText = "Markers & Paths",
-                Icon             = ContentsManager.GetTexture("marker-pathing-icon.png"),
-                Priority         = "Markers & Paths".GetHashCode(),
-                Parent           = GameService.Graphics.SpriteScreen
+                IconName = "Markers & Paths",
+                Icon     = ContentsManager.GetTexture("marker-pathing-icon.png"),
+                Priority = "Markers & Paths".GetHashCode()
             };
 
             _onNewMapLoaded = delegate {
