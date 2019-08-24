@@ -71,10 +71,10 @@ namespace Universal_Search_Module {
 
         protected override async Task LoadAsync() {
             _searchIcon = new CornerIcon() {
-                Icon             = ContentsManager.GetTexture(@"textures\landmark-search.png"),
-                HoverIcon        = ContentsManager.GetTexture(@"textures\landmark-search-hover.png"),
-                BasicTooltipText = "Landmark Search",
-                Priority         = 5
+                IconName  = "Landmark Search",
+                Icon      = ContentsManager.GetTexture(@"textures\landmark-search.png"),
+                HoverIcon = ContentsManager.GetTexture(@"textures\landmark-search-hover.png"),
+                Priority  = 5
             };
 
             GameService.Debug.StartTimeFunc($"Loading all items");
@@ -99,12 +99,6 @@ namespace Universal_Search_Module {
             GameService.Debug.StopTimeFuncAndOutput($"Loading all items");
 
             _searchIcon.Click += delegate { _searchWindow.ToggleWindow(); };
-        }
-
-        protected override void OnModuleLoaded(EventArgs e) {
-            
-
-            base.OnModuleLoaded(e);
         }
 
         protected override void Update(GameTime gameTime) {
