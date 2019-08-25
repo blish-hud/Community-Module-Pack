@@ -4,13 +4,13 @@ using Blish_HUD.Controls.Intern;
 using Musician_Module.Player.Sound;
 namespace Musician_Module.Controls.Instrument
 {
-    public class FlutePreview : IKeyboard
+    public class FlutePreview : IInstrumentPreview
     {
         private FluteNote.Octaves _octave = FluteNote.Octaves.Low;
 
         private readonly FluteSoundRepository _soundRepository = new FluteSoundRepository();
 
-        public void Press(GuildWarsControls key)
+        public void PlaySoundByKey(GuildWarsControls key)
         {
             switch (key)
             {
@@ -42,8 +42,6 @@ namespace Musician_Module.Controls.Instrument
                     throw new ArgumentOutOfRangeException();
             }
         }
-
-        public void Release(GuildWarsControls key){}
 
         private void IncreaseOctave()
         {

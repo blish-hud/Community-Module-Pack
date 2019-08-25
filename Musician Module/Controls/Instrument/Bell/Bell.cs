@@ -23,7 +23,7 @@ namespace Musician_Module.Controls.Instrument
             {BellNote.Keys.Note8, GuildWarsControls.UtilitySkill2}
         };
         private BellNote.Octaves CurrentOctave = BellNote.Octaves.Low;
-        public Bell() { this.PreviewKeyboard = new BellPreview(); }
+        public Bell() { this.Preview = new BellPreview(); }
         public override void PlayNote(Note note)
         {
             var bellNote = BellNote.From(note);

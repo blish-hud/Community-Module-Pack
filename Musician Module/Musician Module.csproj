@@ -87,6 +87,7 @@
     <Compile Include="Controls\Instrument\Bell\BellNote.cs" />
     <Compile Include="Controls\Instrument\Bell\BellPreview.cs" />
     <Compile Include="Controls\Instrument\Bell\BellSoundRepository.cs" />
+    <Compile Include="Controls\Instrument\IInstrumentPreview.cs" />
     <Compile Include="Controls\Instrument\Flute\Flute.cs" />
     <Compile Include="Controls\Instrument\Flute\FluteNote.cs" />
     <Compile Include="Controls\Instrument\Flute\FlutePreview.cs" />
@@ -100,7 +101,6 @@
     <Compile Include="Controls\Instrument\Horn\HornPreview.cs" />
     <Compile Include="Controls\Instrument\Horn\HornSoundRepository.cs" />
     <Compile Include="Controls\Instrument\Instrument.cs" />
-    <Compile Include="Controls\Instrument\KeyboardPractice.cs" />
     <Compile Include="Controls\Instrument\Lute\Lute.cs" />
     <Compile Include="Controls\Instrument\Lute\LuteNote.cs" />
     <Compile Include="Controls\Instrument\Lute\LutePreview.cs" />

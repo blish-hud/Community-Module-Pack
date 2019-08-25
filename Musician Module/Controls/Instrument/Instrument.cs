@@ -2,6 +2,8 @@
 using Musician_Module.Domain.Values;
 using Blish_HUD;
 using Blish_HUD.Controls.Intern;
+using System.Collections.Generic;
+using Blish_HUD.Controls.Extern;
 
 namespace Musician_Module.Controls.Instrument
 {
@@ -20,17 +22,26 @@ namespace Musician_Module.Controls.Instrument
         Practice,
         Emulate
     }
+
     public abstract class Instrument
     {
-        protected IKeyboard PreviewKeyboard;
-        protected IKeyboard PracticeKeyboard;
-        protected IKeyboard EmulatedKeyboard;
+        protected static readonly Dictionary<GuildWarsControls, VirtualKeyShort> VirtualKeyShorts = new Dictionary<GuildWarsControls, VirtualKeyShort>
+        {
+            {GuildWarsControls.WeaponSkill1, VirtualKeyShort.KEY_1},
+            {GuildWarsControls.WeaponSkill2, VirtualKeyShort.KEY_2},
+            {GuildWarsControls.WeaponSkill3, VirtualKeyShort.KEY_3},
+            {GuildWarsControls.WeaponSkill4, VirtualKeyShort.KEY_4},
+            {GuildWarsControls.WeaponSkill5, VirtualKeyShort.KEY_5},
+            {GuildWarsControls.HealingSkill, VirtualKeyShort.KEY_6},
+            {GuildWarsControls.UtilitySkill1, VirtualKeyShort.KEY_7},
+            {GuildWarsControls.UtilitySkill2, VirtualKeyShort.KEY_8},
+            {GuildWarsControls.UtilitySkill3, VirtualKeyShort.KEY_9},
+            {GuildWarsControls.EliteSkill, VirtualKeyShort.KEY_0}
+        };
+
+        protected IInstrumentPreview Preview;
         public InstrumentMode Mode { get; set; }
 
-        public Instrument(){
-            PracticeKeyboard = new KeyboardPractice();
-            EmulatedKeyboard = new Keyboard();
-        }
         public bool IsInstrument(string instrument) {
             return string.Equals(this.GetType().Name, instrument, StringComparison.OrdinalIgnoreCase);
         }
@@ -55,13 +66,12 @@ namespace Musician_Module.Controls.Instrument
 
             } else if (Mode == InstrumentMode.Emulate) {
 
-                EmulatedKeyboard.Press(key);
-                EmulatedKeyboard.Release(key);
+                Keyboard.Press(VirtualKeyShorts[key]);
+                Keyboard.Release(VirtualKeyShorts[key]);
 
             } else if (Mode == InstrumentMode.Preview) {
 
-                PreviewKeyboard.Press(key);
-                PreviewKeyboard.Release(key);
+                Preview.PlaySoundByKey(key);
 
             }
         }

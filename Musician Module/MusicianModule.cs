@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Controls;
@@ -10,7 +8,6 @@ using Blish_HUD.Input;
 using Blish_HUD.Modules;
 using Blish_HUD.Settings;
 using Blish_HUD.Modules.Managers;
-using Gw2Sharp.WebApi.V2.Models;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Musician_Module.Controls;

@@ -24,7 +24,7 @@ namespace Musician_Module.Controls.Instrument
             {BassNote.Keys.Note8, GuildWarsControls.UtilitySkill2}
         };
         private BassNote.Octaves CurrentOctave = BassNote.Octaves.Low;
-        public Bass() { this.PreviewKeyboard = new BassPreview(); }
+        public Bass() { this.Preview = new BassPreview(); }
         public override void PlayNote(Note note)
         {
             var bassNote = BassNote.From(note);
