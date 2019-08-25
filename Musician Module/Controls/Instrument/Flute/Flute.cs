@@ -24,7 +24,7 @@ namespace Musician_Module.Controls.Instrument
             {FluteNote.Keys.Note8, GuildWarsControls.UtilitySkill2}
         };
         private FluteNote.Octaves CurrentOctave = FluteNote.Octaves.Low;
-        public Flute() { this.PreviewKeyboard = new FlutePreview(); }
+        public Flute() { this.Preview = new FlutePreview(); }
         public override void PlayNote(Note note)
         {
             var fluteNote = FluteNote.From(note);
@@ -143,13 +143,13 @@ namespace Musician_Module.Controls.Instrument
 
             } else if (Mode == InstrumentMode.Emulate) {
 
-                EmulatedKeyboard.Press(key);
-                EmulatedKeyboard.Release(key);
+                Keyboard.Press(VirtualKeyShorts[key]);
+                Keyboard.Release(VirtualKeyShorts[key]);
 
             } else if (Mode == InstrumentMode.Preview) {
 
-                PreviewKeyboard.Press(key);
-                PreviewKeyboard.Release(key);
+                Preview.PlaySoundByKey(key);
+
             }
         }
     }

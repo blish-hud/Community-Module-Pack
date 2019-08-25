@@ -4,13 +4,13 @@ using Blish_HUD.Controls.Intern;
 using Musician_Module.Player.Sound;
 namespace Musician_Module.Controls.Instrument
 {
-    public class HornPreview : IKeyboard
+    public class HornPreview : IInstrumentPreview
     {
         private HornNote.Octaves _octave = HornNote.Octaves.Middle;
 
         private readonly HornSoundRepository _soundRepository = new HornSoundRepository();
 
-        public void Press(GuildWarsControls key)
+        public void PlaySoundByKey(GuildWarsControls key)
         {
             switch (key)
             {
@@ -35,8 +35,6 @@ namespace Musician_Module.Controls.Instrument
                     throw new ArgumentOutOfRangeException();
             }
         }
-
-        public void Release(GuildWarsControls key){}
 
         private void IncreaseOctave()
         {

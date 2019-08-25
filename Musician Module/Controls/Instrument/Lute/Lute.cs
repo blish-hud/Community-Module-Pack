@@ -23,7 +23,7 @@ namespace Musician_Module.Controls.Instrument
             {LuteNote.Keys.Note8, GuildWarsControls.UtilitySkill2}
         };
         private LuteNote.Octaves CurrentOctave = LuteNote.Octaves.Low;
-        public Lute() { this.PreviewKeyboard = new LutePreview(); }
+        public Lute() { this.Preview = new LutePreview(); }
         public override void PlayNote(Note note)
         {
             var luteNote = LuteNote.From(note);

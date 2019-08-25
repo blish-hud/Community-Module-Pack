@@ -22,7 +22,7 @@ namespace Musician_Module.Controls.Instrument
             {HarpNote.Keys.Note8, GuildWarsControls.UtilitySkill2}
         };
         private HarpNote.Octaves CurrentOctave = HarpNote.Octaves.Middle;
-        public Harp() { this.PreviewKeyboard = new HarpPreview(); }
+        public Harp() { this.Preview = new HarpPreview(); }
         public override void PlayNote(Note note)
         {
             var harpNote = HarpNote.From(note);
