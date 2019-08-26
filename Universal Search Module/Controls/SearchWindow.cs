@@ -105,52 +105,52 @@ namespace Universal_Search_Module.Controls {
             };
 
             var ttDetailsInfHint1 = new Label() {
-                Text = "Enter: Copy landmark to clipboard.",
-                Font = Content.DefaultFont16,
-                Location = new Point(10, _ttDetailsName.Bottom + 5),
-                TextColor = Color.White,
-                ShowShadow = true,
-                AutoSizeWidth = true,
+                Text           = "Enter: Copy landmark to clipboard.",
+                Font           = Content.DefaultFont16,
+                Location       = new Point(10, _ttDetailsName.Bottom + 5),
+                TextColor      = Color.White,
+                ShowShadow     = true,
+                AutoSizeWidth  = true,
                 AutoSizeHeight = true,
-                Parent = _resultDetails
+                Parent         = _resultDetails
             };
 
             var ttDetailsInf1 = new Label() {
-                Text = "Closest Waypoint",
-                Font = Content.DefaultFont16,
-                Location = new Point(10, ttDetailsInfHint1.Bottom + 12),
-                Height = 11,
-                TextColor = ContentService.Colors.Chardonnay,
-                ShadowColor = Color.Black,
-                ShowShadow = true,
-                AutoSizeWidth = true,
+                Text           = "Closest Waypoint",
+                Font           = Content.DefaultFont16,
+                Location       = new Point(10, ttDetailsInfHint1.Bottom + 12),
+                Height         = 11,
+                TextColor      = ContentService.Colors.Chardonnay,
+                ShadowColor    = Color.Black,
+                ShowShadow     = true,
+                AutoSizeWidth  = true,
                 AutoSizeHeight = true,
-                Parent = _resultDetails
+                Parent         = _resultDetails
             };
 
             _ttDetailsInfRes1 = new Label() {
-                Text = " ",
-                Font = Content.DefaultFont14,
-                Location = new Point(10, ttDetailsInf1.Bottom + 5),
-                TextColor = Color.White,
-                ShadowColor = Color.Black,
-                ShowShadow = true,
-                AutoSizeWidth = true,
+                Text           = " ",
+                Font           = Content.DefaultFont14,
+                Location       = new Point(10, ttDetailsInf1.Bottom + 5),
+                TextColor      = Color.White,
+                ShadowColor    = Color.Black,
+                ShowShadow     = true,
+                AutoSizeWidth  = true,
                 AutoSizeHeight = true,
-                Parent = _resultDetails
+                Parent         = _resultDetails
             };
 
             var ttDetailsInfHint2 = new Label() {
-                Text = "Shift + Enter: Copy closest waypoint to clipboard.",
-                Font = Content.DefaultFont14,
-                Location = new Point(10, _ttDetailsInfRes1.Bottom + 5),
-                TextColor = Color.White,
-                ShadowColor = Color.Black,
-                ShowShadow = true,
-                AutoSizeWidth = true,
+                Text           = "Shift + Enter: Copy closest waypoint to clipboard.",
+                Font           = Content.DefaultFont14,
+                Location       = new Point(10, _ttDetailsInfRes1.Bottom + 5),
+                TextColor      = Color.White,
+                ShadowColor    = Color.Black,
+                ShowShadow     = true,
+                AutoSizeWidth  = true,
                 AutoSizeHeight = true,
-                Visible = false,
-                Parent = _resultDetails
+                Visible        = false,
+                Parent         = _resultDetails
             };
 
             _spinner = new LoadingSpinner() {
@@ -160,7 +160,8 @@ namespace Universal_Search_Module.Controls {
             };
 
             _noneLabel = new Label() {
-                Size                = ContentRegion.Size,
+                Size                = ContentRegion.Size - new Point(0, TextBox.Standard.Size.Y * 2),
+                Location            = new Point(0, TextBox.Standard.Size.Y),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Visible             = false,
                 Text                = "No Results",
