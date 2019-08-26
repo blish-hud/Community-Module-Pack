@@ -67,6 +67,7 @@ namespace Loading_Screen_Hints_Module.Controls {
         private string SelectedNarration;
         private string SelectedSource;
         private BitmapFont Font = GameService.Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size18, ContentService.FontStyle.Regular);
+        private BitmapFont SourceFont = GameService.Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size16, ContentService.FontStyle.Italic);
         public float ReadingTime { get; private set; }
         public Narration(int rnd) {
             var split = Narratives[rnd].Split('|');
@@ -83,12 +84,12 @@ namespace Loading_Screen_Hints_Module.Controls {
 
             string citation = DrawUtil.WrapText(this.Font, SelectedNarration, this.Width - LoadScreenPanel.RIGHT_PADDING);
             string sourceBind = "— ";
-            int srcBindWidth = (int)this.Font.MeasureString(sourceBind).Width;
-            int srcBindHeight = (int)this.Font.MeasureString(sourceBind).Height;
-            string source = DrawUtil.WrapText(this.Font, SelectedSource, centerRight / 2);
+            int srcBindWidth = (int)this.SourceFont.MeasureString(sourceBind).Width;
+            int srcBindHeight = (int)this.SourceFont.MeasureString(sourceBind).Height;
+            string source = DrawUtil.WrapText(this.SourceFont, SelectedSource, centerRight / 2);
 
-            int srcHeight = (int)this.Font.MeasureString(source).Height;
-            int srcWidth = (int)this.Font.MeasureString(source).Width;
+            int srcHeight = (int)this.SourceFont.MeasureString(source).Height;
+            int srcWidth = (int)this.SourceFont.MeasureString(source).Width;
             var srcCenter = new Point(center.X - (srcWidth / 2), center.Y - (srcHeight / 2));
 
             int textHeight = (int)this.Font.MeasureString(citation).Height + srcHeight;
@@ -98,10 +99,10 @@ namespace Loading_Screen_Hints_Module.Controls {
 
             int srcPaddingY = textCenter.Y + (textHeight / 2) + (this.Font.LineHeight);
             int srcBindPaddingX = centerRight - (srcWidth / 2) - srcBindWidth;
-            spriteBatch.DrawStringOnCtrl(this, sourceBind, this.Font, new Rectangle(srcBindPaddingX, srcPaddingY, srcBindWidth, srcBindHeight), Color.White, false, true, 2, left, top);
+            spriteBatch.DrawStringOnCtrl(this, sourceBind, this.SourceFont, new Rectangle(srcBindPaddingX, srcPaddingY, srcBindWidth, srcBindHeight), Color.White, false, true, 2, left, top);
 
             int srcPaddingX = centerRight - (srcWidth / 2);
-            spriteBatch.DrawStringOnCtrl(this, source, this.Font, new Rectangle(srcPaddingX, srcPaddingY, srcWidth, srcHeight), Color.White, false, true, 2, left, top);
+            spriteBatch.DrawStringOnCtrl(this, source, this.SourceFont, new Rectangle(srcPaddingX, srcPaddingY, srcWidth, srcHeight), Color.White, false, true, 2, left, top);
         }
     }
 }
