@@ -76,7 +76,7 @@
   <ItemGroup>
     <Compile Include="Controls\SearchWindow.cs" />
     <Compile Include="Controls\SearchResultItem.cs" />
-    <Compile Include="FileApiExtension.cs" />
+    <Compile Include="WebImgUtil.cs" />
     <Compile Include="LandmarkUtil.cs" />
     <Compile Include="StringUtil.cs" />
     <Compile Include="UniversalSearchModule.cs" />
