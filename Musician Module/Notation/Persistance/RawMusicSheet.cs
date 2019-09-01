@@ -7,10 +7,10 @@ namespace Musician_Module.Notation.Persistance
             Artist = artist;
             Title = title;
             User = user;
-            Instrument = instrument.ToLower();
+            Instrument = instrument.ToLowerInvariant();
             Tempo = tempo;
             Melody = melody;
-            Algorithm = algorithm.ToLower();
+            Algorithm = algorithm.ToLowerInvariant();
             Meter = meter;
         }
         public string Artist { get; private set; }
