@@ -102,7 +102,7 @@ namespace Discord_Rich_Presence_Module {
                                                                    ? _mapOverrides[GameService.Player.Map.Id.ToString()]
                                                                    : DiscordUtil.GetDiscordSafeString(GameService.Player.Map.Name), 32),
                     LargeImageText = DiscordUtil.TruncateLength(GameService.Player.Map.Name,                                         128),
-                    SmallImageKey  = DiscordUtil.TruncateLength(((MapType) GameService.Player.MapType).ToString().ToLower(),         32),
+                    SmallImageKey  = DiscordUtil.TruncateLength(((MapType) GameService.Player.MapType).ToString().ToLowerInvariant(),         32),
                     SmallImageText = DiscordUtil.TruncateLength(((MapType) GameService.Player.MapType).ToString().Replace("_", " "), 128)
                 },
                 Timestamps = new Timestamps() {

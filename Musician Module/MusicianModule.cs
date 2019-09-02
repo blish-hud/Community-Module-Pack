@@ -221,7 +221,7 @@ namespace Musician_Module
                 var melody = new SheetButton
                 {
                     Parent = melodyPanel,
-                    Icon = ContentsManager.GetTexture(@"instruments\" + sheet.Instrument.ToLower() + ".png"),
+                    Icon = ContentsManager.GetTexture(@"instruments\" + sheet.Instrument.ToLowerInvariant() + ".png"),
                     IconSize = DetailsIconSize.Small,
                     Artist = sheet.Artist,
                     Title = sheet.Title,

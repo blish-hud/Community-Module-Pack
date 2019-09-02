@@ -76,7 +76,7 @@ namespace NanoXml {
             // COMPAT: Tekkit packs have 0 before behavior in some places
             return str.Replace("*", "")
                       .TrimStart('0')
-                      .ToLower();
+                      .ToLowerInvariant();
         }
 
         protected static string CleanValue(string str) {
