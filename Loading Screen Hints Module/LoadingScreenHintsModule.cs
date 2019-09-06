@@ -74,7 +74,14 @@ namespace Loading_Screen_Hints_Module {
             }
             else
             {
-                if (LoadScreenPanel != null && LoadScreenPanel.Fade == null) { LoadScreenPanel.FadeOut(); }
+                if (LoadScreenPanel != null && LoadScreenPanel.Fade == null) {
+                    if (LoadScreenPanel.Opacity == 0.0f) {
+                        LoadScreenPanel.Dispose();
+                        LoadScreenPanel = null;
+                    } else {
+                        LoadScreenPanel.FadeOut();
+                    }
+                }
                 Created = false;
             }
         }

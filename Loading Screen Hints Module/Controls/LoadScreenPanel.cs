@@ -40,6 +40,8 @@ namespace Loading_Screen_Hints_Module.Controls {
         }
         public void FadeOut() {
 
+            if (Opacity != 1.0f) return;
+
             float duration = 2.0f;
 
             if (LoadScreenTip != null) {
@@ -69,9 +71,11 @@ namespace Loading_Screen_Hints_Module.Controls {
             });
         }
         private void OnLeftMouseButtonReleased(object sender, MouseEventArgs e) {
+            if (Opacity != 1.0f) return;
             AnimationService.Animation.Tweener.Tween(this, new { Opacity = 0.0f }, 0.2f);
         }
         private void OnRightMouseButtonReleased(object sender, MouseEventArgs e) {
+            if (Opacity != 0.0f) return;
             AnimationService.Animation.Tweener.Tween(this, new { Opacity = 1.0f }, 0.2f);
         }
         private void OnDisposed(object sender, EventArgs e)
