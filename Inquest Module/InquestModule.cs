@@ -215,7 +215,6 @@ namespace Inquest_Module
         {
             // Unload
             QueueAbort = true;
-            QueueWorker.Abort();
             foreach (Control c in _moduleControls)
             {
                 if (c != null) c.Dispose();
@@ -223,6 +222,7 @@ namespace Inquest_Module
             if (DeceiverPanel != null) { DeceiverPanel.Dispose(); DeceiverPanel = null; }
             if (EmotePanel != null) { EmotePanel.Dispose(); EmotePanel = null; }
             if (QueuePanel != null) { QueuePanel.Dispose(); QueuePanel = null; }
+            if (QueueWorker != null) { QueueWorker.Abort(); QueueWorker = null; }
             InquestIcon.Dispose();
             // All static members must be manually unset
             ModuleInstance = null;

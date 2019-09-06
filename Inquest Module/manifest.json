@@ -1,11 +1,11 @@
 {
   "name": "Inquest Chipset",
-  "version": "0.1.0",
+  "version": "0.8.5",
   "namespace": "bh.general.Inquest",
   "package": "Inquest Module.dll",
   "manifest_version": 1,
 
-  "description": "Circuits with functionality used by the Asuran Inquisition.",
+  "description": "Circuits with functionality used by the Asuran Inquisition (Emote Panel, Kill Proof Deceiver, Map Instance Queue).",
   "dependencies": {
     "bh.blishhud": ">=0.4.2"
   },
