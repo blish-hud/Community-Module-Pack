@@ -1,0 +1,16 @@
+{
+  "name": "Inquest Chipset",
+  "version": "0.1.0",
+  "namespace": "bh.general.Inquest",
+  "package": "Inquest Module.dll",
+  "manifest_version": 1,
+
+  "description": "Circuits with functionality used by the Asuran Inquisition.",
+  "dependencies": {
+    "bh.blishhud": ">=0.4.2"
+  },
+  "url": "https://github.com/blish-hud",
+  "author": {
+    "name": "Andy"
+  }
+}

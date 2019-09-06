@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Discord Rich Presence Modul
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Universal Search Module", "Universal Search Module\Universal Search Module.csproj", "{B7515421-CC85-4CB1-9EE3-F526B4509D60}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inquest Module", "Inquest Module\Inquest Module.csproj", "{FEC31CE0-4539-4A1B-A633-78E3BDBD8C56}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +81,12 @@ Global
 		{B7515421-CC85-4CB1-9EE3-F526B4509D60}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B7515421-CC85-4CB1-9EE3-F526B4509D60}.Release|x64.ActiveCfg = Release|x64
 		{B7515421-CC85-4CB1-9EE3-F526B4509D60}.Release|x64.Build.0 = Release|x64
+		{FEC31CE0-4539-4A1B-A633-78E3BDBD8C56}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{FEC31CE0-4539-4A1B-A633-78E3BDBD8C56}.Debug|x64.ActiveCfg = Debug|x64
+		{FEC31CE0-4539-4A1B-A633-78E3BDBD8C56}.Debug|x64.Build.0 = Debug|x64
+		{FEC31CE0-4539-4A1B-A633-78E3BDBD8C56}.Release|Any CPU.ActiveCfg = Release|x64
+		{FEC31CE0-4539-4A1B-A633-78E3BDBD8C56}.Release|x64.ActiveCfg = Release|x64
+		{FEC31CE0-4539-4A1B-A633-78E3BDBD8C56}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
