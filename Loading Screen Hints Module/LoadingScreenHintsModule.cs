@@ -28,6 +28,9 @@ namespace Loading_Screen_Hints_Module {
         internal DirectoriesManager DirectoriesManager => this.ModuleParameters.DirectoriesManager;
         internal Gw2ApiManager      Gw2ApiManager      => this.ModuleParameters.Gw2ApiManager;
 
+        // Settings
+        private SettingEntry<HashSet<int>[]> SeenHints;
+
         // Controls
         private LoadScreenPanel LoadScreenPanel;
         private bool Created;
@@ -45,14 +48,16 @@ namespace Loading_Screen_Hints_Module {
             ModuleInstance = this;
         }
 
-        protected override void DefineSettings(SettingCollection settings) { /** NOOP **/ }
+        protected override void DefineSettings(SettingCollection settings) {
+            SeenHints = settings.DefineSetting<HashSet<int>[]>("SeenHints", new HashSet<int>[3], "PreviousHints", "Previously Seen Hints");
+        }
 
         protected override void Initialize() {
             this.Randomize = new Random();
             this.ShuffledHints = new HashSet<int>();
-            this.SeenGamingTips = new HashSet<int>();
-            this.SeenNarrations = new HashSet<int>();
-            this.SeenGuessCharacters = new HashSet<int>();
+            this.SeenGamingTips = SeenHints.Value[0] != null ? SeenHints.Value[0] : new HashSet<int>();
+            this.SeenNarrations = SeenHints.Value[1] != null ? SeenHints.Value[1] : new HashSet<int>();
+            this.SeenGuessCharacters = SeenHints.Value[2] != null ? SeenHints.Value[2] : new HashSet<int>();
         }
 
         protected override async Task LoadAsync() { /** NOOP **/ }
@@ -79,7 +84,9 @@ namespace Loading_Screen_Hints_Module {
 
             if (LoadScreenPanel != null) { LoadScreenPanel.Dispose(); }
         }
-
+        private void Save() {
+            SeenHints.Value = new HashSet<int>[] { SeenGamingTips, SeenNarrations, SeenGuessCharacters };
+        }
         public void NextHint()
         {
             if (LoadScreenPanel != null) { LoadScreenPanel.Dispose(); }
@@ -147,6 +154,7 @@ namespace Loading_Screen_Hints_Module {
                 default:
                     throw new NotSupportedException();
             }
+            this.Save();
         }
     }
 }

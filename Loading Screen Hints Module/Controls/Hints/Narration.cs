@@ -79,8 +79,8 @@ namespace Loading_Screen_Hints_Module.Controls {
             var center = new Point(this.Size.X / 2, this.Size.Y / 2);
             int centerRight = center.X + (center.X / 2);
 
-            var left = HorizontalAlignment.Center;
-            var top = VerticalAlignment.Top;
+            var alignCenter = HorizontalAlignment.Center;
+            var alignTop = VerticalAlignment.Top;
 
             string citation = DrawUtil.WrapText(this.Font, SelectedNarration, this.Width - LoadScreenPanel.RIGHT_PADDING);
             string sourceBind = "— ";
@@ -95,14 +95,14 @@ namespace Loading_Screen_Hints_Module.Controls {
             int textHeight = (int)this.Font.MeasureString(citation).Height + srcHeight;
             int textWidth = (int)this.Font.MeasureString(citation).Width;
             var textCenter = new Point(center.X - (textWidth / 2), center.Y - (textHeight / 2));
-            spriteBatch.DrawStringOnCtrl(this, citation, this.Font, new Rectangle(textCenter.X, textCenter.Y, textWidth, textHeight), Color.White, false, true, 2, left, top);
+            spriteBatch.DrawStringOnCtrl(this, citation, this.Font, new Rectangle(textCenter.X, textCenter.Y, textWidth, textHeight), Color.White, false, true, 2, alignCenter, alignTop);
 
             int srcPaddingY = textCenter.Y + (textHeight / 2) + (this.Font.LineHeight);
             int srcBindPaddingX = centerRight - (srcWidth / 2) - srcBindWidth;
-            spriteBatch.DrawStringOnCtrl(this, sourceBind, this.SourceFont, new Rectangle(srcBindPaddingX, srcPaddingY, srcBindWidth, srcBindHeight), Color.White, false, true, 2, left, top);
+            spriteBatch.DrawStringOnCtrl(this, sourceBind, this.SourceFont, new Rectangle(srcBindPaddingX, srcPaddingY, srcBindWidth, srcBindHeight), Color.White, false, true, 2, alignCenter, alignTop);
 
             int srcPaddingX = centerRight - (srcWidth / 2);
-            spriteBatch.DrawStringOnCtrl(this, source, this.SourceFont, new Rectangle(srcPaddingX, srcPaddingY, srcWidth, srcHeight), Color.White, false, true, 2, left, top);
+            spriteBatch.DrawStringOnCtrl(this, source, this.SourceFont, new Rectangle(srcPaddingX, srcPaddingY, srcWidth, srcHeight), Color.White, false, true, 2, HorizontalAlignment.Left, alignTop);
         }
     }
 }
