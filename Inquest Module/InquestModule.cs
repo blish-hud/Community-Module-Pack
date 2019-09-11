@@ -202,7 +202,7 @@ namespace Inquest_Module
             if (SurrenderButton != null)
             {
                 SurrenderButton.Visible = GameService.GameIntegration.IsInGame;
-                SurrenderButton.Location = new Point(GameService.Graphics.SpriteScreen.Width / 2 - (SurrenderButton.Width / 2) - 380, GameService.Graphics.SpriteScreen.Height - (SurrenderButton.Height * 4));
+                SurrenderButton.Location = new Point(GameService.Graphics.SpriteScreen.Width / 2 - (SurrenderButton.Width / 2) + 431, GameService.Graphics.SpriteScreen.Height - (SurrenderButton.Height * 2) + 7);
             }
 
             if (!GameService.GameIntegration.IsInGame)
@@ -261,46 +261,32 @@ namespace Inquest_Module
             var surrenderButton = new Image()
             {
                 Parent = GameService.Graphics.SpriteScreen,
-                Size = new Point(32, 32),
-                Location = new Point(GameService.Graphics.SpriteScreen.Width / 2 - 16, GameService.Graphics.SpriteScreen.Height - 64),
+                Size = new Point(45, 45),
+                Location = new Point(GameService.Graphics.SpriteScreen.Width / 2 - 22, GameService.Graphics.SpriteScreen.Height - 45),
                 Texture = ContentsManager.GetTexture("surrender_flag.png"),
-                SpriteBatchParameters = new SpriteBatchParameters(),
                 Visible = GameService.GameIntegration.IsInGame,
                 BasicTooltipText = "/surrender"
             };
-            surrenderButton.SpriteBatchParameters.BlendState = BlendState.NonPremultiplied;
             surrenderButton.MouseEntered += delegate
             {
-                var glow = GameService.Content.ContentManager.Load<Effect>(@"effects\glow");
-                glow.Parameters["TextureWidth"].SetValue((float)surrenderButton.Width);
-                glow.Parameters["GlowColor"].SetValue(Color.White.ToVector4());
-                if (surrenderButton.SpriteBatchParameters == null) {
-                    surrenderButton.SpriteBatchParameters = new SpriteBatchParameters();
-                    surrenderButton.SpriteBatchParameters.BlendState = BlendState.NonPremultiplied;
-                }
-                surrenderButton.SpriteBatchParameters.Effect = glow;
+                surrenderButton.Texture = ContentsManager.GetTexture("surrender_flag_hover.png");
             };
             surrenderButton.MouseLeft += delegate
             {
-                if (surrenderButton.SpriteBatchParameters != null && surrenderButton.SpriteBatchParameters.Effect != null) { surrenderButton.SpriteBatchParameters.Effect = null; }
+                surrenderButton.Texture = ContentsManager.GetTexture("surrender_flag.png");
             };
             surrenderButton.LeftMouseButtonPressed += delegate
             {
                 surrenderButton.Size = new Point(surrenderButton.Size.X - 2, surrenderButton.Size.Y - 2);
                 surrenderButton.Location = new Point(surrenderButton.Location.X + 2, surrenderButton.Location.Y + 2);
-                if (surrenderButton.SpriteBatchParameters != null && surrenderButton.SpriteBatchParameters.Effect != null)
-                {
-                    surrenderButton.SpriteBatchParameters.Effect.Parameters["TextureWidth"].SetValue((float)surrenderButton.Width);
-                }
+                surrenderButton.Texture = ContentsManager.GetTexture("surrender_flag_pressed.png");
             };
             surrenderButton.LeftMouseButtonReleased += delegate
             {
                 surrenderButton.Size = new Point(surrenderButton.Size.X + 2, surrenderButton.Size.Y + 2);
                 surrenderButton.Location = new Point(surrenderButton.Location.X - 2, surrenderButton.Location.Y - 2);
-                if (surrenderButton.SpriteBatchParameters != null && surrenderButton.SpriteBatchParameters.Effect != null)
-                {
-                    surrenderButton.SpriteBatchParameters.Effect.Parameters["TextureWidth"].SetValue((float)surrenderButton.Width);
-                }
+                surrenderButton.Texture = ContentsManager.GetTexture("surrender_flag.png");
+
                 SendToChat("/gg");
             };
             return surrenderButton;
