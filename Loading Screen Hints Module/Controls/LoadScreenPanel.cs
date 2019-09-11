@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Controls;
+using Blish_HUD.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -33,9 +34,13 @@ namespace Loading_Screen_Hints_Module.Controls {
 
             Graphics.SpriteScreen.Resized += UpdateLocation;
             Disposed += OnDisposed;
-        }
 
+            LeftMouseButtonReleased += OnLeftMouseButtonReleased;
+            RightMouseButtonReleased += OnRightMouseButtonReleased;
+        }
         public void FadeOut() {
+
+            if (Opacity != 1.0f) return;
 
             float duration = 2.0f;
 
@@ -65,7 +70,14 @@ namespace Loading_Screen_Hints_Module.Controls {
                 Dispose();
             });
         }
-
+        private void OnLeftMouseButtonReleased(object sender, MouseEventArgs e) {
+            if (Opacity != 1.0f) return;
+            AnimationService.Animation.Tweener.Tween(this, new { Opacity = 0.0f }, 0.2f);
+        }
+        private void OnRightMouseButtonReleased(object sender, MouseEventArgs e) {
+            if (Opacity != 0.0f) return;
+            AnimationService.Animation.Tweener.Tween(this, new { Opacity = 1.0f }, 0.2f);
+        }
         private void OnDisposed(object sender, EventArgs e)
         {
             if (LoadScreenTip != null)
