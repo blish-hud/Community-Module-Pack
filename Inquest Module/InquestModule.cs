@@ -277,14 +277,12 @@ namespace Inquest_Module
             };
             surrenderButton.LeftMouseButtonPressed += delegate
             {
-                surrenderButton.Size = new Point(surrenderButton.Size.X - 2, surrenderButton.Size.Y - 2);
-                surrenderButton.Location = new Point(surrenderButton.Location.X + 2, surrenderButton.Location.Y + 2);
+                surrenderButton.Size = new Point(43, 43);
                 surrenderButton.Texture = ContentsManager.GetTexture("surrender_flag_pressed.png");
             };
             surrenderButton.LeftMouseButtonReleased += delegate
             {
-                surrenderButton.Size = new Point(surrenderButton.Size.X + 2, surrenderButton.Size.Y + 2);
-                surrenderButton.Location = new Point(surrenderButton.Location.X - 2, surrenderButton.Location.Y - 2);
+                surrenderButton.Size = new Point(45, 45);
                 surrenderButton.Texture = ContentsManager.GetTexture("surrender_flag.png");
 
                 SendToChat("/gg");
