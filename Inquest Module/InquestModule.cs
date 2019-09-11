@@ -39,6 +39,7 @@ namespace Inquest_Module
         private SettingEntry<bool> SkillFramesEnabled;
         private SettingEntry<Dictionary<string, bool>> SkillFramesSettings;
         private SettingEntry<bool> EmotePanelEnabled;
+        private SettingEntry<bool> SurrenderButtonEnabled;
         #endregion
 
         private List<Control> _moduleControls;
@@ -46,6 +47,7 @@ namespace Inquest_Module
         private Panel DeceiverPanel;
         private Panel QueuePanel;
         private Panel EmotePanel;
+        private Image SurrenderButton;
         private CornerIcon InquestIcon;
         private ContextMenuStrip InquestIconMenu;
         private Random Randomizer;
@@ -123,6 +125,8 @@ namespace Inquest_Module
             SkillFramesSettings = settings.DefineSetting<Dictionary<string, bool>>("SkillFramesSettings", new Dictionary<string, bool>());
 
             EmotePanelEnabled = settings.DefineSetting("EmotePanelEnabled", false, "Emote Panel.", "Express a variety of emotes in a press of a button.");
+
+            SurrenderButtonEnabled = settings.DefineSetting("SurrenderButtonEnabled", false, "Surrender Button.", "Send /gg by a press of the white surrender flag.");
         }
 
         protected override void Initialize(){
@@ -160,6 +164,7 @@ namespace Inquest_Module
             };
             if (KillProofDeceiverEnabled.Value) { DeceiverPanel = BuildDeceiverPanel(); }
             if (EmotePanelEnabled.Value) { EmotePanel = BuildEmotePanel(); }
+            if (SurrenderButtonEnabled.Value) { SurrenderButton = BuildSurrenderButton(); }
 
             InquestIconMenu = new ContextMenuStrip();
 
@@ -194,6 +199,12 @@ namespace Inquest_Module
                 EmotePanel.Visible = GameService.GameIntegration.IsInGame;
             }
 
+            if (SurrenderButton != null)
+            {
+                SurrenderButton.Visible = GameService.GameIntegration.IsInGame;
+                SurrenderButton.Location = new Point(GameService.Graphics.SpriteScreen.Width / 2 - (SurrenderButton.Width / 2) - 380, GameService.Graphics.SpriteScreen.Height - (SurrenderButton.Height * 4));
+            }
+
             if (!GameService.GameIntegration.IsInGame)
             {
                 if (!QueueAbort) {
@@ -221,6 +232,7 @@ namespace Inquest_Module
             }
             if (DeceiverPanel != null) { DeceiverPanel.Dispose(); DeceiverPanel = null; }
             if (EmotePanel != null) { EmotePanel.Dispose(); EmotePanel = null; }
+            if (SurrenderButton != null) { SurrenderButton.Dispose(); SurrenderButton = null; }
             if (QueuePanel != null) { QueuePanel.Dispose(); QueuePanel = null; }
             if (QueueWorker != null) { QueueWorker.Abort(); QueueWorker = null; }
             InquestIcon.Dispose();
@@ -243,6 +255,55 @@ namespace Inquest_Module
                 Keyboard.Press(VirtualKeyShort.RETURN, true);
                 Keyboard.Release(VirtualKeyShort.RETURN, true);
             });
+        }
+        private Image BuildSurrenderButton()
+        {
+            var surrenderButton = new Image()
+            {
+                Parent = GameService.Graphics.SpriteScreen,
+                Size = new Point(32, 32),
+                Location = new Point(GameService.Graphics.SpriteScreen.Width / 2 - 16, GameService.Graphics.SpriteScreen.Height - 64),
+                Texture = ContentsManager.GetTexture("surrender_flag.png"),
+                SpriteBatchParameters = new SpriteBatchParameters(),
+                Visible = GameService.GameIntegration.IsInGame,
+                BasicTooltipText = "/surrender"
+            };
+            surrenderButton.SpriteBatchParameters.BlendState = BlendState.NonPremultiplied;
+            surrenderButton.MouseEntered += delegate
+            {
+                var glow = GameService.Content.ContentManager.Load<Effect>(@"effects\glow");
+                glow.Parameters["TextureWidth"].SetValue((float)surrenderButton.Width);
+                glow.Parameters["GlowColor"].SetValue(Color.White.ToVector4());
+                if (surrenderButton.SpriteBatchParameters == null) {
+                    surrenderButton.SpriteBatchParameters = new SpriteBatchParameters();
+                    surrenderButton.SpriteBatchParameters.BlendState = BlendState.NonPremultiplied;
+                }
+                surrenderButton.SpriteBatchParameters.Effect = glow;
+            };
+            surrenderButton.MouseLeft += delegate
+            {
+                if (surrenderButton.SpriteBatchParameters != null && surrenderButton.SpriteBatchParameters.Effect != null) { surrenderButton.SpriteBatchParameters.Effect = null; }
+            };
+            surrenderButton.LeftMouseButtonPressed += delegate
+            {
+                surrenderButton.Size = new Point(surrenderButton.Size.X - 2, surrenderButton.Size.Y - 2);
+                surrenderButton.Location = new Point(surrenderButton.Location.X + 2, surrenderButton.Location.Y + 2);
+                if (surrenderButton.SpriteBatchParameters != null && surrenderButton.SpriteBatchParameters.Effect != null)
+                {
+                    surrenderButton.SpriteBatchParameters.Effect.Parameters["TextureWidth"].SetValue((float)surrenderButton.Width);
+                }
+            };
+            surrenderButton.LeftMouseButtonReleased += delegate
+            {
+                surrenderButton.Size = new Point(surrenderButton.Size.X + 2, surrenderButton.Size.Y + 2);
+                surrenderButton.Location = new Point(surrenderButton.Location.X - 2, surrenderButton.Location.Y - 2);
+                if (surrenderButton.SpriteBatchParameters != null && surrenderButton.SpriteBatchParameters.Effect != null)
+                {
+                    surrenderButton.SpriteBatchParameters.Effect.Parameters["TextureWidth"].SetValue((float)surrenderButton.Width);
+                }
+                SendToChat("/gg");
+            };
+            return surrenderButton;
         }
         private Panel BuildEmotePanel() {
             var emotePanel = new Panel() {
@@ -513,6 +574,25 @@ namespace Inquest_Module
                 }
             };
             _moduleControls.Add(emoteItem);
+
+            var surrenderItem = new ContextMenuStripItem()
+            {
+                Text = "Surrender Button",
+                CanCheck = true,
+                Checked = SurrenderButtonEnabled.Value,
+                Parent = InquestIconMenu
+            };
+            surrenderItem.CheckedChanged += delegate (object sender, CheckChangedEvent e) {
+                SurrenderButtonEnabled.Value = e.Checked;
+
+                if (e.Checked) {
+                    SurrenderButton = BuildSurrenderButton();
+                } else {
+                    SurrenderButton.Dispose();
+                    SurrenderButton = null;
+                }
+            };
+            _moduleControls.Add(surrenderItem);
 
             //BuildSkillFramesMenu();
         }
