@@ -17,6 +17,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
 
         private const string MARKERCATEGORY_NAME_ATTR        = "name";
         private const string MARKERCATEGORY_DISPLAYNAME_ATTR = "displayname";
+        private const string MARKERCATEGORY_ISSEPARATOR_ATTR = "isseparator";
 
         public static void UnpackCategory(NanoXmlNode categoryNode, PathingCategory categoryParent) {
             if (!string.Equals(categoryNode.Name, ELEMENT_CATEGORY, StringComparison.OrdinalIgnoreCase)) {
@@ -46,6 +47,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
                                    : parent.GetOrAddCategoryFromNamespace(categoryName);
 
             subjCategory.DisplayName = categoryNode.GetAttribute(MARKERCATEGORY_DISPLAYNAME_ATTR)?.Value;
+            subjCategory.IsSeparator = categoryNode.GetAttribute(MARKERCATEGORY_ISSEPARATOR_ATTR)?.Value == "1";
 
             subjCategory.SetAttributes(AttributeBuilder.FromNanoXmlNode(categoryNode));
 
