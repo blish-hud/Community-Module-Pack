@@ -134,8 +134,8 @@ namespace Markers_and_Paths_Module {
             StoreValue<bool> categoryStoreState = _pathableToggleStates.GetOrSetValue(newCategory.Namespace, true);
             newCategory.Visible = categoryStoreState.Value;
 
-            newCategoryMenuItem.CanCheck = true;
-            newCategoryMenuItem.Checked  = newCategory.Visible;
+            newCategoryMenuItem.CanCheck = !newCategory.IsSeparator;
+            newCategoryMenuItem.Checked  = newCategory.Visible && newCategoryMenuItem.CanCheck;
 
             newCategoryMenuItem.CheckedChanged += delegate(object sender, CheckChangedEvent e) {
                 newCategory.Visible = e.Checked;
