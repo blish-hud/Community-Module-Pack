@@ -15,9 +15,10 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
 
         private const string ELEMENT_CATEGORY = "markercategory";
 
-        private const string MARKERCATEGORY_NAME_ATTR        = "name";
-        private const string MARKERCATEGORY_DISPLAYNAME_ATTR = "displayname";
-        private const string MARKERCATEGORY_ISSEPARATOR_ATTR = "isseparator";
+        private const string MARKERCATEGORY_NAME_ATTR          = "name";
+        private const string MARKERCATEGORY_DISPLAYNAME_ATTR   = "displayname";
+        private const string MARKERCATEGORY_ISSEPARATOR_ATTR   = "isseparator";
+        private const string MARKERCATEGORY_DEFAULTTOGGLE_ATTR = "defaulttoggle";
 
         public static void UnpackCategory(NanoXmlNode categoryNode, PathingCategory categoryParent) {
             if (!string.Equals(categoryNode.Name, ELEMENT_CATEGORY, StringComparison.OrdinalIgnoreCase)) {
@@ -48,6 +49,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
 
             subjCategory.DisplayName = categoryNode.GetAttribute(MARKERCATEGORY_DISPLAYNAME_ATTR)?.Value;
             subjCategory.IsSeparator = categoryNode.GetAttribute(MARKERCATEGORY_ISSEPARATOR_ATTR)?.Value == "1";
+            subjCategory.DefaultToggle = categoryNode.GetAttribute(MARKERCATEGORY_DEFAULTTOGGLE_ATTR)?.Value != "0";
 
             subjCategory.SetAttributes(AttributeBuilder.FromNanoXmlNode(categoryNode));
 
