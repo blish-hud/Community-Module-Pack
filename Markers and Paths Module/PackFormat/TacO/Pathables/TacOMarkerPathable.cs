@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
+﻿using System.Collections.Generic;
 using Blish_HUD;
 using Blish_HUD.Pathing;
 using Blish_HUD.Pathing.Content;
@@ -19,15 +13,15 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
         private const float DEFAULT_HEIGHTOFFSET = 1.5f;
         private const float DEFAULT_ICONSIZE = 2f;
 
-        private string _type;
+        private string          _type;
         private PathingCategory _category;
-        private int _resetLength;
-        private bool _autoTrigger;
-        private bool _hasCountdown;
-        private float _triggerRange;
-        private int _tacOBehaviorId;
+        private int             _resetLength;
+        private bool            _autoTrigger  = false;
+        private bool            _hasCountdown = false;
+        private float           _triggerRange = 2.0f;
+        private int             _tacOBehaviorId;
 
-        private BasicTacOBehavior<ManagedPathable<Marker>, Marker> _tacOBehavior;
+        private TacOBehavior _tacOBehavior;
 
         public string Type {
             get => _type;
@@ -77,11 +71,13 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
             get => _tacOBehaviorId;
             set {
                 if (SetProperty(ref _tacOBehaviorId, value)) {
-                    //this.Behavior.Remove(_tacOBehavior);
+                    this.Behavior.Remove(_tacOBehavior);
 
-                    //_tacOBehavior = new BasicTacOBehavior<ManagedPathable<Marker>, Marker>(this, (TacOBehavior)_tacOBehaviorId);
+                    _tacOBehavior = TacOBehavior.FromBehaviorId(this, (TacOBehaviorId)_tacOBehaviorId);
 
-                    //this.Behavior.Add(_tacOBehavior);
+                    if (_tacOBehavior != null) {
+                        this.Behavior.Add(_tacOBehavior);
+                    }
                 }
             }
         }
@@ -93,7 +89,13 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
             _sourceAttributes = sourceAttributes;
             _rootCategory     = rootCategory;
 
+            this.PropertyChanged += TacOMarkerPathable_PropertyChanged;
+
             BeginLoad();
+        }
+
+        private void TacOMarkerPathable_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
+            _tacOBehavior?.PushPathableStateChange(e.PropertyName);
         }
 
         protected override void BeginLoad() {
@@ -155,13 +157,13 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
 
             // AutoTrigger
             RegisterAttribute("autoTrigger", delegate (PathableAttribute attribute) {
-                this.AutoTrigger = (attribute.Value == "0");
+                this.AutoTrigger = (attribute.Value == "1");
                 return true;
             });
 
-            // AutoTrigger
+            // HasCountdown
             RegisterAttribute("hasCountdown", delegate (PathableAttribute attribute) {
-                this.HasCountdown = (attribute.Value == "0");
+                this.HasCountdown = (attribute.Value == "1");
                 return true;
             });
 
@@ -173,7 +175,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
                 return true;
             });
 
-            // Taco Behavior
+            // TacO Behavior
             RegisterAttribute("behavior", delegate (PathableAttribute attribute) {
                 if (!InvariantUtil.TryParseInt(attribute.Value, out int iOut)) return false;
 

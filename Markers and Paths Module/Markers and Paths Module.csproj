@@ -49,7 +49,15 @@
     <Compile Include="Library\NanoXml\NanoXmlNode.cs" />
     <Compile Include="Library\NanoXml\NanoXmlParsingException.cs" />
     <Compile Include="MarkersAndPathsModule.cs" />
-    <Compile Include="PackFormat\TacO\Behavior\BasicTacOBehavior.cs" />
+    <Compile Include="PackFormat\TacO\Behavior\AlwaysVisible_0.cs" />
+    <Compile Include="PackFormat\TacO\Behavior\OnlyVisibleBeforeActivation_3.cs" />
+    <Compile Include="PackFormat\TacO\Behavior\ReappearAfterTimer_4.cs" />
+    <Compile Include="PackFormat\TacO\Behavior\ReappearOnDailyReset_2.cs" />
+    <Compile Include="PackFormat\TacO\Behavior\ReappearOnMapChange_1.cs" />
+    <Compile Include="PackFormat\TacO\Behavior\TacOActivatedBehaviorImpl.cs" />
+    <Compile Include="PackFormat\TacO\Behavior\TacOBehavior.cs" />
+    <Compile Include="PackFormat\TacO\Behavior\TacOBehaviorId.cs" />
+    <Compile Include="PackFormat\TacO\Behavior\TacOInteractBehaviorImpl.cs" />
     <Compile Include="PackFormat\TacO\Builders\AttributeBuilder.cs" />
     <Compile Include="PackFormat\TacO\Builders\PathingCategoryBuilder.cs" />
     <Compile Include="PackFormat\TacO\Builders\PoiBuilder.cs" />
@@ -59,6 +67,7 @@
     <Compile Include="PackFormat\TacO\PathingCategory.cs" />
     <Compile Include="PackFormat\TacO\Readers\MarkerPackReader.cs" />
     <Compile Include="PackFormat\TacO\Readers\TrlReader.cs" />
+    <Compile Include="PackFormat\TacO\Utils\AttributeReaderUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
