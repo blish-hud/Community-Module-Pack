@@ -84,7 +84,7 @@ namespace Markers_and_Paths_Module {
         }
 
         protected override async Task LoadAsync() {
-            GameService.Debug.StartTimeFunc("Markers and Paths");
+            //GameService.Debug.StartTimeFunc("Markers and Paths");
 
             LoadPacks();
             BuildMenu();
@@ -211,7 +211,7 @@ namespace Markers_and_Paths_Module {
             _currentReader.UpdatePathableStates();
             GameService.Pathing.NewMapLoaded += _onNewMapLoaded;
 
-            GameService.Debug.StopTimeFuncAndOutput("Markers and Paths");
+            //GameService.Debug.StopTimeFuncAndOutput("Markers and Paths");
         }
 
         protected override void OnModuleLoaded(EventArgs e) {
