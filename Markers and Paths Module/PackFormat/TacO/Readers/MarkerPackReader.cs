@@ -17,9 +17,9 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
 
         private static readonly Logger Logger = Logger.GetLogger(typeof(MarkerPackReader));
 
-        internal readonly PathingCategory Categories = new PathingCategory("root") { Visible = true };
+        public readonly PathingCategory Categories = new PathingCategory("root") { Visible = true };
 
-        internal readonly SynchronizedCollection<IPathable<Entity>> Pathables = new SynchronizedCollection<IPathable<Entity>>();
+        public readonly SynchronizedCollection<IPathable<Entity>> Pathables = new SynchronizedCollection<IPathable<Entity>>();
 
         public void RegisterPathable(IPathable<Entity> pathable) {
             if (pathable == null) return;
