@@ -106,6 +106,7 @@ namespace Loading_Screen_Hints_Module.Controls {
             CharacterImage.SpriteBatchParameters.BlendState = BlendState.NonPremultiplied;
             Result = false;
         }
+
         protected override void Paint(SpriteBatch spriteBatch, Rectangle bounds) {
             var center = new Point(this.Size.X / 2, this.Size.Y / 2);
             int centerLeft = center.X / 2;

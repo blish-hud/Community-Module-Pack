@@ -18,7 +18,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
         private const string ELEMENT_POITYPE_ROUTE = "route";
 
         public static void UnpackPathable(NanoXmlNode pathableNode, PathableResourceManager pathableResourceManager, PathingCategory rootCategory) {
-            switch (pathableNode.Name.ToLower()) {
+            switch (pathableNode.Name.ToLowerInvariant()) {
                 case ELEMENT_POITYPE_POI:
                     var poiAttributes = AttributeBuilder.FromNanoXmlNode(pathableNode);
 

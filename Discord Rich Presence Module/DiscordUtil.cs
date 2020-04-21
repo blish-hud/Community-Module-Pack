@@ -15,7 +15,7 @@ namespace Discord_Rich_Presence_Module {
         }
 
         public static string GetDiscordSafeString(string text) {
-            return Regex.Replace(text.Replace(":", "").Trim(), @"[^a-zA-Z]+", "_").ToLower();
+            return Regex.Replace(text.Replace(":", "").Trim(), @"[^a-zA-Z]+", "_").ToLowerInvariant();
         }
 
     }

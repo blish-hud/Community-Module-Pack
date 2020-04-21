@@ -56,7 +56,7 @@ namespace Loading_Screen_Hints_Module.Controls {
             "Across Tyria, one can find, aside from non-interactable cats, a number of cats and kittens that will accept certain food items, ingredients, or other specific items; some under specific circumstances.",
             "A red bar under your skills indicates that your target is too far away for your skill to reach.",
             "Mounts' health, stamina and engage skill damage are all separate and independent from the player's gear.",
-            "Mounts' have additional action abilities which are bindable in your keyboard options. These allow many maneuver and ways of traversing.",
+            "Mounts have additional action abilities which are bindable in your keyboard options. These allow many maneuver and ways of traversing.",
             "Moving the mouse pointer over each entry in the legend of your map will make any revealed point or scout pointing to not yet revealed renown hearts flash on the map, making them much easier to find.",
             "The LFG search bar allows to concatenate filters using whitespace as a separator. A minus (-) preceding a word will remove any party or squad listing containing the given word.",
             "You can also write \"consume\" or other parts of an item's type into the search box of your inventory or vault.",

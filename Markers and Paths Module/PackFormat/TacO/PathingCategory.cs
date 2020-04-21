@@ -105,6 +105,19 @@ namespace Markers_and_Paths_Module.PackFormat.TacO {
             }
         }
 
+        private bool _isSeparator = false;
+        public bool IsSeparator
+        {
+            get => _isSeparator;
+            set {
+                if (_isSeparator == value) return;
+
+                _isSeparator = value;
+                _visible = !value;  // Separators should not contain visible nodes
+                UpdatePathableState();
+            }
+        }
+
         private readonly PathableAttributeCollection _attributes = new PathableAttributeCollection();
         public PathableAttributeCollection Attributes {
             get {
