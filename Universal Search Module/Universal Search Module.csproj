@@ -76,7 +76,6 @@
   <ItemGroup>
     <Compile Include="Controls\SearchWindow.cs" />
     <Compile Include="Controls\SearchResultItem.cs" />
-    <Compile Include="WebImgUtil.cs" />
     <Compile Include="LandmarkUtil.cs" />
     <Compile Include="StringUtil.cs" />
     <Compile Include="UniversalSearchModule.cs" />
@@ -106,6 +105,9 @@
     <None Include="BuildScripts\_DoNotModify.txt" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="AsyncClipboardService">
+      <Version>1.7.1</Version>
+    </PackageReference>
     <PackageReference Include="Costura.Fody">
       <Version>4.0.0</Version>
     </PackageReference>
