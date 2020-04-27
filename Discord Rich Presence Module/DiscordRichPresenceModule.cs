@@ -72,10 +72,10 @@ namespace Discord_Rich_Presence_Module {
 
         protected override async Task LoadAsync() {
             // Update character name
-            GameService.Player.CharacterNameChanged += delegate { UpdateDetails(); };
+            GameService.Gw2Mumble.PlayerCharacter.NameChanged += delegate { UpdateDetails(); };
 
             // Update map
-            GameService.Player.MapChanged += delegate { UpdateDetails(); };
+            GameService.Gw2Mumble.CurrentMap.MapChanged += delegate { UpdateDetails(); };
 
             // Initiate presence when the game is opened
             GameService.GameIntegration.Gw2Started += delegate { InitRichPresence(); };
@@ -87,15 +87,13 @@ namespace Discord_Rich_Presence_Module {
         }
 
         private void UpdateDetails() {
-            if (GameService.Player.Map == null) return;
-
-            Logger.Debug($"Player changed maps to '{GameService.Player.Map.Name}' ({GameService.Player.Map.Id}).");
+            if (GameService.Gw2Mumble.CurrentMap.Id <= 0) return;
 
             // rpcClient *shouldn't* be null at this point unless a rare race condition occurs
             // In the event that this occurs, it'll be resolved by the next loop
             _rpcClient?.SetPresence(new RichPresence() {
                 // Truncate length (requirements: https://discordapp.com/developers/docs/rich-presence/how-to)
-                Details = DiscordUtil.TruncateLength(GameService.Player.CharacterName,    128),
+                Details = DiscordUtil.TruncateLength(GameService.Gw2Mumble.PlayerCharacter.Name, 128),
                 State   = DiscordUtil.TruncateLength($"in {GameService.Player.Map.Name}", 128),
                 Assets = new Assets() {
                     LargeImageKey = DiscordUtil.TruncateLength(_mapOverrides.ContainsKey(GameService.Player.Map.Id.ToString())
