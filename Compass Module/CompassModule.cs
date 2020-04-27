@@ -86,17 +86,17 @@ namespace Compass_Module {
         }
 
         private void UpdateBillboardPosition() {
-            _northBb.Position = GameService.Player.Position + new Vector3(0, 1 + _settingCompassRadius.Value, _settingVerticalOffset.Value);
-            _eastBb.Position  = GameService.Player.Position + new Vector3(1    + _settingCompassRadius.Value, 0,                                _settingVerticalOffset.Value);
-            _southBb.Position = GameService.Player.Position + new Vector3(0,                                  -1 - _settingCompassRadius.Value, _settingVerticalOffset.Value);
-            _westBb.Position  = GameService.Player.Position + new Vector3(-1                                     - _settingCompassRadius.Value, 0, _settingVerticalOffset.Value);
+            _northBb.Position = GameService.Gw2Mumble.PlayerCharacter.Position + new Vector3(0, 1 + _settingCompassRadius.Value, _settingVerticalOffset.Value);
+            _eastBb.Position  = GameService.Gw2Mumble.PlayerCharacter.Position + new Vector3(1    + _settingCompassRadius.Value, 0,                                _settingVerticalOffset.Value);
+            _southBb.Position = GameService.Gw2Mumble.PlayerCharacter.Position + new Vector3(0,                                  -1 - _settingCompassRadius.Value, _settingVerticalOffset.Value);
+            _westBb.Position  = GameService.Gw2Mumble.PlayerCharacter.Position + new Vector3(-1                                     - _settingCompassRadius.Value, 0, _settingVerticalOffset.Value);
         }
 
         private void UpdateBillboardOpacity() {
-            _northBb.Opacity = Math.Min(1 - GameService.Camera.Forward.Y, 1f);
-            _eastBb.Opacity  = Math.Min(1 - GameService.Camera.Forward.X, 1f);
-            _southBb.Opacity = Math.Min(1 + GameService.Camera.Forward.Y, 1f);
-            _westBb.Opacity  = Math.Min(1 + GameService.Camera.Forward.X, 1f);
+            _northBb.Opacity = Math.Min(1 - GameService.Gw2Mumble.PlayerCamera.Forward.Y, 1f);
+            _eastBb.Opacity  = Math.Min(1 - GameService.Gw2Mumble.PlayerCamera.Forward.X, 1f);
+            _southBb.Opacity = Math.Min(1 + GameService.Gw2Mumble.PlayerCamera.Forward.Y, 1f);
+            _westBb.Opacity  = Math.Min(1 + GameService.Gw2Mumble.PlayerCamera.Forward.X, 1f);
         }
 
         /// <inheritdoc />
