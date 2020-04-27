@@ -77,12 +77,11 @@ namespace Universal_Search_Module {
                 Priority  = 5
             };
 
-            GameService.Debug.StartTimeFunc($"Loading all items");
-            var regions = await Gw2ApiManager.Gw2ApiClient.Continents[1].Floors[1].Regions.AllAsync();
+            var regions = await Gw2ApiManager.Gw2ApiClient.V2.Continents[1].Floors[1].Regions.AllAsync();
 
             foreach (var region in regions) {
                 _searchIcon.LoadingMessage = $"Loading {region.Name}...";
-                var maps = await Gw2ApiManager.Gw2ApiClient.Continents[1].Floors[1].Regions[region.Id].Maps.AllAsync();
+                var maps = await Gw2ApiManager.Gw2ApiClient.V2.Continents[1].Floors[1].Regions[region.Id].Maps.AllAsync();
 
                 foreach (var map in maps) {
                     _searchIcon.LoadingMessage = $"Loading {region.Name}: {map.Name}...";
@@ -96,7 +95,6 @@ namespace Universal_Search_Module {
             }
 
             _searchIcon.LoadingMessage = null;
-            GameService.Debug.StopTimeFuncAndOutput($"Loading all items");
 
             _searchIcon.Click += delegate { _searchWindow.ToggleWindow(); };
         }

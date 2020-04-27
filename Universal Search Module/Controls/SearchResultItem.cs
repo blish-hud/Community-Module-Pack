@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Blish_HUD;
+using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Blish_HUD.Input;
 using Gw2Sharp.WebApi.V2.Models;
@@ -43,8 +44,8 @@ namespace Universal_Search_Module.Controls {
             Activated?.Invoke(this, e);
         }
 
-        private Texture2D _icon;
-        public Texture2D Icon {
+        private AsyncTexture2D _icon;
+        public AsyncTexture2D Icon {
             get => _icon;
             set => SetProperty(ref _icon, value);
         }
@@ -77,7 +78,7 @@ namespace Universal_Search_Module.Controls {
             set {
                 if (SetProperty(ref _landmark, value)) {
                     if (_landmark != null) {
-                        GetTextureForLandmarkAsync(_landmark).ContinueWith(texture => this.Icon = texture.Result);
+                        _icon        = GetTextureForLandmarkAsync(_landmark);
                         _name        = _landmark.Name;
                         _description = _landmark.ChatLink;
 
@@ -89,7 +90,7 @@ namespace Universal_Search_Module.Controls {
             }
         }
 
-        private async Task<Texture2D> GetTextureForLandmarkAsync(ContinentFloorRegionMapPoi landmark) {
+        private AsyncTexture2D GetTextureForLandmarkAsync(ContinentFloorRegionMapPoi landmark) {
             string imgUrl = string.Empty;
 
             switch (landmark.Type.Value) {
@@ -112,14 +113,28 @@ namespace Universal_Search_Module.Controls {
                     break;
             }
 
-            return await WebImgUtil.RequestTextureAsync(imgUrl);
+            return Content.GetRenderServiceTexture(imgUrl);
         }
 
         public SearchResultItem() {
             this.Size = new Point(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         }
 
-        /// <inheritdoc />
+        protected override void OnClick(MouseEventArgs e) {
+            if (_landmark != null) {
+                ClipboardUtil.WindowsClipboardService.SetTextAsync(_landmark.ChatLink)
+                    .ContinueWith((clipboardResult) => {
+                        if (clipboardResult.IsFaulted) {
+                            ScreenNotification.ShowNotification("Failed to copy waypoint to clipboard. Try again.", ScreenNotification.NotificationType.Red, duration: 2);
+                        } else {
+                            ScreenNotification.ShowNotification("Copied waypoint to clipboard!", duration: 2);
+                        }
+                    });
+            }
+
+            base.OnClick(e);
+        }
+
         protected override void OnMouseEntered(MouseEventArgs e) {
             this.Active = true;
 
@@ -130,7 +145,6 @@ namespace Universal_Search_Module.Controls {
         private Rectangle _layoutNameBounds;
         private Rectangle _layoutDescriptionBounds;
 
-        /// <inheritdoc />
         public override void RecalculateLayout() {
             _layoutIconBounds = new Rectangle(ICON_PADDING, ICON_PADDING, ICON_SIZE, ICON_SIZE);
 

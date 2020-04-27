@@ -36,16 +36,24 @@ namespace Events_Module {
         private const string EC_ALLEVENTS = "All Events";
         private const string EC_HIDDEN    = "Hidden Events";
 
+        private const int TIMER_RECALC_RATE = 5;
+
         private List<DetailsButton> _displayedEvents;
 
         private WindowTab _eventsTab;
 
         private Panel _tabPanel;
 
-        private SettingCollection _watchCollection;
+        private SettingCollection  _watchCollection;
+        private SettingEntry<bool> _settingNotificationsEnabled;
 
         private Texture2D _textureWatch;
         private Texture2D _textureWatchActive;
+
+        public bool NotificationsEnabled {
+            get => _settingNotificationsEnabled.Value;
+            set => _settingNotificationsEnabled.Value = value;
+        }
 
         [ImportingConstructor]
         public EventsModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) {
@@ -53,7 +61,8 @@ namespace Events_Module {
         }
 
         protected override void DefineSettings(SettingCollection settings) {
-            _watchCollection = settings.AddSubCollection("Watching");
+            _watchCollection             = settings.AddSubCollection("Watching");
+            _settingNotificationsEnabled = settings.DefineSetting("notificationsEnabled", true);
         }
 
         protected override void Initialize() {
@@ -87,8 +96,18 @@ namespace Events_Module {
             var ddSortMethod = new Dropdown() {
                 Location = new Point(etPanel.Right - 150 - Dropdown.Standard.ControlOffset.X, Dropdown.Standard.ControlOffset.Y),
                 Width    = 150,
-                Parent = etPanel,
+                Parent   = etPanel,
             };
+
+            var notificationToggle = new Checkbox() {
+                Text     = "Enable Notifications",
+                Checked  = this.NotificationsEnabled,
+                Parent   = etPanel
+            };
+
+            notificationToggle.Location = new Point(ddSortMethod.Left - notificationToggle.Width - 10, ddSortMethod.Top + 6);
+
+            notificationToggle.CheckedChanged += delegate(object sender, CheckChangedEvent e) { this.NotificationsEnabled = e.Checked; };
 
             int topOffset = ddSortMethod.Bottom + Panel.MenuStandard.ControlOffset.Y;
 
@@ -109,18 +128,16 @@ namespace Events_Module {
                 Parent         = etPanel
             };
 
-            GameService.Overlay.QueueMainThreadUpdate((gameTime) => {
-                var searchBox = new TextBox() {
-                    PlaceholderText = "Event Search",
-                    Width           = menuSection.Width,
-                    Location        = new Point(ddSortMethod.Top, menuSection.Left),
-                    Parent          = etPanel
-                };
+            var searchBox = new TextBox() {
+                PlaceholderText = "Event Search",
+                Width           = menuSection.Width,
+                Location        = new Point(ddSortMethod.Top, menuSection.Left),
+                Parent          = etPanel
+            };
 
-                searchBox.TextChanged += delegate(object sender, EventArgs args) {
-                    eventPanel.FilterChildren<DetailsButton>(db => db.Text.ToLower().Contains(searchBox.Text.ToLower()));
-                };
-            });
+            searchBox.TextChanged += delegate (object sender, EventArgs args) {
+                eventPanel.FilterChildren<DetailsButton>(db => db.Text.ToLower().Contains(searchBox.Text.ToLower()));
+            };
 
             foreach (var meta in Meta.Events) {
                 var setting = _watchCollection.DefineSetting("watchEvent:" + meta.Name, true);
@@ -178,9 +195,14 @@ namespace Events_Module {
                     };
 
                     glowWaypointBttn.Click += delegate {
-                        System.Windows.Forms.Clipboard.SetText(meta.Waypoint);
-
-                        ScreenNotification.ShowNotification("Waypoint copied to clipboard.");
+                        ClipboardUtil.WindowsClipboardService.SetTextAsync(meta.Waypoint)
+                                     .ContinueWith((clipboardResult) => {
+                                           if (clipboardResult.IsFaulted) {
+                                               ScreenNotification.ShowNotification("Failed to copy waypoint to clipboard. Try again.", ScreenNotification.NotificationType.Red, duration: 2);
+                                           } else {
+                                               ScreenNotification.ShowNotification("Copied waypoint to clipboard!", duration: 2);
+                                           }
+                                       });
                     };
                 }
 
@@ -195,13 +217,13 @@ namespace Events_Module {
 
                 toggleFollowBttn.Click += delegate {
                     meta.IsWatched = toggleFollowBttn.Checked;
-                    setting.Value = toggleFollowBttn.Checked;
+                    setting.Value  = toggleFollowBttn.Checked;
                 };
 
                 meta.OnNextRunTimeChanged += delegate {
                     UpdateSort(ddSortMethod, EventArgs.Empty);
 
-                    nextTimeLabel.Text = meta.NextTime.ToShortTimeString();
+                    nextTimeLabel.Text             = meta.NextTime.ToShortTimeString();
                     nextTimeLabel.BasicTooltipText = GetTimeDetails(meta);
                 };
 
@@ -307,8 +329,15 @@ namespace Events_Module {
         // Utility
         private static bool UrlIsValid(string source) => Uri.TryCreate(source, UriKind.Absolute, out Uri uriResult) && uriResult.Scheme == Uri.UriSchemeHttps;
 
+        private double _elapsedSeconds = 0;
+
         protected override void Update(GameTime gameTime) {
-            Meta.UpdateEventSchedules();
+            _elapsedSeconds += gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (_elapsedSeconds > TIMER_RECALC_RATE) {
+                Meta.UpdateEventSchedules();
+                _elapsedSeconds = 0;
+            }
         }
 
         protected override void Unload() {

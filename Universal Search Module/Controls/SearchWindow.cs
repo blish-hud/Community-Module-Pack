@@ -187,9 +187,7 @@ namespace Universal_Search_Module.Controls {
             _searchbox.TextChanged += SearchboxOnTextChanged;
         }
 
-        private async void SearchboxOnTextChanged(object sender, EventArgs e) {
-            await Task.Yield();
-
+        private void SearchboxOnTextChanged(object sender, EventArgs e) {
             _results.ForEach(r => r.Landmark = null);
 
             string searchText = _searchbox.Text;
