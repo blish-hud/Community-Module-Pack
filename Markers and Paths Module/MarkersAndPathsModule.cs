@@ -131,7 +131,7 @@ namespace Markers_and_Paths_Module {
 
             _moduleControls.Add(newCategoryMenuItem);
 
-            StoreValue<bool> categoryStoreState = _pathableToggleStates.GetOrSetValue(newCategory.Namespace, true);
+            StoreValue<bool> categoryStoreState = _pathableToggleStates.GetOrSetValue(newCategory.Namespace, newCategory.DefaultToggle);
             newCategory.Visible = categoryStoreState.Value;
 
             newCategoryMenuItem.CanCheck = !newCategory.IsSeparator;

@@ -118,6 +118,18 @@ namespace Markers_and_Paths_Module.PackFormat.TacO {
             }
         }
 
+        private bool _defaultToggle = true;
+        public bool DefaultToggle
+        {
+            get => _defaultToggle;
+            set
+            {
+                if (_defaultToggle == value) return;
+
+                _defaultToggle = value;
+            }
+        }
+
         private readonly PathableAttributeCollection _attributes = new PathableAttributeCollection();
         public PathableAttributeCollection Attributes {
             get {
