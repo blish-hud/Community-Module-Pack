@@ -11,6 +11,7 @@ using Blish_HUD.Modules;
 using Blish_HUD.Modules.Managers;
 using Blish_HUD.Settings;
 using DiscordRPC;
+using Gw2Sharp.WebApi.V2.Models;
 using Microsoft.Xna.Framework;
 
 namespace Discord_Rich_Presence_Module {
@@ -66,16 +67,14 @@ namespace Discord_Rich_Presence_Module {
             settings.DefineSetting("HideInWvW", false, "Hide Detailed Location while in WvW", "Prevents people on Discord from being able to see closest landmark details while you're in WvW.");
         }
 
-        protected override void Initialize() {
-
-        }
+        protected override void Initialize() { /* NOOP */ }
 
         protected override async Task LoadAsync() {
             // Update character name
-            GameService.Gw2Mumble.PlayerCharacter.NameChanged += delegate { UpdateDetails(); };
+            GameService.Gw2Mumble.PlayerCharacter.NameChanged += delegate { CurrentMapOnMapChanged(null, new ValueEventArgs<int>(GameService.Gw2Mumble.CurrentMap.Id)); };
 
             // Update map
-            GameService.Gw2Mumble.CurrentMap.MapChanged += delegate { UpdateDetails(); };
+            GameService.Gw2Mumble.CurrentMap.MapChanged += CurrentMapOnMapChanged;
 
             // Initiate presence when the game is opened
             GameService.GameIntegration.Gw2Started += delegate { InitRichPresence(); };
@@ -86,22 +85,31 @@ namespace Discord_Rich_Presence_Module {
             InitRichPresence();
         }
 
-        private void UpdateDetails() {
-            if (GameService.Gw2Mumble.CurrentMap.Id <= 0) return;
+        private void CurrentMapOnMapChanged(object sender, ValueEventArgs<int> e) {
+            Gw2ApiManager.Gw2ApiClient.V2.Maps.GetAsync(e.Value)
+                         .ContinueWith(mapTask => {
+                                           if (!mapTask.IsFaulted && mapTask.Result != null) {
+                                               UpdateDetails(mapTask.Result);
+                                           }
+                                       });
+        }
+
+        private void UpdateDetails(Map map) {
+            if (map.Id <= 0) return;
 
             // rpcClient *shouldn't* be null at this point unless a rare race condition occurs
             // In the event that this occurs, it'll be resolved by the next loop
             _rpcClient?.SetPresence(new RichPresence() {
                 // Truncate length (requirements: https://discordapp.com/developers/docs/rich-presence/how-to)
                 Details = DiscordUtil.TruncateLength(GameService.Gw2Mumble.PlayerCharacter.Name, 128),
-                State   = DiscordUtil.TruncateLength($"in {GameService.Player.Map.Name}", 128),
+                State   = DiscordUtil.TruncateLength($"in {map.Name}", 128),
                 Assets = new Assets() {
-                    LargeImageKey = DiscordUtil.TruncateLength(_mapOverrides.ContainsKey(GameService.Player.Map.Id.ToString())
-                                                                   ? _mapOverrides[GameService.Player.Map.Id.ToString()]
-                                                                   : DiscordUtil.GetDiscordSafeString(GameService.Player.Map.Name), 32),
-                    LargeImageText = DiscordUtil.TruncateLength(GameService.Player.Map.Name,                                         128),
-                    SmallImageKey  = DiscordUtil.TruncateLength(((MapType) GameService.Player.MapType).ToString().ToLowerInvariant(),         32),
-                    SmallImageText = DiscordUtil.TruncateLength(((MapType) GameService.Player.MapType).ToString().Replace("_", " "), 128)
+                    LargeImageKey = DiscordUtil.TruncateLength(_mapOverrides.ContainsKey(map.Id.ToString())
+                                                                   ? _mapOverrides[map.Id.ToString()]
+                                                                   : DiscordUtil.GetDiscordSafeString(map.Name), 32),
+                    LargeImageText = DiscordUtil.TruncateLength(map.Name,                                                128),
+                    SmallImageKey  = DiscordUtil.TruncateLength(((MapType)map.Type.Value).ToString().ToLowerInvariant(), 32),
+                    SmallImageText = DiscordUtil.TruncateLength(((MapType)map.Type.Value).ToString().Replace("_", " "),  128)
                 },
                 Timestamps = new Timestamps() {
                     Start = _startTime
@@ -122,7 +130,7 @@ namespace Discord_Rich_Presence_Module {
             _rpcClient = new DiscordRpcClient(DISCORD_APP_ID);
             _rpcClient.Initialize();
 
-            UpdateDetails();
+            CurrentMapOnMapChanged(null, new ValueEventArgs<int>(GameService.Gw2Mumble.CurrentMap.Id));
         }
 
         private void CleanUpRichPresence() {
@@ -131,9 +139,7 @@ namespace Discord_Rich_Presence_Module {
             _rpcClient = null;
         }
 
-        protected override void Update(GameTime gameTime) {
-            /* NOOP */
-        }
+        protected override void Update(GameTime gameTime) { /* NOOP */ }
 
         protected override void Unload() {
             ModuleInstance = null;
