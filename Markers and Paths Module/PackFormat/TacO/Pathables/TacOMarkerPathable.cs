@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Blish_HUD;
+using Blish_HUD.Contexts;
 using Blish_HUD.Pathing;
 using Blish_HUD.Pathing.Content;
 using Blish_HUD.Pathing.Entities;
@@ -22,6 +24,10 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
         private int             _tacOBehaviorId;
 
         private TacOBehavior _tacOBehavior;
+
+        private int  _profession;
+        private int  _specialization;
+        private int? _race;
 
         public string Type {
             get => _type;
@@ -67,6 +73,23 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
             set => SetProperty(ref _triggerRange, value);
         }
 
+        public List<FestivalContext.Festival> Festivals { get; } = new List<FestivalContext.Festival>();
+
+        public int Profession {
+            get => _profession;
+            set => SetProperty(ref _profession, value);
+        }
+
+        public int Specialization {
+            get => _specialization;
+            set => SetProperty(ref _specialization, value);
+        }
+
+        public int? Race {
+            get => _race;
+            set => SetProperty(ref _race, value);
+        }
+
         public int TacOBehaviorId {
             get => _tacOBehaviorId;
             set {
@@ -104,7 +127,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
 
         protected override void PrepareAttributes() {
             // Type
-            RegisterAttribute("type", attribute => (!string.IsNullOrEmpty(this.Type = attribute.Value.Trim())));
+            RegisterAttribute("type", this.LoadAttrType);
 
             // Alpha (alias:Opacity)
             RegisterAttribute("alpha", delegate (PathableAttribute attribute) {
@@ -182,6 +205,14 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
                 this.TacOBehaviorId = iOut;
                 return true;
             });
+
+            // Festivals
+            RegisterAttribute("festival", this.LoadAttrFestival);
+
+            // Profession + Specialization
+            RegisterAttribute("profession",     this.LoadAttrProfession);
+            RegisterAttribute("specialization", this.LoadAttrSpecialization);
+            RegisterAttribute("race",           this.LoadAttrRace);
 
             base.PrepareAttributes();
         }

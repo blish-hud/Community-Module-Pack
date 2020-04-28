@@ -62,6 +62,7 @@
     <Compile Include="PackFormat\TacO\Builders\PathingCategoryBuilder.cs" />
     <Compile Include="PackFormat\TacO\Builders\PoiBuilder.cs" />
     <Compile Include="PackFormat\TacO\Pathables\ITacOPathable.cs" />
+    <Compile Include="PackFormat\TacO\Pathables\SharedTacOPathableImpl.cs" />
     <Compile Include="PackFormat\TacO\Pathables\TacOMarkerPathable.cs" />
     <Compile Include="PackFormat\TacO\Pathables\TacOTrailPathable.cs" />
     <Compile Include="PackFormat\TacO\PathingCategory.cs" />
@@ -86,6 +87,9 @@
       <Version>5.1.1</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Gw2Sharp">
+      <Version>0.9.5</Version>
     </PackageReference>
     <PackageReference Include="Humanizer.Core.de">
       <Version>2.6.2</Version>

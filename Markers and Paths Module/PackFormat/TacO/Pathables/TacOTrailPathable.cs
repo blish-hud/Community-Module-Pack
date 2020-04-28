@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Blish_HUD;
+using Blish_HUD.Contexts;
 using Blish_HUD.Pathing;
 using Blish_HUD.Pathing.Content;
 
@@ -16,9 +17,13 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
         private const float DEFAULT_TRAILSCALE = 1f;
         private const float DEFAULT_ANIMATIONSPEED = 0.5f;
 
-        private string _type;
+        private string          _type;
         private PathingCategory _category;
-        private string _trlFilePath;
+        private string          _trlFilePath;
+
+        private int  _profession;
+        private int  _specialization;
+        private int? _race;
 
         public string Type {
             get => _type;
@@ -55,6 +60,23 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
             set => SetProperty(ref _trlFilePath, value);
         }
 
+        public List<FestivalContext.Festival> Festivals { get; } = new List<FestivalContext.Festival>();
+
+        public int Profession {
+            get => _profession;
+            set => SetProperty(ref _profession, value);
+        }
+
+        public int Specialization {
+            get => _specialization;
+            set => SetProperty(ref _specialization, value);
+        }
+
+        public int? Race {
+            get => _race;
+            set => SetProperty(ref _race, value);
+        }
+
         private readonly PathableAttributeCollection _sourceAttributes;
         private readonly PathingCategory             _rootCategory;
 
@@ -73,9 +95,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
             base.PrepareAttributes();
 
             // Type
-            RegisterAttribute("type",
-                              attribute => (!string.IsNullOrEmpty(this.Type = attribute.Value.Trim())),
-                              false);
+            RegisterAttribute("type", this.LoadAttrType);
 
             // [Required] TrailData
             RegisterAttribute("traildata",
@@ -122,6 +142,13 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
                 return true;
             });
 
+            // Festivals
+            RegisterAttribute("festival", this.LoadAttrFestival);
+
+            // Profession + Specialization + Race
+            RegisterAttribute("profession",     this.LoadAttrProfession);
+            RegisterAttribute("specialization", this.LoadAttrSpecialization);
+            RegisterAttribute("race",           this.LoadAttrRace);
         }
 
         protected override bool FinalizeAttributes(Dictionary<string, LoadedPathableAttributeDescription> attributeLoaders) {

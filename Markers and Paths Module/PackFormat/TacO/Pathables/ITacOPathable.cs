@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Blish_HUD.Contexts;
+using Gw2Sharp.Models;
+using Gw2Sharp.WebApi.V2.Models;
 
 namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
     public interface ITacOPathable {
@@ -10,6 +9,14 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
         string Type { get; set; }
 
         PathingCategory Category { get; set; }
+
+        List<FestivalContext.Festival> Festivals { get; }
+
+        int Profession { get; set; }
+
+        int Specialization { get; set; }
+
+        int? Race { get; set; }
 
     }
 

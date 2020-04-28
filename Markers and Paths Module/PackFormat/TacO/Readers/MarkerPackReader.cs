@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Blish_HUD.Pathing.Content;
+using Markers_and_Paths_Module.PackFormat.TacO.Pathables;
 using NanoXml;
 
 namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
@@ -29,18 +30,49 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
 
         public void UpdatePathableStates() {
             foreach (var pathable in Pathables.ToArray()) {
-                this.ProcessPathableState(pathable);
+                ProcessPathableState(pathable);
             }
         }
 
         private void ProcessPathableState(IPathable<Entity> pathable) {
-            if (pathable.MapId == GameService.Gw2Mumble.CurrentMap.Id || pathable.MapId == -1) {
+            if (PathableIsValid(pathable)) {
                 pathable.Active = true;
                 GameService.Pathing.RegisterPathable(pathable);
             } else if (GameService.Graphics.World.Entities.Contains(pathable.ManagedEntity)) {
                 pathable.Active = false;
                 GameService.Pathing.UnregisterPathable(pathable);
             }
+        }
+
+        private bool PathableIsValid(IPathable<Entity> pathable) {
+            // Map check
+            if (pathable.MapId != GameService.Gw2Mumble.CurrentMap.Id
+             && pathable.MapId != -1)
+                return false;
+
+            var tacoPathable = (ITacOPathable)pathable;
+
+            // Festival check
+            if (tacoPathable.Festivals.Count > 0
+             && !tacoPathable.Festivals.Any(festival => festival.IsActive()))
+                return false;
+
+            // Profession check
+            if (tacoPathable.Profession > 0
+             && tacoPathable.Profession != (int)GameService.Gw2Mumble.PlayerCharacter.Profession)
+                return false;
+
+            // Specialization check
+            if (tacoPathable.Specialization > 0
+             && tacoPathable.Specialization != GameService.Gw2Mumble.PlayerCharacter.Specialization)
+                return false;
+
+            // Race check
+            if (tacoPathable.Race.HasValue
+             && tacoPathable.Race != (int) GameService.Gw2Mumble.PlayerCharacter.Race)
+                return false;
+
+            return true;
         }
 
         public void ReadFromXmlPack(Stream xmlPackStream, PathableResourceManager pathableResourceManager) {

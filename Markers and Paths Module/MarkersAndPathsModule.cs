@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Content;
@@ -37,8 +35,6 @@ namespace Markers_and_Paths_Module {
 
         private List<Control> _moduleControls;
 
-        private EventHandler<EventArgs> _onNewMapLoaded;
-
         private Store _pathableToggleStates;
 
         internal MarkerPackReader _currentReader;
@@ -53,9 +49,7 @@ namespace Markers_and_Paths_Module {
             ModuleInstance = this;
         }
 
-        protected override void DefineSettings(SettingCollection settings) {
-
-        }
+        protected override void DefineSettings(SettingCollection settings) { /* NOOP */ }
 
         protected override void Initialize() {
             _markerDirectory = DirectoriesManager.GetFullDirectoryPath("markers");
@@ -69,12 +63,6 @@ namespace Markers_and_Paths_Module {
                 Priority = "Markers & Paths".GetHashCode()
             };
 
-            _onNewMapLoaded = delegate {
-                if (this.Loaded && _packsLoaded) {
-                    _currentReader?.UpdatePathableStates();
-                }
-            };
-
             _mapIconMenu = new ContextMenuStrip();
 
             _mapIcon.Click += delegate { _mapIconMenu.Show(_mapIcon); };
@@ -83,9 +71,23 @@ namespace Markers_and_Paths_Module {
             loadingMenuItem.Enabled = false;
         }
 
-        protected override async Task LoadAsync() {
-            //GameService.Debug.StartTimeFunc("Markers and Paths");
+        private bool _isUpdating = false;
 
+        private void UpdatePathablesFromEvent(object sender, EventArgs e) {
+            if (_isUpdating) return;
+
+            _isUpdating = true;
+
+            if (this.Loaded && _packsLoaded) {
+                _currentReader?.UpdatePathableStates();
+
+                _allPathableResourceManagers.ForEach(packContext => packContext.RunTextureDisposal());
+            }
+
+            _isUpdating = false;
+        }
+
+        protected override async Task LoadAsync() {
             LoadPacks();
             BuildMenu();
             
@@ -209,7 +211,9 @@ namespace Markers_and_Paths_Module {
             _allPathableResourceManagers.ForEach(GameService.Pathing.RegisterPathableResourceManager);
 
             _currentReader.UpdatePathableStates();
-            GameService.Pathing.NewMapLoaded += _onNewMapLoaded;
+            GameService.Gw2Mumble.PlayerCharacter.SpecializationChanged += UpdatePathablesFromEvent;
+            GameService.Gw2Mumble.PlayerCharacter.NameChanged           += UpdatePathablesFromEvent;
+            GameService.Gw2Mumble.CurrentMap.MapChanged                 += UpdatePathablesFromEvent;
 
             //GameService.Debug.StopTimeFuncAndOutput("Markers and Paths");
         }
@@ -241,7 +245,9 @@ namespace Markers_and_Paths_Module {
 
         protected override void Unload() {
             // Unsubscribe from events
-            GameService.Pathing.NewMapLoaded -= _onNewMapLoaded;
+            GameService.Gw2Mumble.PlayerCharacter.SpecializationChanged -= UpdatePathablesFromEvent;
+            GameService.Gw2Mumble.PlayerCharacter.NameChanged           -= UpdatePathablesFromEvent;
+            GameService.Gw2Mumble.CurrentMap.MapChanged                 -= UpdatePathablesFromEvent;
 
             // Dispose all controls
             _moduleControls.ForEach(c => c.Dispose());
