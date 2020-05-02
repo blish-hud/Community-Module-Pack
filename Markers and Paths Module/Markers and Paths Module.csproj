@@ -63,6 +63,7 @@
     <Compile Include="PackFormat\TacO\Builders\PoiBuilder.cs" />
     <Compile Include="PackFormat\TacO\Pathables\ITacOPathable.cs" />
     <Compile Include="PackFormat\TacO\Pathables\TacOMarkerPathable.cs" />
+    <Compile Include="PackFormat\TacO\Pathables\TacORoutePathable.cs" />
     <Compile Include="PackFormat\TacO\Pathables\TacOTrailPathable.cs" />
     <Compile Include="PackFormat\TacO\PathingCategory.cs" />
     <Compile Include="PackFormat\TacO\Readers\MarkerPackReader.cs" />
