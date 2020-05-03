@@ -5,8 +5,7 @@ using NanoXml;
 
 namespace Markers_and_Paths_Module.PackFormat.TacO.Builders
 {
-    public static class PoiBuilder
-    {
+    public static class PoiBuilder {
 
         private static readonly Logger Logger = Logger.GetLogger(typeof(PoiBuilder));
 
@@ -14,21 +13,17 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders
         private const string ELEMENT_POITYPE_TRAIL = "trail";
         private const string ELEMENT_POITYPE_ROUTE = "route";
 
-        public static void UnpackPathable(NanoXmlNode pathableNode, PathableResourceManager pathableResourceManager, PathingCategory rootCategory)
-        {
-            switch (pathableNode.Name.ToLowerInvariant())
-            {
+        public static void UnpackPathable(NanoXmlNode pathableNode, PathableResourceManager pathableResourceManager, PathingCategory rootCategory) {
+            switch (pathableNode.Name.ToLowerInvariant()) {
                 case ELEMENT_POITYPE_POI:
                     var poiAttributes = AttributeBuilder.FromNanoXmlNode(pathableNode);
 
                     var newPoiMarker = new Pathables.TacOMarkerPathable(poiAttributes, pathableResourceManager, rootCategory);
 
-                    if (newPoiMarker.SuccessfullyLoaded)
-                    {
+                    if (newPoiMarker.SuccessfullyLoaded) {
                         MarkersAndPathsModule.ModuleInstance._currentReader.RegisterPathable(newPoiMarker);
                     }
-                    else
-                    {
+                    else {
                         Logger.Warn("Failed to load marker: {markerInfo}", poiAttributes);
                     }
                     break;
@@ -38,12 +33,10 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders
 
                     var newPathTrail = new Pathables.TacOTrailPathable(trailAttributes, pathableResourceManager, rootCategory);
 
-                    if (newPathTrail.SuccessfullyLoaded)
-                    {
+                    if (newPathTrail.SuccessfullyLoaded) {
                         MarkersAndPathsModule.ModuleInstance._currentReader.RegisterPathable(newPathTrail);
                     }
-                    else
-                    {
+                    else {
                         Logger.Warn("Failed to load trail: {trailInfo}", trailAttributes);
                     }
                     break;
