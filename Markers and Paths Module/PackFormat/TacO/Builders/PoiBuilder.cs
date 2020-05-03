@@ -3,8 +3,7 @@ using Blish_HUD;
 using Blish_HUD.Pathing.Content;
 using NanoXml;
 
-namespace Markers_and_Paths_Module.PackFormat.TacO.Builders
-{
+namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
     public static class PoiBuilder {
 
         private static readonly Logger Logger = Logger.GetLogger(typeof(PoiBuilder));
@@ -22,8 +21,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders
 
                     if (newPoiMarker.SuccessfullyLoaded) {
                         MarkersAndPathsModule.ModuleInstance._currentReader.RegisterPathable(newPoiMarker);
-                    }
-                    else {
+                    } else {
                         Logger.Warn("Failed to load marker: {markerInfo}", poiAttributes);
                     }
                     break;
@@ -35,8 +33,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders
 
                     if (newPathTrail.SuccessfullyLoaded) {
                         MarkersAndPathsModule.ModuleInstance._currentReader.RegisterPathable(newPathTrail);
-                    }
-                    else {
+                    } else {
                         Logger.Warn("Failed to load trail: {trailInfo}", trailAttributes);
                     }
                     break;
