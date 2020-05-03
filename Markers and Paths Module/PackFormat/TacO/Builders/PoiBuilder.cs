@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
+﻿using System.Linq;
 using Blish_HUD;
 using Blish_HUD.Pathing.Content;
-using Blish_HUD.Pathing.Trails;
 using NanoXml;
 
 namespace Markers_and_Paths_Module.PackFormat.TacO.Builders
@@ -55,24 +49,13 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders
                     break;
 
                 case ELEMENT_POITYPE_ROUTE:
-                    //var routeAttributes = AttributeBuilder.FromNanoXmlNode(pathableNode);
+                    var poiNodes = pathableNode.SelectNodes("poi");
 
-                    //var newRoute = new Pathables.TacOTrailPathable(routeAttributes, pathableResourceManager, rootCategory);
-
-                    //if (newRoute.SuccessfullyLoaded)
-                    //{
-                    //    MarkersAndPathsModule.ModuleInstance._currentReader.RegisterPathable(newRoute);
-                    //}
-                    //else
-                    //{
-                    //    Logger.Warn("Failed to load trail: {trailInfo}", routeAttributes);
-                    //}
-
-                    var poisInRoute = pathableNode.SelectNodes("poi");
-                    for (int i = 0; i < poisInRoute.Count(); i++)
+                    foreach(var poiNode in poiNodes)
                     {
-                        UnpackPathable(poisInRoute[i], pathableResourceManager, rootCategory);
+                        UnpackPathable(poiNode, pathableResourceManager, rootCategory);
                     }
+
                     break;
 
                 default:
