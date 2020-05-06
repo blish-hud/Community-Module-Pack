@@ -1,4 +1,5 @@
-﻿using Blish_HUD;
+﻿using System;
+using Blish_HUD;
 using Blish_HUD.Entities;
 using Blish_HUD.Pathing;
 using Blish_HUD.Pathing.Behaviors;
@@ -32,8 +33,8 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Behavior.Extended {
             foreach (var attr in attributes) {
                 switch (attr.Name.ToLowerInvariant()) {
                     case "race":
-                        if (InvariantUtil.TryParseInt(attr.Value, out int race)) {
-                            _race = (RaceType)race;
+                        if (Enum.TryParse<RaceType>(attr.Value, true, out var race)) {
+                            _race = race;
                         }
                         break;
                 }
