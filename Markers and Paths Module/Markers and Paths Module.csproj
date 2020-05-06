@@ -50,6 +50,12 @@
     <Compile Include="Library\NanoXml\NanoXmlParsingException.cs" />
     <Compile Include="MarkersAndPathsModule.cs" />
     <Compile Include="PackFormat\TacO\Behavior\AlwaysVisible_0.cs" />
+    <Compile Include="PackFormat\TacO\Behavior\Extended\FestivalFilter.cs" />
+    <Compile Include="PackFormat\TacO\Behavior\Extended\FilterBehavior.cs" />
+    <Compile Include="PackFormat\TacO\Behavior\Extended\MountFilter.cs" />
+    <Compile Include="PackFormat\TacO\Behavior\Extended\ProfessionFilter.cs" />
+    <Compile Include="PackFormat\TacO\Behavior\Extended\RaceFilter.cs" />
+    <Compile Include="PackFormat\TacO\Behavior\Extended\SpecializationFilter.cs" />
     <Compile Include="PackFormat\TacO\Behavior\OnlyVisibleBeforeActivation_3.cs" />
     <Compile Include="PackFormat\TacO\Behavior\ReappearAfterTimer_4.cs" />
     <Compile Include="PackFormat\TacO\Behavior\ReappearOnDailyReset_2.cs" />
@@ -86,6 +92,9 @@
       <Version>5.1.1</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Gw2Sharp">
+      <Version>0.9.6</Version>
     </PackageReference>
     <PackageReference Include="Humanizer.Core.de">
       <Version>2.6.2</Version>

@@ -3,6 +3,7 @@ using Blish_HUD.Entities;
 using Blish_HUD.Pathing;
 using Blish_HUD.Pathing.Behaviors;
 using Gw2Sharp.Models;
+using System;
 using System.Collections.Generic;
 
 namespace Markers_and_Paths_Module.PackFormat.TacO.Behavior.Extended {
@@ -32,8 +33,8 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Behavior.Extended {
             foreach (var attr in attributes) {
                 switch (attr.Name.ToLowerInvariant()) {
                     case "profession":
-                        if (InvariantUtil.TryParseInt(attr.Value, out int profession)) {
-                            _profession = (ProfessionType)profession;
+                        if (Enum.TryParse<ProfessionType>(attr.Value, true, out var profession)) {
+                            _profession = profession;
                         }
                         break;
                 }
