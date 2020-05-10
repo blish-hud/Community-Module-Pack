@@ -222,6 +222,7 @@ namespace Events_Module {
 
                 meta.OnNextRunTimeChanged += delegate {
                     UpdateSort(ddSortMethod, EventArgs.Empty);
+                    SortEventPanel(ddSortMethod.SelectedItem, ref eventPanel);
 
                     nextTimeLabel.Text             = meta.NextTime.ToShortTimeString();
                     nextTimeLabel.BasicTooltipText = GetTimeDetails(meta);
@@ -261,17 +262,11 @@ namespace Events_Module {
             ddSortMethod.Items.Add(DD_NEXTUP);
 
             ddSortMethod.ValueChanged += delegate (object sender, ValueChangedEventArgs args) {
-                switch (args.CurrentValue) {
-                    case DD_ALPHABETICAL:
-                        eventPanel.SortChildren<DetailsButton>((db1, db2) => string.Compare(db1.Text, db2.Text, StringComparison.CurrentCultureIgnoreCase));
-                        break;
-                    case DD_NEXTUP:
-                        break;
-                }
+                SortEventPanel(args.CurrentValue, ref eventPanel);
             };
 
             ddSortMethod.SelectedItem = DD_NEXTUP;
-            //UpdateSort(ddSortMethod, EventArgs.Empty);
+            UpdateSort(ddSortMethod, EventArgs.Empty);
 
             return etPanel;
         }
@@ -315,15 +310,31 @@ namespace Events_Module {
         private void UpdateSort(object sender, EventArgs e) {
             switch (((Dropdown)sender).SelectedItem) {
                 case DD_ALPHABETICAL:
-
-                    //displayedEvents.Sort((e1, e2) => e1.AssignedMeta.Name.CompareTo(e2.AssignedMeta.Name));
+                    _displayedEvents.Sort((e1, e2) => string.Compare(e1.Text, e2.Text, StringComparison.CurrentCultureIgnoreCase));
                     break;
                 case DD_NEXTUP:
-                    //displayedEvents.Sort((e1, e2) => e1.AssignedMeta.NextTime.CompareTo(e2.AssignedMeta.NextTime));
+                    var orderedEvents = GetOrderedNextUpEventNames();
+                    _displayedEvents.Sort((db1, db2) => {
+                        return orderedEvents.IndexOf(db1.Text) - orderedEvents.IndexOf(db2.Text);
+                    });
                     break;
             }
 
             RepositionES();
+        }
+
+        private void SortEventPanel(string ddSortMethodValue, ref FlowPanel eventPanel) {
+            switch (ddSortMethodValue) {
+                case DD_ALPHABETICAL:
+                    eventPanel.SortChildren<DetailsButton>((db1, db2) => string.Compare(db1.Text, db2.Text, StringComparison.CurrentCultureIgnoreCase));
+                    break;
+                case DD_NEXTUP:
+                    var orderedEvents = GetOrderedNextUpEventNames();
+                    eventPanel.SortChildren<DetailsButton>((db1, db2) => {
+                        return orderedEvents.IndexOf(db1.Text) - orderedEvents.IndexOf(db2.Text);
+                    });
+                    break;
+            }
         }
 
         // Utility
@@ -346,6 +357,10 @@ namespace Events_Module {
             GameService.Overlay.BlishHudWindow.RemoveTab(_eventsTab);
             _displayedEvents.ForEach(de => de.Dispose());
             _displayedEvents.Clear();
+        }
+
+        private IList<string> GetOrderedNextUpEventNames() {
+            return Meta.Events.OrderBy(el => el.NextTime).Select(el => el.Name).ToList();
         }
 
     }
