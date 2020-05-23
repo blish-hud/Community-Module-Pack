@@ -78,7 +78,6 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
@@ -99,8 +98,11 @@
     <None Include="BuildScripts\_DoNotModify.txt" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="AsyncClipboardService">
+      <Version>1.7.1</Version>
+    </PackageReference>
     <PackageReference Include="Gw2Sharp">
-      <Version>0.9.5</Version>
+      <Version>0.9.6</Version>
     </PackageReference>
     <PackageReference Include="MonoGame.Extended">
       <Version>3.7.0</Version>

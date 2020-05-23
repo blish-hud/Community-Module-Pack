@@ -282,19 +282,24 @@ namespace Inquest_Module
             ModuleInstance = null;
         }
         private void SendToChat(string message) {
-            System.Windows.Forms.Clipboard.SetText(message);
-            Task.Run(() =>
-            {
-                Keyboard.Press(VirtualKeyShort.RETURN, true);
-                Keyboard.Release(VirtualKeyShort.RETURN, true);
-                Keyboard.Press(VirtualKeyShort.LCONTROL, true);
-                Keyboard.Press(VirtualKeyShort.KEY_V, true);
-                Thread.Sleep(50);
-                Keyboard.Release(VirtualKeyShort.LCONTROL, true);
-                Keyboard.Release(VirtualKeyShort.KEY_V, true);
-                Keyboard.Press(VirtualKeyShort.RETURN, true);
-                Keyboard.Release(VirtualKeyShort.RETURN, true);
-            });
+                ClipboardUtil.WindowsClipboardService.SetTextAsync(message)
+                    .ContinueWith((clipboardResult) => {
+                        if (clipboardResult.IsFaulted)
+                            Logger.Warn(clipboardResult.Exception, "Failed to set clipboard text to {message}!",
+                                message);
+                        else
+                            Task.Run(() => {
+                                Keyboard.Press(VirtualKeyShort.RETURN, true);
+                                Keyboard.Release(VirtualKeyShort.RETURN, true);
+                                Keyboard.Press(VirtualKeyShort.LCONTROL, true);
+                                Keyboard.Press(VirtualKeyShort.KEY_V, true);
+                                Thread.Sleep(50);
+                                Keyboard.Release(VirtualKeyShort.LCONTROL, true);
+                                Keyboard.Release(VirtualKeyShort.KEY_V, true);
+                                Keyboard.Press(VirtualKeyShort.RETURN, true);
+                                Keyboard.Release(VirtualKeyShort.RETURN, true);
+                            });
+                    });
         }
         private Panel BuildEmotePanel() {
             var emotePanel = new Panel() {
@@ -792,12 +797,17 @@ namespace Inquest_Module
                 Parent = GameService.Graphics.SpriteScreen,
                 Location = new Point(10, 38),
                 Size = new Point(410, 40),
-                Opacity = 0.0f,
+                Opacity = 0.4f,
+                Visible = false,
                 ShowBorder = true
             };
             bgPanel.Resized += delegate (object sender, ResizedEventArgs args)
             {
                 bgPanel.Location = new Point(10, 38);
+            };
+            bgPanel.MouseEntered += delegate (object sender, MouseEventArgs e)
+            {
+                var fadeIn = GameService.Animation.Tweener.Tween(bgPanel, new { Opacity = 1.0f }, 0.45f);
             };
             var leftBracket = new Label()
             {
@@ -818,6 +828,10 @@ namespace Inquest_Module
                 MaxValue = 250,
                 ValueWidth = 24,
                 Numerator = 1,
+            };
+            bgPanel.MouseLeft += delegate (object sender, MouseEventArgs e) {
+                //TODO: Check for when dropdown IsExpanded
+                var fadeOut = GameService.Animation.Tweener.Tween(bgPanel, new { Opacity = 0.4f }, 0.45f);
             };
             var dropdown = new Dropdown()
             {
@@ -962,13 +976,10 @@ namespace Inquest_Module
                 }
                 TokenQuantity.Value = TokenQuantity.Value.MergeLeft(TokenQuantityRepository);
             };
-
-            var fadeIn = GameService.Animation.Tweener.Tween(bgPanel, new { Opacity = 1.0f }, 0.2f);
             bgPanel.Disposed += delegate
             {
                 var fadeOut = GameService.Animation.Tweener.Tween(bgPanel, new { Opacity = 0.0f }, 0.2f);
             };
-
             return bgPanel;
         }
     }
