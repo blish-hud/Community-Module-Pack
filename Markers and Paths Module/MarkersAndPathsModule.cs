@@ -13,6 +13,7 @@ using Blish_HUD.Entities;
 using Blish_HUD.Modules;
 using Blish_HUD.Modules.Managers;
 using Blish_HUD.Pathing;
+using Blish_HUD.Pathing.Behaviors;
 using Blish_HUD.Pathing.Content;
 using Blish_HUD.PersistentStore;
 using Blish_HUD.Settings;
@@ -59,6 +60,8 @@ namespace Markers_and_Paths_Module {
 
         protected override void Initialize() {
             _markerDirectory = DirectoriesManager.GetFullDirectoryPath("markers");
+
+            PathingBehavior.AllAvailableBehaviors.AddRange(PathingBehaviorAttribute.GetTypes(System.Reflection.Assembly.GetExecutingAssembly()));
 
             _moduleControls = new List<Control>();
             _pathableToggleStates = GameService.Store.RegisterStore(this.Namespace);
@@ -131,7 +134,7 @@ namespace Markers_and_Paths_Module {
 
             _moduleControls.Add(newCategoryMenuItem);
 
-            StoreValue<bool> categoryStoreState = _pathableToggleStates.GetOrSetValue(newCategory.Namespace, true);
+            StoreValue<bool> categoryStoreState = _pathableToggleStates.GetOrSetValue(newCategory.Namespace, newCategory.DefaultToggle);
             newCategory.Visible = categoryStoreState.Value;
 
             newCategoryMenuItem.CanCheck = !newCategory.IsSeparator;

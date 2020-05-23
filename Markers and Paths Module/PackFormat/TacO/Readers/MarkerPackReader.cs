@@ -34,7 +34,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Readers {
         }
 
         private void ProcessPathableState(IPathable<Entity> pathable) {
-            if (pathable.MapId == GameService.Player.MapId || pathable.MapId == -1) {
+            if (pathable.MapId == GameService.Gw2Mumble.CurrentMap.Id || pathable.MapId == -1) {
                 pathable.Active = true;
                 GameService.Pathing.RegisterPathable(pathable);
             } else if (GameService.Graphics.World.Entities.Contains(pathable.ManagedEntity)) {
