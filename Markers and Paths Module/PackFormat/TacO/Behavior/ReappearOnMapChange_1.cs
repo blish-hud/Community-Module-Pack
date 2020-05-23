@@ -24,10 +24,10 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Behavior {
         }
 
         protected override void PrepareTacOBehavior() {
-            Blish_HUD.GameService.Player.MapIdChanged += Player_MapIdChanged;
+            Blish_HUD.GameService.Gw2Mumble.CurrentMap.MapChanged += HandleMapIdChanged;
         }
 
-        private void Player_MapIdChanged(object sender, EventArgs e) {
+        private void HandleMapIdChanged(object sender, EventArgs e) {
             _triggered = false;
             this.HiddenByBehavior = false;
         }

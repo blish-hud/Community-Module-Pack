@@ -1,12 +1,13 @@
 {
   "name": "Discord Rich Presence",
-  "version": "0.3.0",
+  "version": "0.3.3",
   "namespace": "bh.general.discordrp",
   "package": "Discord Rich Presence Module.dll",
   "manifest_version": 1,
 
   "description": "Integrates with Discord to show what you're up to in the world of Guild Wars 2.",
   "dependencies": {
+    "bh.blishhud": ">=0.5.0"
   },
   "url": "https://github.com/blish-hud/Blish-HUD",
   "author": {
