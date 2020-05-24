@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Controls.Extern;
@@ -10,8 +13,8 @@ using Blish_HUD.Controls.Intern;
 using Blish_HUD.Input;
 using Blish_HUD.Modules;
 using Blish_HUD.Modules.Managers;
+using Blish_HUD.Pathing.Behaviors;
 using Blish_HUD.Settings;
-using Glide;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -49,12 +52,7 @@ namespace Random_Module
         }
 
         protected override void Initialize() {
-            _diceTextures.Add(ContentsManager.GetTexture("dice/side1.png"));
-            _diceTextures.Add(ContentsManager.GetTexture("dice/side2.png"));
-            _diceTextures.Add(ContentsManager.GetTexture("dice/side3.png"));
-            _diceTextures.Add(ContentsManager.GetTexture("dice/side4.png"));
-            _diceTextures.Add(ContentsManager.GetTexture("dice/side5.png"));
-            _diceTextures.Add(ContentsManager.GetTexture("dice/side6.png"));
+            for (var i = 0; i < 6; i++) _diceTextures.Add(ContentsManager.GetTexture($"dice/side{i + 1}.png"));
 
             /*_coinTextures.Add(ContentsManager.GetTexture("coin/heads.png"));
             _coinTextures.Add(ContentsManager.GetTexture("coin/tails.png"));*/
@@ -119,16 +117,35 @@ namespace Random_Module
                 if (rolling) return;
                 rolling = true;
 
-                var index = 0;
-                for (var i = 0; i < 20; i++)
+                var duration = new Stopwatch();
+                var worker = new BackgroundWorker();
+                var interval = new System.Timers.Timer(70);
+                interval.Elapsed += delegate {
+                    if (!worker.IsBusy)
+                        worker.RunWorkerAsync();
+                };
+                worker.DoWork += delegate
                 {
+                    var index = 0;
                     index = RandomUtil.GetRandom(0, 5);
                     _dice.Texture = _diceTextures[index];
-                }
 
-                SendToChat($"/me rolled {index + 1}.");
-                ScreenNotification.ShowNotification($"{(GameService.Gw2Mumble.IsAvailable ? GameService.Gw2Mumble.PlayerCharacter.Name : "You")} rolled a {index + 1}.");
-                rolling = false;
+                    if (duration.Elapsed > TimeSpan.FromMilliseconds(1200))
+                    {
+                        interval?.Stop();
+                        interval?.Dispose();
+                        duration?.Stop();
+                        duration = null;
+                        SendToChat($"/me rolled a {index + 1}.");
+                        ScreenNotification.ShowNotification(
+                            $"{(GameService.Gw2Mumble.IsAvailable ? GameService.Gw2Mumble.PlayerCharacter.Name : "You")} rolled a {index + 1}.");
+
+                        rolling = false;
+                        worker.Dispose();
+                    }
+                };
+                interval.Start();
+                duration.Start();
             };
             return _dice;
         }
@@ -136,8 +153,7 @@ namespace Random_Module
         {
             if (Dice != null) {
                 Dice.Visible = GameService.GameIntegration.IsInGame;
-                Dice.Location = new Point((GameService.Graphics.SpriteScreen.Width - 480),
-                    (GameService.Graphics.SpriteScreen.Height - Dice.Height) - 25);
+                Dice.Location = new Point((GameService.Graphics.SpriteScreen.Width - 480),(GameService.Graphics.SpriteScreen.Height - Dice.Height) - 25);
             }
         }
 
