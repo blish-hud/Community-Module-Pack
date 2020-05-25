@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Runtime.Remoting.Channels;
+using System.Security.AccessControl;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -36,23 +38,25 @@ namespace Random_Module
         internal Gw2ApiManager Gw2ApiManager => this.ModuleParameters.Gw2ApiManager;
         #endregion
 
-        private SettingEntry<bool> ShowDice;
+        private SettingEntry<bool> ShowDie;
+        private SettingEntry<int> DieSides;
 
         internal List<Texture2D> _diceTextures = new List<Texture2D>();
         internal List<Texture2D> _coinTextures = new List<Texture2D>();
 
-        private Image Dice;
+        private Panel Die;
 
         [ImportingConstructor]
         public RandomModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) { ModuleInstance = this; }
 
         protected override void DefineSettings(SettingCollection settings)
         {
-            ShowDice = settings.DefineSetting("ShowDice", true, "ShowDice", "Shows a dice");
+            ShowDie = settings.DefineSetting("ShowDie", true, "Show Die", "Shows a die");
+            DieSides = settings.DefineSetting("DieSides", 6, "Die Sides", "Indicates the amount of sides the die has.");
         }
 
         protected override void Initialize() {
-            for (var i = 0; i < 6; i++) _diceTextures.Add(ContentsManager.GetTexture($"dice/side{i + 1}.png"));
+            for (var i = 0; i < 7; i++) _diceTextures.Add(ContentsManager.GetTexture($"dice/side{i}.png"));
 
             /*_coinTextures.Add(ContentsManager.GetTexture("coin/heads.png"));
             _coinTextures.Add(ContentsManager.GetTexture("coin/tails.png"));*/
@@ -64,57 +68,136 @@ namespace Random_Module
 
         protected override void OnModuleLoaded(EventArgs e)
         {
-            Dice = ShowDice.Value ? CreateDice() : null;
+            DieSides.Value = DieSides.Value > 100 || DieSides.Value < 2 ? 6 : DieSides.Value;
+            Die = ShowDie.Value ? CreateDie() : null;
 
             // Base handler must be called
             base.OnModuleLoaded(e);
         }
-        private void SendToChat(string message) {
-            ClipboardUtil.WindowsClipboardService.SetTextAsync(message)
+        private async void SendToChat(string message)
+        {
+            var prevClipboardContent = await ClipboardUtil.WindowsClipboardService.GetTextAsync();
+            await ClipboardUtil.WindowsClipboardService.SetTextAsync(message)
                 .ContinueWith((clipboardResult) => {
                     if (clipboardResult.IsFaulted)
-                        Logger.Warn(clipboardResult.Exception, "Failed to set clipboard text to {message}!",
+                        Logger.Warn(clipboardResult.Exception, $"Failed to set clipboard text to \"{message}\"!",
                             message);
                     else
                         Task.Run(() => {
-                            Keyboard.Press(VirtualKeyShort.RETURN, true);
-                            Keyboard.Release(VirtualKeyShort.RETURN, true);
+                            GameService.GameIntegration.FocusGw2();
+                            Mouse.Click(MouseButton.LEFT, GameService.Graphics.GraphicsDevice.Viewport.Width / 2, 0);
+                            Keyboard.Stroke(VirtualKeyShort.RETURN);
                             Keyboard.Press(VirtualKeyShort.LCONTROL, true);
-                            Keyboard.Press(VirtualKeyShort.KEY_V, true);
+                            Keyboard.Stroke(VirtualKeyShort.KEY_V, true);
                             Thread.Sleep(50);
                             Keyboard.Release(VirtualKeyShort.LCONTROL, true);
-                            Keyboard.Release(VirtualKeyShort.KEY_V, true);
-                            Keyboard.Press(VirtualKeyShort.RETURN, true);
-                            Keyboard.Release(VirtualKeyShort.RETURN, true);
+                            Keyboard.Stroke(VirtualKeyShort.RETURN);
+                        }).ContinueWith((result) => {
+                            if (prevClipboardContent != null)
+                                ClipboardUtil.WindowsClipboardService.SetTextAsync(prevClipboardContent);
                         });
                 });
         }
-        private Image CreateDice()
+        private Panel CreateDie()
         {
             var rolling = false;
-            var _dice = new Image()
+            var _die = new Panel()
             {
                 Parent = GameService.Graphics.SpriteScreen,
-                Texture = _diceTextures[RandomUtil.GetRandom(0,5)],
                 Size = new Point(64, 64),
                 Location = new Point(0, 0),
                 Opacity = 0.4f,
                 Visible = false
             };
-            _dice.MouseEntered += delegate(object sender, MouseEventArgs e)
+            var diceImage = new Image()
             {
-                var fadeIn = GameService.Animation.Tweener.Tween(_dice, new { Opacity = 1.0f }, 0.45f);
+                Parent = _die,
+                Texture = _diceTextures[0],
+                Size = new Point(64, 64),
+                Location = new Point(0, 0)
             };
-            _dice.MouseLeft += delegate(object sender, MouseEventArgs e)
+            var diceLabel = new Label()
             {
-                var fadeOut = GameService.Animation.Tweener.Tween(_dice, new { Opacity = 0.4f }, 0.45f);
+                Parent = _die,
+                Size = _die.Size,
+                Location = new Point(0, 0),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Middle,
+                Font = GameService.Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size22, ContentService.FontStyle.Regular),
+                ShowShadow = true,
+                TextColor = Color.Black,
+                ShadowColor = Color.Black,
+                StrokeText = false,
+                Text = ""
             };
-            _dice.Disposed += delegate {
-                var fadeOut = GameService.Animation.Tweener.Tween(_dice, new { Opacity = 0.0f }, 0.2f);
-            };
-            _dice.LeftMouseButtonPressed += delegate(object sender, MouseEventArgs e)
+
+            int ApplyDiceValue()
             {
-                if (rolling) return;
+                var value = RandomUtil.GetRandom(1, DieSides.Value);
+                if (value < 7) {
+                    diceLabel.Text = "";
+                    diceImage.Texture = _diceTextures[value];
+                } else {
+                    diceImage.Texture = _diceTextures[0];
+                    diceLabel.Text = $"{value}";
+                }
+                return value;
+            }
+            ApplyDiceValue();
+
+            var dieSettingsOpen = false;
+            _die.RightMouseButtonPressed += delegate(object sender, MouseEventArgs e)
+            {
+                if (rolling || dieSettingsOpen) return;
+                dieSettingsOpen = true;
+                var sidesTotalPanel = new Panel()
+                {
+                    Parent = GameService.Graphics.SpriteScreen,
+                    Size = new Point(200, 120),
+                    Location = new Point(GameService.Graphics.SpriteScreen.Width / 2 - 100, GameService.Graphics.SpriteScreen.Height / 2 - 60),
+                    ShowBorder = true,
+                    Title = "Die Sides"
+                };
+                var counter = new CounterBox()
+                {
+                    Parent = sidesTotalPanel,
+                    Size = new Point(100,100),
+                    ValueWidth = 60,
+                    Location = new Point(sidesTotalPanel.ContentRegion.Width / 2 - 50, sidesTotalPanel.Height / 2 - 50),
+                    MinValue = 2,
+                    MaxValue = 100,
+                    Value = DieSides.Value,
+                    Numerator = 1,
+                    Suffix = " sides"
+                };
+                var applyButton = new StandardButton()
+                {
+                    Parent = sidesTotalPanel,
+                    Size = new Point(50, 30),
+                    Location = new Point(sidesTotalPanel.ContentRegion.Width / 2 - 25, sidesTotalPanel.ContentRegion.Height - 35),
+                    Text = "Apply"
+                };
+                applyButton.LeftMouseButtonPressed += delegate
+                {
+                    DieSides.Value = counter.Value;
+                    dieSettingsOpen = false;
+                    sidesTotalPanel.Dispose();
+                };
+            };
+            _die.MouseEntered += delegate(object sender, MouseEventArgs e)
+            {
+                var fadeIn = GameService.Animation.Tweener.Tween(_die, new { Opacity = 1.0f }, 0.45f);
+            };
+            _die.MouseLeft += delegate(object sender, MouseEventArgs e)
+            {
+                var fadeOut = GameService.Animation.Tweener.Tween(_die, new { Opacity = 0.4f }, 0.45f);
+            };
+            _die.Disposed += delegate {
+                var fadeOut = GameService.Animation.Tweener.Tween(_die, new { Opacity = 0.0f }, 0.2f);
+            };
+            _die.LeftMouseButtonPressed += delegate(object sender, MouseEventArgs e)
+            {
+                if (rolling || dieSettingsOpen) return;
                 rolling = true;
 
                 var duration = new Stopwatch();
@@ -126,9 +209,7 @@ namespace Random_Module
                 };
                 worker.DoWork += delegate
                 {
-                    var index = 0;
-                    index = RandomUtil.GetRandom(0, 5);
-                    _dice.Texture = _diceTextures[index];
+                    var value = ApplyDiceValue();
 
                     if (duration.Elapsed > TimeSpan.FromMilliseconds(1200))
                     {
@@ -136,9 +217,9 @@ namespace Random_Module
                         interval?.Dispose();
                         duration?.Stop();
                         duration = null;
-                        SendToChat($"/me rolled a {index + 1}.");
+                        SendToChat($"/me rolls {value} on a {DieSides.Value} sided die.");
                         ScreenNotification.ShowNotification(
-                            $"{(GameService.Gw2Mumble.IsAvailable ? GameService.Gw2Mumble.PlayerCharacter.Name : "You")} rolled a {index + 1}.");
+                            $"{(GameService.Gw2Mumble.IsAvailable ? GameService.Gw2Mumble.PlayerCharacter.Name : "You")} rolls {value} on a {DieSides.Value} sided die.");
 
                         rolling = false;
                         worker.Dispose();
@@ -147,20 +228,20 @@ namespace Random_Module
                 interval.Start();
                 duration.Start();
             };
-            return _dice;
+            return _die;
         }
         protected override void Update(GameTime gameTime)
         {
-            if (Dice != null) {
-                Dice.Visible = GameService.GameIntegration.IsInGame;
-                Dice.Location = new Point((GameService.Graphics.SpriteScreen.Width - 480),(GameService.Graphics.SpriteScreen.Height - Dice.Height) - 25);
+            if (Die != null) {
+                Die.Visible = GameService.GameIntegration.IsInGame;
+                Die.Location = new Point((GameService.Graphics.SpriteScreen.Width - 480),(GameService.Graphics.SpriteScreen.Height - Die.Height) - 25);
             }
         }
 
         /// <inheritdoc />
         protected override void Unload() {
             // Unload
-            Dice?.Dispose();
+            Die?.Dispose();
             // All static members must be manually unset
             ModuleInstance = null;
         }
