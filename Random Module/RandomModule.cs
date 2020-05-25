@@ -185,7 +185,7 @@ namespace Random_Module
                     dieSettingsOpen = false;
                     ApplyDieValue(true);
                     var fadeOut = GameService.Animation.Tweener.Tween(sidesTotalPanel, new { Opacity = 0.0f }, 0.2f)
-                                                                    .OnComplete(() =>{sidesTotalPanel.Dispose();});
+                                                                    .OnComplete(() => { sidesTotalPanel.Dispose(); });
                 };
                 var fadeIn = GameService.Animation.Tweener.Tween(sidesTotalPanel, new { Opacity = 1.0f }, 0.2f);
             };
