@@ -41,7 +41,7 @@ namespace Random_Module
         private SettingEntry<bool> ShowDie;
         private SettingEntry<int> DieSides;
 
-        internal List<Texture2D> _diceTextures = new List<Texture2D>();
+        internal List<Texture2D> _dieTextures = new List<Texture2D>();
         internal List<Texture2D> _coinTextures = new List<Texture2D>();
 
         private Panel Die;
@@ -56,7 +56,7 @@ namespace Random_Module
         }
 
         protected override void Initialize() {
-            for (var i = 0; i < 7; i++) _diceTextures.Add(ContentsManager.GetTexture($"dice/side{i}.png"));
+            for (var i = 0; i < 7; i++) _dieTextures.Add(ContentsManager.GetTexture($"dice/side{i}.png"));
 
             /*_coinTextures.Add(ContentsManager.GetTexture("coin/heads.png"));
             _coinTextures.Add(ContentsManager.GetTexture("coin/tails.png"));*/
@@ -109,14 +109,14 @@ namespace Random_Module
                 Opacity = 0.4f,
                 Visible = false
             };
-            var diceImage = new Image()
+            var dieImage = new Image()
             {
                 Parent = _die,
-                Texture = _diceTextures[0],
+                Texture = _dieTextures[0],
                 Size = new Point(64, 64),
                 Location = new Point(0, 0)
             };
-            var diceLabel = new Label()
+            var dieLabel = new Label()
             {
                 Parent = _die,
                 Size = _die.Size,
@@ -131,19 +131,19 @@ namespace Random_Module
                 Text = ""
             };
 
-            int ApplyDiceValue()
+            int ApplyDieValue(bool reset = false)
             {
-                var value = RandomUtil.GetRandom(1, DieSides.Value);
+                var value = reset ? DieSides.Value : RandomUtil.GetRandom(1, DieSides.Value);
                 if (value < 7) {
-                    diceLabel.Text = "";
-                    diceImage.Texture = _diceTextures[value];
+                    dieLabel.Text = "";
+                    dieImage.Texture = _dieTextures[value];
                 } else {
-                    diceImage.Texture = _diceTextures[0];
-                    diceLabel.Text = $"{value}";
+                    dieImage.Texture = _dieTextures[0];
+                    dieLabel.Text = $"{value}";
                 }
                 return value;
             }
-            ApplyDiceValue();
+            ApplyDieValue();
 
             var dieSettingsOpen = false;
             _die.RightMouseButtonPressed += delegate(object sender, MouseEventArgs e)
@@ -155,8 +155,10 @@ namespace Random_Module
                     Parent = GameService.Graphics.SpriteScreen,
                     Size = new Point(200, 120),
                     Location = new Point(GameService.Graphics.SpriteScreen.Width / 2 - 100, GameService.Graphics.SpriteScreen.Height / 2 - 60),
+                    Opacity = 0.0f,
+                    BackgroundTexture = GameService.Content.GetTexture("502049"),
                     ShowBorder = true,
-                    Title = "Die Sides"
+                    Title = "Die Sides",
                 };
                 var counter = new CounterBox()
                 {
@@ -181,8 +183,11 @@ namespace Random_Module
                 {
                     DieSides.Value = counter.Value;
                     dieSettingsOpen = false;
-                    sidesTotalPanel.Dispose();
+                    ApplyDieValue(true);
+                    var fadeOut = GameService.Animation.Tweener.Tween(sidesTotalPanel, new { Opacity = 0.0f }, 0.2f)
+                                                                    .OnComplete(() =>{sidesTotalPanel.Dispose();});
                 };
+                var fadeIn = GameService.Animation.Tweener.Tween(sidesTotalPanel, new { Opacity = 1.0f }, 0.2f);
             };
             _die.MouseEntered += delegate(object sender, MouseEventArgs e)
             {
@@ -209,7 +214,7 @@ namespace Random_Module
                 };
                 worker.DoWork += delegate
                 {
-                    var value = ApplyDiceValue();
+                    var value = ApplyDieValue();
 
                     if (duration.Elapsed > TimeSpan.FromMilliseconds(1200))
                     {
