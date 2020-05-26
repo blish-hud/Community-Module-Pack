@@ -156,7 +156,7 @@ namespace Random_Module
                     Size = new Point(200, 120),
                     Location = new Point(GameService.Graphics.SpriteScreen.Width / 2 - 100, GameService.Graphics.SpriteScreen.Height / 2 - 60),
                     Opacity = 0.0f,
-                    BackgroundTexture = GameService.Content.GetTexture("502049"),
+                    BackgroundTexture = GameService.Content.GetTexture("controls/window/502049"),
                     ShowBorder = true,
                     Title = "Die Sides",
                 };
@@ -166,8 +166,8 @@ namespace Random_Module
                     Size = new Point(100,100),
                     ValueWidth = 60,
                     Location = new Point(sidesTotalPanel.ContentRegion.Width / 2 - 50, sidesTotalPanel.Height / 2 - 50),
-                    MinValue = 2,
                     MaxValue = 100,
+                    MinValue = 2,
                     Value = DieSides.Value,
                     Numerator = 1,
                     Suffix = " sides"
