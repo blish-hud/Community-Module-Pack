@@ -10,6 +10,7 @@ using Blish_HUD.Input;
 using Gw2Sharp.WebApi.V2.Models;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using WikiClientLibrary.Sites;
 using Color = Gw2Sharp.WebApi.V2.Models.Color;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
@@ -20,8 +21,9 @@ namespace Universal_Search_Module.Controls {
 
         private const string POI_FILE      = "https://render.guildwars2.com/file/25B230711176AB5728E86F5FC5F0BFAE48B32F6E/97461.png";
         private const string WAYPOINT_FILE = "https://render.guildwars2.com/file/32633AF8ADEA696A1EF56D3AE32D617B10D3AC57/157353.png";
-        private const string VISTA_FILE    = "https://render.guildwars2.com/file/A2C16AF497BA3A0903A0499FFBAF531477566F10/358415.png";
-        
+        private const string VISTA_FILE = "https://render.guildwars2.com/file/A2C16AF497BA3A0903A0499FFBAF531477566F10/358415.png";
+
+
         private const int ICON_SIZE = 32;
         private const int ICON_PADDING = 2;
 
@@ -73,17 +75,45 @@ namespace Universal_Search_Module.Controls {
         }
 
         private ContinentFloorRegionMapPoi _landmark;
-        public ContinentFloorRegionMapPoi Landmark {
+        public ContinentFloorRegionMapPoi Landmark
+        {
             get => _landmark;
-            set {
-                if (SetProperty(ref _landmark, value)) {
-                    if (_landmark != null) {
-                        _icon        = GetTextureForLandmarkAsync(_landmark);
-                        _name        = _landmark.Name;
+            set
+            {
+                if (SetProperty(ref _landmark, value))
+                {
+                    if (_landmark != null)
+                    {
+                        _icon = GetTextureForLandmarkAsync(_landmark);
+                        _name = _landmark.Name;
                         _description = _landmark.ChatLink;
-
                         this.Show();
-                    } else {
+                    }
+                    else
+                    {
+                        this.Hide();
+                    }
+                }
+            }
+        }
+
+        private OpenSearchResultEntry? _wikiSearchResult;
+        public OpenSearchResultEntry? WikiSearchResult
+        {
+            get => _wikiSearchResult;
+            set
+            {
+                if (SetProperty(ref _wikiSearchResult, value))
+                {
+                    if (_wikiSearchResult != null)
+                    {
+                        _icon = UniversalSearchModule.ModuleInstance.ContentsManager.GetTexture(@"textures\wiki.png");
+                        _name = _wikiSearchResult.Value.Title;
+                        _description = _wikiSearchResult.Value.Description;
+                        this.Show();
+                    }
+                    else
+                    {
                         this.Hide();
                     }
                 }
@@ -132,6 +162,9 @@ namespace Universal_Search_Module.Controls {
                     });
             }
 
+            if (_wikiSearchResult != null) {
+                System.Diagnostics.Process.Start(_wikiSearchResult.Value.Url);
+            }
             base.OnClick(e);
         }
 

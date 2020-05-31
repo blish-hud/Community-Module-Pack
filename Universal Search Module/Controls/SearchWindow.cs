@@ -10,16 +10,19 @@ using Gw2Sharp.WebApi.V2.Models;
 using Microsoft.Xna.Framework;
 using Color = Microsoft.Xna.Framework.Color;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
+using WikiClientLibrary.Client;
+using WikiClientLibrary.Sites;
 
 namespace Universal_Search_Module.Controls {
     public class SearchWindow : WindowBase {
 
         private const int WINDOW_WIDTH  = 256;
-        private const int WINDOW_HEIGHT = 178;
+        private const int WINDOW_HEIGHT = 500;
 
         private const int TITLEBAR_HEIGHT = 32;
 
-        private const int MAX_RESULT_COUNT = 3;
+        private const int MAX_RESULT_COUNT_LANDMARK = 5;
+        private const int MAX_RESULT_COUNT_WIKI = 5;
 
         #region Load Static
 
@@ -53,9 +56,10 @@ namespace Universal_Search_Module.Controls {
             }
         }
 
-        private List<SearchResultItem> _results;
+        private List<SearchResultItem> _results = new List<SearchResultItem>();
 
         private Tooltip        _resultDetails;
+        private Label          _ttDetailsInfHint1;
         private TextBox        _searchbox;
         private LoadingSpinner _spinner;
         private Label          _noneLabel;
@@ -69,7 +73,7 @@ namespace Universal_Search_Module.Controls {
         }
 
         private void BuildWindow() {
-            this.Title  = "Landmark Search";
+            this.Title  = "Landmark and Wiki Search";
             this.ZIndex = Screen.TOOLWINDOW_BASEZINDEX;
 
             ConstructWindow(_textureWindowBackground,
@@ -104,7 +108,7 @@ namespace Universal_Search_Module.Controls {
                 Parent = _resultDetails
             };
 
-            var ttDetailsInfHint1 = new Label() {
+            _ttDetailsInfHint1 = new Label() {
                 Text           = "Enter: Copy landmark to clipboard.",
                 Font           = Content.DefaultFont16,
                 Location       = new Point(10, _ttDetailsName.Bottom + 5),
@@ -118,7 +122,7 @@ namespace Universal_Search_Module.Controls {
             var ttDetailsInf1 = new Label() {
                 Text           = "Closest Waypoint",
                 Font           = Content.DefaultFont16,
-                Location       = new Point(10, ttDetailsInfHint1.Bottom + 12),
+                Location       = new Point(10, _ttDetailsInfHint1.Bottom + 12),
                 Height         = 11,
                 TextColor      = ContentService.Colors.Chardonnay,
                 ShadowColor    = Color.Black,
@@ -168,31 +172,32 @@ namespace Universal_Search_Module.Controls {
                 Parent              = this
             };
 
-            _results = new List<SearchResultItem>(MAX_RESULT_COUNT);
-
-            int lastResultBottom = _searchbox.Bottom;
-
-            for (int i = 0; i < MAX_RESULT_COUNT; i++) {
-                var sri = BuildSearchResultItem(i);
-
-                sri.Location = new Point(2, lastResultBottom + 3);
-                sri.Activated    += ResultActivated;
-                sri.MouseEntered += ResultActivated;
-
-                lastResultBottom = sri.Bottom;
-
-                _results.Add(sri);
-            }
-
             _searchbox.TextChanged += SearchboxOnTextChanged;
         }
 
-        private void SearchboxOnTextChanged(object sender, EventArgs e) {
-            _results.ForEach(r => r.Landmark = null);
+        private async Task<IList<OpenSearchResultEntry>> QueryWiki(string searchText)
+        {
+            var client = new WikiClient { ClientUserAgent = "BlishHUD"};
+                var site = new WikiSite(client, "https://wiki.guildwars2.com/api.php");
+                // Wait for initialization to complete.
+                // Throws error if any.
+                await site.Initialization;
+               var results = await site.OpenSearchAsync(searchText, MAX_RESULT_COUNT_WIKI);
+            client.Dispose();
+            return results;
+        }
+
+        private void SearchboxOnTextChanged(object sender, EventArgs e)
+        {
+            _results.ForEach(r => {
+                r.Landmark = null;
+                r.WikiSearchResult = null;
+            });
 
             string searchText = _searchbox.Text;
 
-            if (!(searchText.Length >= 2)) {
+            if (!(searchText.Length >= 2))
+            {
                 _noneLabel.Show();
                 return;
             }
@@ -200,6 +205,8 @@ namespace Universal_Search_Module.Controls {
             _noneLabel.Hide();
             _spinner.Show();
 
+            var wikiResults = QueryWiki(searchText).GetAwaiter().GetResult().ToList();
+            
             var landmarkDiffs = new List<WordScoreResult>();
 
             foreach (var landmark in UniversalSearchModule.ModuleInstance.LoadedLandmarks) {
@@ -216,31 +223,61 @@ namespace Universal_Search_Module.Controls {
                 landmarkDiffs.Add(new WordScoreResult(landmark, score));
             }
 
-            var possibleLandmarks = landmarkDiffs.OrderBy(x => x.DiffScore).Take(MAX_RESULT_COUNT).ToList();
+            var landMarkResults = landmarkDiffs.OrderBy(x => x.DiffScore).Take(MAX_RESULT_COUNT_LANDMARK).ToList();
 
             _spinner.Hide();
 
-            if (possibleLandmarks.Any()) {
-                for (int i = 0; i < Math.Max(MAX_RESULT_COUNT, possibleLandmarks.Count); i++) {
-                    _results[i].Landmark = possibleLandmarks[i].Landmark;
+            _results = new List<SearchResultItem>(landMarkResults.Count + wikiResults.Count);
+
+            int lastResultBottom = _searchbox.Bottom;
+
+            if (landMarkResults.Any() || wikiResults.Any()) {
+                for (int i = 0; i < Math.Min(MAX_RESULT_COUNT_LANDMARK, landMarkResults.Count); i++) {
+                    SearchResultItem sri = BuildSearchResultItem(lastResultBottom);
+                    lastResultBottom = sri.Bottom;
+                    sri.Landmark = landMarkResults[i].Landmark;
+                    _results.Add(sri);
+                }
+                for (int i = 0; i < Math.Min(MAX_RESULT_COUNT_WIKI, wikiResults.Count); i++)
+                {
+                    SearchResultItem sri = BuildSearchResultItem(lastResultBottom);
+                    lastResultBottom = sri.Bottom;
+                    sri.WikiSearchResult = wikiResults[i];
+                    _results.Add(sri);
                 }
             } else {
                 _noneLabel.Show();
             }
         }
 
-        private SearchResultItem BuildSearchResultItem(int index) {
-            return new SearchResultItem() {
-                Width   = _size.X - 4,
+        private SearchResultItem BuildSearchResultItem(int lastResultBottom)
+        {
+            var sri = new SearchResultItem()
+            {
+                Width = _size.X - 4,
                 Tooltip = _resultDetails,
                 Visible = false,
-                Parent  = this
+                Parent = this
             };
+
+            sri.Location = new Point(2, lastResultBottom + 3);
+            sri.Activated += ResultActivated;
+            sri.MouseEntered += ResultActivated;
+            return sri;
         }
 
         private void ResultActivated(object sender, EventArgs e) {
             if (sender is SearchResultItem activatedSearchResult && activatedSearchResult.Active) {
                 this.ActiveSearchResult = activatedSearchResult;
+
+                if(activatedSearchResult.Landmark != null)
+                {
+                    _ttDetailsInfHint1.Text = "Enter: Copy landmark to clipboard.";
+                }
+                else if(activatedSearchResult.WikiSearchResult != null)
+                {
+                    _ttDetailsInfHint1.Text = "Enter: open wiki.";
+                }
 
                 _ttDetailsName.Text    = activatedSearchResult.Name;
                 _ttDetailsInfRes1.Text = "none found";
