@@ -6,11 +6,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Controls;
+using Blish_HUD.Input;
 using Blish_HUD.Modules;
 using Blish_HUD.Modules.Managers;
 using Blish_HUD.Settings;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.BitmapFonts;
 using Color = Microsoft.Xna.Framework.Color;
 using Module = Blish_HUD.Modules.Module;
 using Point = Microsoft.Xna.Framework.Point;
@@ -88,11 +90,13 @@ namespace Screenshot_Manager_Module
                 var w = new FileSystemWatcher
                 {
                     Path = DirectoryUtil.ScreensPath,
-                    NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.LastWrite | NotifyFilters.FileName,
+                    NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName,
                     Filter = f,
                     EnableRaisingEvents = true
                 };
-                w.Changed += OnScreensFolderChanged;
+                w.Created += OnScreenshotCreated;
+                w.Deleted += OnScreenshotDeleted;
+                w.Renamed += OnScreenshotRenamed;
                 screensPathWatchers.Add(w);
             }
             var modulePanel = BuildModulePanel(GameService.Overlay.BlishHudWindow);
@@ -139,6 +143,34 @@ namespace Screenshot_Manager_Module
                 Opacity = 0.8f,
                 BasicTooltipText = "Click To Zoom"
             };
+            var inspectButton = new Blish_HUD.Controls.Image() {
+                Parent = thumbnail,
+                Texture = _inspectIcon,
+                Size = new Point(64, 64),
+                Location = new Point((thumbnail.Width / 2) - 32, (thumbnail.Height / 2) - 32),
+                Opacity = 0.0f,
+                BasicTooltipText = "Click To Zoom"
+            };
+            var deleteBackgroundTint = new Panel()
+            {
+                Parent = thumbnail,
+                Size = thumbnail.Size,
+                BackgroundColor = Color.Black,
+                Opacity = 0.0f
+            };
+            var deleteLabel = new Label() {
+                Parent = thumbnail,
+                Size = thumbnail.Size,
+                TextColor = Color.White,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Middle,
+                Font = GameService.Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size24, ContentService.FontStyle.Regular), 
+                Text = "Delete File?",
+                BasicTooltipText = "Click To Zoom",
+                StrokeText = true,
+                ShowShadow = true,
+                Opacity = 0.0f,
+            };
             var fileNameTextBox = new TextBox() {
                 Parent = thumbnail,
                 Size = new Point(thumbnail.Width / 2 + 20, 30),
@@ -146,6 +178,7 @@ namespace Screenshot_Manager_Module
                 PlaceholderText = Path.GetFileNameWithoutExtension(filePath),
                 MaxLength = 255,
                 BackgroundColor = Color.DarkBlue,
+                BasicTooltipText = "Rename Image",
                 Opacity = 0.8f
             };
             fileNameTextBox.MouseEntered += delegate { GameService.Animation.Tweener.Tween(fileNameTextBox, new { Opacity = 1.0f }, 0.2f); };
@@ -159,7 +192,7 @@ namespace Screenshot_Manager_Module
                     return;
                 } else {
                     var newPath = Path.Combine(Directory.GetParent(Path.GetFullPath(filePath)).FullName, fileNameTextBox.Text + Path.GetExtension(filePath));
-                    bool error = newPath.Equals(filePath);
+                    bool error = newPath.Equals(filePath, StringComparison.InvariantCultureIgnoreCase);
                     if (File.Exists(newPath)) {
                         ScreenNotification.ShowNotification(
                             $"Unable to rename file:\n A duplicate file name was specified!",
@@ -176,8 +209,6 @@ namespace Screenshot_Manager_Module
                     if (!error) {
                         try {
                             File.Move(filePath, newPath);
-                            fileNameTextBox.PlaceholderText = Path.GetFileNameWithoutExtension(newPath);
-                            filePath = newPath;
                         } catch (IOException e) {
                             Logger.Error(e.Message + " | StackTrace:" + e.StackTrace);
                             GC.Collect();
@@ -187,26 +218,18 @@ namespace Screenshot_Manager_Module
                 if (!fileNameTextBox.MouseOver) GameService.Animation.Tweener.Tween(fileNameTextBox, new { Opacity = 0.6f }, 0.2f);
                 fileNameTextBox.Text = "";
             };
-            var inspectButton = new Blish_HUD.Controls.Image() {
-                Parent = thumbnail,
-                Texture = _inspectIcon,
-                Size = new Point(64, 64),
-                Location = new Point((thumbnail.Width / 2) - 32, (thumbnail.Height / 2) - 32),
-                Opacity = 0.0f,
-                BasicTooltipText = "Click To Zoom"
-            };
-            tImage.MouseEntered += delegate
+            deleteLabel.MouseEntered += delegate
             {
                 GameService.Animation.Tweener.Tween(inspectButton, new { Opacity = 1.0f }, 0.2f);
                 GameService.Animation.Tweener.Tween(tImage, new { Opacity = 1.0f }, 0.45f);
             };
-            tImage.MouseLeft += delegate
+            deleteLabel.MouseLeft += delegate
             {
                 GameService.Animation.Tweener.Tween(inspectButton, new { Opacity = 0.0f }, 0.2f);
                 GameService.Animation.Tweener.Tween(tImage, new { Opacity = 0.8f }, 0.45f);
             };
             Panel inspectPanel = null;
-            tImage.Click += delegate {
+            deleteLabel.Click += delegate {
                 inspectPanel?.Dispose();
                 var maxWidth = GameService.Graphics.Resolution.X - 100;
                 var maxHeight = GameService.Graphics.Resolution.Y - 100;
@@ -237,14 +260,23 @@ namespace Screenshot_Manager_Module
                 Texture = _trashcanClosedIcon64,
                 Size = new Point(45,45),
                 Location = new Point(thumbnail.Width - 45 - PanelMargin, thumbnail.Height - 45 - PanelMargin),
-                Opacity = 0.5f,
-                BasicTooltipText = "Delete File?"
+                Opacity = 0.5f
             };
-            deleteButton.MouseEntered += delegate {
-                deleteButton.Texture = _trashcanOpenIcon64; GameService.Animation.Tweener.Tween(deleteButton, new { Opacity = 1.0f }, 0.2f);
+            deleteButton.MouseEntered += delegate
+            {
+                deleteLabel.Text = "Delete Image\n\"" + Path.GetFileNameWithoutExtension(filePath) + "\"?";
+                deleteButton.Texture = _trashcanOpenIcon64;
+                GameService.Animation.Tweener.Tween(deleteButton, new { Opacity = 1.0f }, 0.2f);
+                GameService.Animation.Tweener.Tween(deleteLabel, new { Opacity = 1.0f }, 0.2f);
+                GameService.Animation.Tweener.Tween(deleteBackgroundTint, new { Opacity = 0.6f }, 0.35f);
+                GameService.Animation.Tweener.Tween(fileNameTextBox, new { Opacity = 0.0f }, 0.2f);
             };
             deleteButton.MouseLeft += delegate {
-                deleteButton.Texture = _trashcanClosedIcon64; GameService.Animation.Tweener.Tween(deleteButton, new { Opacity = 0.8f }, 0.2f);
+                deleteButton.Texture = _trashcanClosedIcon64; 
+                GameService.Animation.Tweener.Tween(deleteButton, new { Opacity = 0.8f }, 0.2f);
+                GameService.Animation.Tweener.Tween(deleteLabel, new { Opacity = 0.0f }, 0.2f);
+                GameService.Animation.Tweener.Tween(deleteBackgroundTint, new { Opacity = 0.0f }, 0.2f);
+                GameService.Animation.Tweener.Tween(fileNameTextBox, new { Opacity = 0.8f }, 0.2f);
             };
             deleteButton.LeftMouseButtonReleased += delegate
             {
@@ -253,27 +285,32 @@ namespace Screenshot_Manager_Module
                 } else {
                     try {
                         File.Delete(filePath);
-                        thumbnail?.Dispose();
                     } catch (IOException e) {
                         Logger.Error(e.Message + " | StackTrace:" + e.StackTrace);
                         GC.Collect();
                     }
                 }
             };
-            thumbnail.Disposed += delegate { if (displayedThumbnails.ContainsKey(filePath)) displayedThumbnails.Remove(filePath); };
+            thumbnail.Disposed += delegate
+            {
+                if (displayedThumbnails.ContainsKey(filePath)) 
+                    displayedThumbnails.Remove(filePath);
+            };
             displayedThumbnails.Add(filePath, thumbnail);
         }
-        private void OnScreensFolderChanged(object sender, FileSystemEventArgs e)
+        private void OnScreenshotCreated(object sender, FileSystemEventArgs e)
         {
-            if (!File.Exists(e.FullPath)) {
-                if (displayedThumbnails.ContainsKey(e.FullPath))
-                    displayedThumbnails[e.FullPath]?.Dispose();
-            } else if (!displayedThumbnails.ContainsKey(e.FullPath)) {
+            if (!displayedThumbnails.ContainsKey(e.FullPath))
                 AddThumbnail(e.FullPath);
-            } else if (displayedThumbnails[e.FullPath] == null) {
-                displayedThumbnails.Remove(e.FullPath);
-                AddThumbnail(e.FullPath);
-            }
+        }
+        private void OnScreenshotDeleted(object sender, FileSystemEventArgs e) {
+            if (displayedThumbnails.ContainsKey(e.FullPath))
+                displayedThumbnails[e.FullPath].Dispose();
+        }
+        private void OnScreenshotRenamed(object sender, RenamedEventArgs e)
+        {
+            displayedThumbnails[e.OldFullPath].Dispose();
+            AddThumbnail(e.FullPath);
         }
         private Panel BuildModulePanel(WindowBase wnd)
         {
@@ -326,18 +363,20 @@ namespace Screenshot_Manager_Module
         /// <inheritdoc />
         protected override void Unload() {
             // Unload
+            GameService.Overlay.BlishHudWindow.RemoveTab(moduleTab);
+            moduleTab = null;
             moduleCornerIcon?.Dispose();
             thumbnailFlowPanel?.Dispose();
             // avoiding resource leak
             for (var i=0; i<screensPathWatchers.Count; i++)
             {
                 if (screensPathWatchers[i] == null) continue;
-                screensPathWatchers[i].Changed -= OnScreensFolderChanged;
+                screensPathWatchers[i].Created -= OnScreenshotCreated;
+                screensPathWatchers[i].Deleted -= OnScreenshotDeleted;
+                screensPathWatchers[i].Renamed -= OnScreenshotRenamed;
                 screensPathWatchers[i].Dispose();
                 screensPathWatchers[i] = null;
             }
-            foreach (var p in displayedThumbnails)
-                p.Value?.Dispose();
             displayedThumbnails.Clear();
             displayedThumbnails = null;
             // All static members must be manually unset
