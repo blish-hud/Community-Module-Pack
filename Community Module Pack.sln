@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Universal Search Module", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Discord Rich Presence Module", "Discord Rich Presence Module\Discord Rich Presence Module.csproj", "{1DED6817-F7EB-4273-B793-9314D8E3E8D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Random Module", "Random Module\Random Module.csproj", "{FEC31CE0-4539-4A1B-A633-78E3BDBD8C56}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Random Generator Module", "Random Generator Module\Random Generator Module.csproj", "{FEC31CE0-4539-4A1B-A633-78E3BDBD8C56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
