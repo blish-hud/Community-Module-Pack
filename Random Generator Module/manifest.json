@@ -1,13 +1,13 @@
 {
-  "name": "Random Module",
+  "name": "Random Generator",
   "version": "0.1.0",
-  "namespace": "Random_Module",
-  "package": "Random Module.dll",
+  "namespace": "Random_Generator_Module",
+  "package": "Random Generator Module.dll",
   "manifest_version": 1,
 
   "description": "Roll a dice, flip a coin, whatever suits your needs.",
   "dependencies": {
-    "bh.blishhud": ">=0.4.2"
+    "bh.blishhud": ">=0.5.2"
   },
   "url": "https://github.com/blish-hud/Community-Module-Pack",
   "author": {
