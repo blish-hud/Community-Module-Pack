@@ -1,14 +1,4 @@
-﻿using Blish_HUD;
-using Blish_HUD.Controls;
-using Blish_HUD.Controls.Intern;
-using Blish_HUD.Input;
-using Blish_HUD.Modules;
-using Blish_HUD.Modules.Managers;
-using Blish_HUD.Settings;
-using Gw2Sharp.Mumble.Models;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
@@ -16,47 +6,28 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using VerticalAlignment = Blish_HUD.Controls.VerticalAlignment;
+using Blish_HUD;
+using Blish_HUD.Controls;
+using Blish_HUD.Controls.Intern;
+using Blish_HUD.Input;
+using Blish_HUD.Modules;
+using Blish_HUD.Modules.Managers;
+using Blish_HUD.Settings;
+using Gw2Sharp.ChatLinks;
+using Gw2Sharp.Mumble.Models;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Inquest_Module
 {
-
-    [Export(typeof(Blish_HUD.Modules.Module))]
-    public class InquestModule : Blish_HUD.Modules.Module {
-
+    [Export(typeof(Module))]
+    public class InquestModule : Module
+    {
         private static readonly Logger Logger = Logger.GetLogger(typeof(InquestModule));
 
         internal static InquestModule ModuleInstance;
 
-        #region Service Managers
-        internal SettingsManager SettingsManager => this.ModuleParameters.SettingsManager;
-        internal ContentsManager ContentsManager => this.ModuleParameters.ContentsManager;
-        internal DirectoriesManager DirectoriesManager => this.ModuleParameters.DirectoriesManager;
-        internal Gw2ApiManager Gw2ApiManager => this.ModuleParameters.Gw2ApiManager;
-        #endregion
-
-        #region Settings
-        private SettingEntry<bool> KillProofDeceiverEnabled;
-        private SettingEntry<Dictionary<string, int>> TokenQuantity;
-        private SettingEntry<bool> SkillFramesEnabled;
-        private SettingEntry<Dictionary<GuildWarsControls, Tuple<bool,bool>>> SkillFramesSettings;
-        private SettingEntry<bool> EmotePanelEnabled;
-        private SettingEntry<bool> SurrenderButtonEnabled;
-        private SettingEntry<bool> HealthpoolShadowEnabled;
-        #endregion
-
-        private List<Control> _moduleControls;
-
-        private Panel DeceiverPanel;
-        private Panel QueuePanel;
-        private Panel EmotePanel;
-        private Image SurrenderButton;
-        private Image HealthpoolShadow;
-        private CornerIcon InquestIcon;
-        private ContextMenuStrip InquestIconMenu;
-        private Random Randomizer;
-
-        private static Dictionary<string, int> TokenIdRepository = new Dictionary<string, int>()
+        private static readonly Dictionary<string, int> TokenIdRepository = new Dictionary<string, int>
         {
             {"Legendary Insight", 77302},
             {"Unstable Cosmic Essence", 81743},
@@ -70,7 +41,7 @@ namespace Inquest_Module
             {"W3 | Keep Construct Rubble", 78905},
             {"W3 | Ribbon Scrap", 78942},
             {"W4 | Cairn Fragment", 80623},
-            {"W4 | Recreation Room Floor Fragment",  80269},
+            {"W4 | Recreation Room Floor Fragment", 80269},
             {"W4 | Impaled Prisoner Token", 80087},
             {"W4 | Fragment of Saul's Burden", 80189},
             {"W5 | Desmina's Token", 85993},
@@ -84,16 +55,20 @@ namespace Inquest_Module
             {"W7 | Cardinal Sabir's Token", 91270},
             {"W7 | Ether Djinn's Token", 91175}
         };
-        private static List<string> RaidWings = new List<string>()
+
+        private static readonly List<string> RaidWings = new List<string>
         {
-           "W1",
-           "W2",
-           "W3",
-           "W4",
-           "W5",
-           "W6",
-           "W7",
+            "W1",
+            "W2",
+            "W3",
+            "W4",
+            "W5",
+            "W6",
+            "W7"
         };
+
+        private static Dictionary<string, Texture2D> EmoteRepository;
+
         private readonly Dictionary<GuildWarsControls, (int, int, int)> Abilities =
             new Dictionary<GuildWarsControls, (int, int, int)>
             {
@@ -108,180 +83,209 @@ namespace Inquest_Module
                 {GuildWarsControls.UtilitySkill3, (270, 24, 0)},
                 {GuildWarsControls.EliteSkill, (332, 24, 0)}
             };
-        private static Dictionary<string, Texture2D> EmoteRepository;
+
+        private List<Control> _moduleControls;
+
+        private Panel DeceiverPanel;
+        private Panel EmotePanel;
+        private Image HealthpoolShadow;
+        private CornerIcon InquestIcon;
+        private ContextMenuStrip InquestIconMenu;
+        private bool QueueAbort;
+        private Panel QueuePanel;
+        private Stopwatch QueueStopWatch;
+        private Label QueueTimeLabel;
+        private Thread QueueWorker;
+        private Random Randomizer;
 
         private Dictionary<GuildWarsControls, Control> SkillFrames;
         private Dictionary<GuildWarsControls, Control> SkillGlassFrames;
+        private Image SurrenderButton;
         private Dictionary<string, int> TokenQuantityRepository;
-        private Thread QueueWorker;
-        private bool QueueAbort;
-        private Stopwatch QueueStopWatch;
-        private Label QueueTimeLabel;
 
         [ImportingConstructor]
-        public InquestModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) { ModuleInstance = this; }
+        public InquestModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters)
+        {
+            ModuleInstance = this;
+        }
 
         protected override void DefineSettings(SettingCollection settings)
         {
-            KillProofDeceiverEnabled = settings.DefineSetting("KillProofDeceiverEnabled", false, "Kill Proof Deceiver Panel.", "Deceive players by showing off with fake kill proofs.");
-            TokenQuantity = settings.DefineSetting<Dictionary<string, int>>("TokenQuantity", new Dictionary<string, int>());
-            SkillFramesEnabled = settings.DefineSetting("SkillFramesEnabled", false, "Customizable Skill Frames", "Shows customizable skill frames.");
-            SkillFramesSettings = settings.DefineSetting("SkillFramesSettings", new Dictionary<GuildWarsControls, Tuple<bool, bool>>());
-            HealthpoolShadowEnabled = settings.DefineSetting("HealthpoolShadowEnabled", false, "Health-pool shadow", "Shows an inner shadow on the health-pool.");
-            EmotePanelEnabled = settings.DefineSetting("EmotePanelEnabled", false, "Emote Panel.", "Express a variety of emotes in a press of a button.");
-            SurrenderButtonEnabled = settings.DefineSetting("SurrenderButtonEnabled", false, "Surrender Button.", "Send /gg by a press of the white surrender flag.");
+            KillProofDeceiverEnabled = settings.DefineSetting("KillProofDeceiverEnabled", false,
+                "Kill Proof Deceiver Panel.", "Deceive players by showing off with fake kill proofs.");
+            TokenQuantity = settings.DefineSetting("TokenQuantity", new Dictionary<string, int>());
+            SkillFramesEnabled = settings.DefineSetting("SkillFramesEnabled", false, "Customizable Skill Frames",
+                "Shows customizable skill frames.");
+            SkillFramesSettings = settings.DefineSetting("SkillFramesSettings",
+                new Dictionary<GuildWarsControls, Tuple<bool, bool>>());
+            HealthpoolShadowEnabled = settings.DefineSetting("HealthpoolShadowEnabled", false, "Health-pool shadow",
+                "Shows an inner shadow on the health-pool.");
+            EmotePanelEnabled = settings.DefineSetting("EmotePanelEnabled", false, "Emote Panel.",
+                "Express a variety of emotes in a press of a button.");
+            SurrenderButtonEnabled = settings.DefineSetting("SurrenderButtonEnabled", false, "Surrender Button.",
+                "Send /gg by a press of the white surrender flag.");
         }
 
-        protected override void Initialize(){
+        protected override void Initialize()
+        {
             Randomizer = new Random();
             _moduleControls = new List<Control>();
             TokenQuantityRepository = TokenQuantity.Value;
             SkillFrames = new Dictionary<GuildWarsControls, Control>();
             SkillGlassFrames = new Dictionary<GuildWarsControls, Control>();
             QueueStopWatch = new Stopwatch();
-            EmoteRepository = new Dictionary<string, Texture2D>() {
+            EmoteRepository = new Dictionary<string, Texture2D>
+            {
                 //Grey (neutral)
-                { "/beckon", ContentsManager.GetTexture("emotes/Beckon.png") },
-                { "/bow", ContentsManager.GetTexture("emotes/Bow.png") },
-                { "/kneel", ContentsManager.GetTexture("emotes/Kneel.png") },
-                { "/point", ContentsManager.GetTexture("emotes/Point.png") },
-                { "/ponder", ContentsManager.GetTexture("emotes/Think.png") },
-                { "/salute", ContentsManager.GetTexture("emotes/Salute.png") },
-                { "/sit", ContentsManager.GetTexture("emotes/Sit.png") },
-                { "/sleep", ContentsManager.GetTexture("emotes/Doze.png") },
-                { "/wave", ContentsManager.GetTexture("emotes/Wave.png") },
-                { "/crossarms", ContentsManager.GetTexture("emotes/At_Ease.png") },
-                { "/talk", ContentsManager.GetTexture("emotes/Converse.png") },
+                {"/beckon", ContentsManager.GetTexture("emotes/Beckon.png")},
+                {"/bow", ContentsManager.GetTexture("emotes/Bow.png")},
+                {"/kneel", ContentsManager.GetTexture("emotes/Kneel.png")},
+                {"/point", ContentsManager.GetTexture("emotes/Point.png")},
+                {"/ponder", ContentsManager.GetTexture("emotes/Think.png")},
+                {"/salute", ContentsManager.GetTexture("emotes/Salute.png")},
+                {"/sit", ContentsManager.GetTexture("emotes/Sit.png")},
+                {"/sleep", ContentsManager.GetTexture("emotes/Doze.png")},
+                {"/wave", ContentsManager.GetTexture("emotes/Wave.png")},
+                {"/crossarms", ContentsManager.GetTexture("emotes/At_Ease.png")},
+                {"/talk", ContentsManager.GetTexture("emotes/Converse.png")},
                 //Blue (negative)
-                { "/sad", ContentsManager.GetTexture("emotes/Disappointed.png") },
-                { "/threaten", ContentsManager.GetTexture("emotes/Furious.png") },
-                { "/surprised", ContentsManager.GetTexture("emotes/Surprised.png") },
-                { "/shrug", ContentsManager.GetTexture("emotes/Shrug.png") },
-                { "/no", ContentsManager.GetTexture("emotes/No.png") },
-                { "/cry", ContentsManager.GetTexture("emotes/Cry.png") },
-                { "/cower", ContentsManager.GetTexture("emotes/Tremble.png") },
-                { "/upset", ContentsManager.GetTexture("emotes/Facepalm.png") },
+                {"/sad", ContentsManager.GetTexture("emotes/Disappointed.png")},
+                {"/threaten", ContentsManager.GetTexture("emotes/Furious.png")},
+                {"/surprised", ContentsManager.GetTexture("emotes/Surprised.png")},
+                {"/shrug", ContentsManager.GetTexture("emotes/Shrug.png")},
+                {"/no", ContentsManager.GetTexture("emotes/No.png")},
+                {"/cry", ContentsManager.GetTexture("emotes/Cry.png")},
+                {"/cower", ContentsManager.GetTexture("emotes/Tremble.png")},
+                {"/upset", ContentsManager.GetTexture("emotes/Facepalm.png")},
                 //Yellow (positive)
-                { "/yes", ContentsManager.GetTexture("emotes/Yes.png") },
-                { "/laugh", ContentsManager.GetTexture("emotes/Laugh.png") },
-                { "/dance", ContentsManager.GetTexture("emotes/Dance.png") },
-                { "/cheer", ContentsManager.GetTexture("emotes/Cheer.png") },
-                { "/thanks", ContentsManager.GetTexture("emotes/Thumbs_Up.png") }
+                {"/yes", ContentsManager.GetTexture("emotes/Yes.png")},
+                {"/laugh", ContentsManager.GetTexture("emotes/Laugh.png")},
+                {"/dance", ContentsManager.GetTexture("emotes/Dance.png")},
+                {"/cheer", ContentsManager.GetTexture("emotes/Cheer.png")},
+                {"/thanks", ContentsManager.GetTexture("emotes/Thumbs_Up.png")}
             };
-            if (KillProofDeceiverEnabled.Value) { DeceiverPanel = BuildDeceiverPanel(); }
-            if (EmotePanelEnabled.Value) { EmotePanel = BuildEmotePanel(); }
-            if (SurrenderButtonEnabled.Value) { SurrenderButton = BuildSurrenderButton(); }
+            if (KillProofDeceiverEnabled.Value) DeceiverPanel = BuildDeceiverPanel();
+            if (EmotePanelEnabled.Value) EmotePanel = BuildEmotePanel();
+            if (SurrenderButtonEnabled.Value) SurrenderButton = BuildSurrenderButton();
 
-            if (SkillFramesEnabled.Value) {
-                foreach (KeyValuePair<GuildWarsControls, Tuple<bool, bool>> frameSetting in SkillFramesSettings.Value)
+            if (SkillFramesEnabled.Value)
+            {
+                foreach (var frameSetting in SkillFramesSettings.Value)
                 {
                     if (frameSetting.Value.Item1) CreateSkillFrame(frameSetting.Key);
                     if (frameSetting.Value.Item2) CreateSkillFrame(frameSetting.Key, true);
                 }
 
                 if (HealthpoolShadowEnabled.Value)
-                {
-                    HealthpoolShadow = new Image()
+                    HealthpoolShadow = new Image
                     {
                         Parent = GameService.Graphics.SpriteScreen,
                         Texture = ContentsManager.GetTexture("healthpool_shadow.png"),
                         Size = new Point(111, 111)
                     };
-                }
             }
 
             InquestIconMenu = new ContextMenuStrip();
 
             BuildCategoryMenus();
 
-            InquestIcon = new CornerIcon()
+            InquestIcon = new CornerIcon
             {
                 IconName = "Inquest Chipset",
                 Icon = ContentsManager.GetTexture("assault_cube_icon.png"),
                 Priority = "Inquest Chipset".GetHashCode()
             };
-            InquestIcon.Click += delegate {
-                InquestIconMenu.Show(InquestIcon);
-            };
+            InquestIcon.Click += delegate { InquestIconMenu.Show(InquestIcon); };
         }
+
         protected override async Task LoadAsync()
         {
         }
+
         protected override void OnModuleLoaded(EventArgs e)
         {
             // Base handler must be called
             base.OnModuleLoaded(e);
         }
+
         protected override void Update(GameTime gameTime)
         {
-            if (DeceiverPanel != null)
+            if (DeceiverPanel != null) DeceiverPanel.Visible = GameService.GameIntegration.IsInGame;
+            if (EmotePanel != null) EmotePanel.Visible = GameService.GameIntegration.IsInGame;
+            if (SurrenderButton != null)
             {
-                DeceiverPanel.Visible = GameService.GameIntegration.IsInGame;
-            }
-            if (EmotePanel != null) {
-                EmotePanel.Visible = GameService.GameIntegration.IsInGame;
-            }
-            if (SurrenderButton != null) {
                 SurrenderButton.Visible = GameService.GameIntegration.IsInGame;
                 SurrenderButton.Location =
                     new Point(GameService.Graphics.SpriteScreen.Width / 2 - SurrenderButton.Width / 2 + 431,
                         GameService.Graphics.SpriteScreen.Height - SurrenderButton.Height * 2 + 7);
             }
-            if (!GameService.GameIntegration.IsInGame && !QueueAbort) {
-                    QueueAbort = true;
-                    if (QueuePanel != null) {
-                        QueuePanel.Dispose();
-                        QueuePanel = null;
-                    }
-            }
-            if (QueueTimeLabel != null && QueueTimeLabel.Visible && QueueStopWatch.IsRunning)
+
+            if (!GameService.GameIntegration.IsInGame && !QueueAbort)
             {
-                QueueTimeLabel.Text = "In instance queue: " + string.Format($"{QueueStopWatch.Elapsed:mm\\:ss}");
+                QueueAbort = true;
+                if (QueuePanel != null)
+                {
+                    QueuePanel.Dispose();
+                    QueuePanel = null;
+                }
             }
+
+            if (QueueTimeLabel != null && QueueTimeLabel.Visible && QueueStopWatch.IsRunning)
+                QueueTimeLabel.Text = "In instance queue: " + string.Format($"{QueueStopWatch.Elapsed:mm\\:ss}");
             if (SkillFramesEnabled.Value)
             {
-                if (HealthpoolShadow != null) {
+                if (HealthpoolShadow != null)
+                {
                     HealthpoolShadow.Visible = GameService.GameIntegration.IsInGame;
                     HealthpoolShadow.Location =
                         new Point(GameService.Graphics.SpriteScreen.Width / 2 - HealthpoolShadow.Width / 2,
                             GameService.Graphics.SpriteScreen.Height - HealthpoolShadow.Height - 17);
                 }
-                foreach (KeyValuePair<GuildWarsControls, Control> frame in SkillFrames)
+
+                foreach (var frame in SkillFrames)
                 {
                     if (frame.Value == null) continue;
                     frame.Value.Visible = GameService.GameIntegration.IsInGame;
-                    frame.Value.Location = new Point(GameService.Graphics.SpriteScreen.Width / 2 - frame.Value.Width / 2 + Abilities[frame.Key].Item1,
+                    frame.Value.Location = new Point(
+                        GameService.Graphics.SpriteScreen.Width / 2 - frame.Value.Width / 2 +
+                        Abilities[frame.Key].Item1,
                         GameService.Graphics.SpriteScreen.Height - frame.Value.Height - Abilities[frame.Key].Item2);
                 }
-                foreach (KeyValuePair<GuildWarsControls, Control> frame in SkillGlassFrames) {
+
+                foreach (var frame in SkillGlassFrames)
+                {
                     if (frame.Value == null) continue;
                     frame.Value.Visible = GameService.GameIntegration.IsInGame;
-                    frame.Value.Location = new Point(GameService.Graphics.SpriteScreen.Width / 2 - frame.Value.Width / 2 + Abilities[frame.Key].Item1, 
+                    frame.Value.Location = new Point(
+                        GameService.Graphics.SpriteScreen.Width / 2 - frame.Value.Width / 2 +
+                        Abilities[frame.Key].Item1,
                         GameService.Graphics.SpriteScreen.Height - frame.Value.Height - Abilities[frame.Key].Item2);
                 }
             }
         }
+
         /// <inheritdoc />
         protected override void Unload()
         {
             // Unload
             QueueAbort = true;
-            foreach (Control c in _moduleControls)
-            {
-                c?.Dispose();
-            }
+            foreach (var c in _moduleControls) c?.Dispose();
             DeceiverPanel?.Dispose();
             EmotePanel?.Dispose();
             SurrenderButton?.Dispose();
             HealthpoolShadow?.Dispose();
             QueuePanel?.Dispose();
             QueueWorker?.Abort();
+            QueueWorker = null;
             InquestIcon?.Dispose();
             // All static members must be manually unset
             ModuleInstance = null;
         }
-        private Panel BuildEmotePanel() {
-            var emotePanel = new Panel() {
+
+        private Panel BuildEmotePanel()
+        {
+            var emotePanel = new Panel
+            {
                 Parent = GameService.Graphics.SpriteScreen,
                 Location = new Point(10, 180),
                 Size = new Point(124, 708),
@@ -291,8 +295,10 @@ namespace Inquest_Module
             };
 
             var pos = new Point(0, 0);
-            foreach (KeyValuePair<string, Texture2D> emote in EmoteRepository) {
-                var icon = new Image() {
+            foreach (var emote in EmoteRepository)
+            {
+                var icon = new Image
+                {
                     Parent = emotePanel,
                     Texture = emote.Value,
                     Size = new Point(56, 56),
@@ -301,68 +307,84 @@ namespace Inquest_Module
                 };
 
                 pos.X += icon.Width + 2;
-                if (pos.X + 56 > emotePanel.Width) {
+                if (pos.X + 56 > emotePanel.Width)
+                {
                     pos.Y += icon.Height + 2;
                     pos.X = 0;
                 }
 
-                icon.LeftMouseButtonPressed += delegate {
+                icon.LeftMouseButtonPressed += delegate
+                {
                     icon.Size = new Point(icon.Size.X - 2, icon.Size.Y - 2);
                     icon.Location = new Point(icon.Location.X + 2, icon.Location.Y + 2);
                 };
-                icon.LeftMouseButtonReleased += delegate {
+                icon.LeftMouseButtonReleased += delegate
+                {
                     icon.Size = new Point(icon.Size.X + 2, icon.Size.Y + 2);
                     icon.Location = new Point(icon.Location.X - 2, icon.Location.Y - 2);
 
                     GameService.GameIntegration.Chat.Send(emote.Key + " @");
-
                 };
             }
-            var fadeIn = AnimationService.Animation.Tweener.Tween(emotePanel, new { Opacity = 1.0f }, 0.2f);
+
+            GameService.Animation.Tweener.Tween(emotePanel, new {Opacity = 1.0f}, 0.35f);
             return emotePanel;
         }
-        private Image BuildSurrenderButton() {
+
+        private Image BuildSurrenderButton()
+        {
             var tooltip_texture = ContentsManager.GetTexture("surrender_tooltip.png");
             var tooltip_size = new Point(tooltip_texture.Width, tooltip_texture.Height);
-            var surrenderButtonTooltip = new Tooltip {
+            var surrenderButtonTooltip = new Tooltip
+            {
                 Size = tooltip_size
             };
-            var surrenderButtonTooltipImage = new Image(tooltip_texture) {
+            var surrenderButtonTooltipImage = new Image(tooltip_texture)
+            {
                 Parent = surrenderButtonTooltip,
                 Location = new Point(0, 0),
                 Visible = surrenderButtonTooltip.Visible
             };
-            var surrenderButton = new Image {
+            var surrenderButton = new Image
+            {
                 Parent = GameService.Graphics.SpriteScreen,
                 Size = new Point(45, 45),
                 Location = new Point(GameService.Graphics.SpriteScreen.Width / 2 - 22,
                     GameService.Graphics.SpriteScreen.Height - 45),
                 Texture = ContentsManager.GetTexture("surrender_flag.png"),
                 Visible = SurrenderButtonEnabled.Value,
-                Tooltip = surrenderButtonTooltip
+                Tooltip = surrenderButtonTooltip,
+                Opacity = 0.0f
             };
-            surrenderButton.MouseEntered += delegate {
+            surrenderButton.MouseEntered += delegate
+            {
                 surrenderButton.Texture = ContentsManager.GetTexture("surrender_flag_hover.png");
             };
-            surrenderButton.MouseLeft += delegate {
+            surrenderButton.MouseLeft += delegate
+            {
                 surrenderButton.Texture = ContentsManager.GetTexture("surrender_flag.png");
             };
-            surrenderButton.LeftMouseButtonPressed += delegate {
+            surrenderButton.LeftMouseButtonPressed += delegate
+            {
                 surrenderButton.Size = new Point(43, 43);
                 surrenderButton.Texture = ContentsManager.GetTexture("surrender_flag_pressed.png");
             };
-            surrenderButton.LeftMouseButtonReleased += delegate {
+            surrenderButton.LeftMouseButtonReleased += delegate
+            {
                 surrenderButton.Size = new Point(45, 45);
                 surrenderButton.Texture = ContentsManager.GetTexture("surrender_flag.png");
                 GameService.GameIntegration.Chat.Send("/gg");
             };
+            GameService.Animation.Tweener.Tween(surrenderButton, new {Opacity = 1.0}, 0.35f);
             return surrenderButton;
         }
+
         private void TryMapJoin(int x, int y)
         {
             var playerContextMenuItemJoinMapPos = new Point(x, y);
             var errorMapFullOkButton = new Point(0, 0);
-            switch (GameService.Gw2Mumble.UI.UISize) {
+            switch (GameService.Gw2Mumble.UI.UISize)
+            {
                 case UiSize.Small:
                     playerContextMenuItemJoinMapPos.X += 78;
                     playerContextMenuItemJoinMapPos.Y += 78;
@@ -388,7 +410,8 @@ namespace Inquest_Module
                     errorMapFullOkButton.Y = 603;
                     break;
             }
-            int tries = 0;
+
+            var tries = 0;
             while (!QueueAbort)
             {
                 Mouse.SetPosition(x, y);
@@ -400,50 +423,54 @@ namespace Inquest_Module
                 Mouse.SetPosition(errorMapFullOkButton.X, errorMapFullOkButton.Y);
                 Mouse.Click(MouseButton.LEFT, errorMapFullOkButton.X, errorMapFullOkButton.Y);
 
-                if (QueuePanel != null) {
+                if (QueuePanel != null)
+                {
                     tries++;
                     QueuePanel.BasicTooltipText = "Map join attempts: " + tries;
                 }
-                Thread.Sleep(Randomizer.Next(700,1000));
+
+                Thread.Sleep(Randomizer.Next(700, 1000));
             }
+
             QueueWorker = null;
         }
 
         private Panel BuildMapQueuePanel()
         {
-            var mainPanel = new Panel()
+            var mainPanel = new Panel
             {
                 Parent = GameService.Graphics.SpriteScreen,
                 Size = new Point(700, 260),
-                Location = new Point(GameService.Graphics.SpriteScreen.Width / 2 - 350, GameService.Graphics.SpriteScreen.Height / 2 - 130),
+                Location = new Point(GameService.Graphics.SpriteScreen.Width / 2 - 350,
+                    GameService.Graphics.SpriteScreen.Height / 2 - 130),
                 ShowBorder = true,
                 ShowTint = true,
                 Title = "Map Instance Queue - Enqueue for another player's full instance.",
                 Opacity = 0.0f
             };
-            QueueTimeLabel = new Label()
+            QueueTimeLabel = new Label
             {
                 Parent = mainPanel,
                 Size = mainPanel.ContentRegion.Size,
                 Location = new Point(0, 20),
-                Text = "Left Click a player in your squad to get his slot coordinates.\nMake sure it's static when squad size changes.",
-                Font = GameService.Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size24, ContentService.FontStyle.Regular),
+                Text =
+                    "Left Click a player in your squad to get his slot coordinates.\nMake sure it's static when squad size changes.",
+                Font = GameService.Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size24,
+                    ContentService.FontStyle.Regular),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Top,
                 StrokeText = true,
                 ShowShadow = true
             };
-            mainPanel.Disposed += delegate
-            {
-                QueueStopWatch.Stop();
-            };
-            var queuePosLabel = new Label()
+            mainPanel.Disposed += delegate { QueueStopWatch.Stop(); };
+            var queuePosLabel = new Label
             {
                 Parent = mainPanel,
                 Size = mainPanel.ContentRegion.Size,
                 Text = "",
                 Location = new Point(0, 90),
-                Font = GameService.Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size24, ContentService.FontStyle.Regular),
+                Font = GameService.Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size24,
+                    ContentService.FontStyle.Regular),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Top,
                 StrokeText = true,
@@ -452,14 +479,15 @@ namespace Inquest_Module
 
             int x = 0, y = 0;
 
-            var queueSpinner = new LoadingSpinner()
+            var queueSpinner = new LoadingSpinner
             {
                 Parent = mainPanel,
                 Visible = false
             };
-            queueSpinner.Location = new Point(mainPanel.ContentRegion.Width / 2 - queueSpinner.Width / 2, mainPanel.ContentRegion.Height / 2 - queueSpinner.Height / 2);
+            queueSpinner.Location = new Point(mainPanel.ContentRegion.Width / 2 - queueSpinner.Width / 2,
+                mainPanel.ContentRegion.Height / 2 - queueSpinner.Height / 2);
 
-            var enqueueButton = new StandardButton()
+            var enqueueButton = new StandardButton
             {
                 Parent = mainPanel,
                 Size = new Point(100, 50),
@@ -467,12 +495,14 @@ namespace Inquest_Module
                 Visible = false,
                 Text = "Enqueue"
             };
-            GameService.Input.Mouse.LeftMouseButtonPressed += delegate (object sender, MouseEventArgs e)
+            GameService.Input.Mouse.LeftMouseButtonPressed += delegate(object sender, MouseEventArgs e)
             {
                 if (mainPanel == null) return;
 
-                if (e.MouseState.X < mainPanel.AbsoluteBounds.X + mainPanel.AbsoluteBounds.Width && e.MouseState.X > mainPanel.AbsoluteBounds.X &&
-                    e.MouseState.Y < mainPanel.AbsoluteBounds.Y + mainPanel.AbsoluteBounds.Height && e.MouseState.Y > mainPanel.AbsoluteBounds.Y) return;
+                if (e.MouseState.X < mainPanel.AbsoluteBounds.X + mainPanel.AbsoluteBounds.Width &&
+                    e.MouseState.X > mainPanel.AbsoluteBounds.X &&
+                    e.MouseState.Y < mainPanel.AbsoluteBounds.Y + mainPanel.AbsoluteBounds.Height &&
+                    e.MouseState.Y > mainPanel.AbsoluteBounds.Y) return;
 
                 var pos = Mouse.GetPosition();
                 x = pos.X;
@@ -480,10 +510,10 @@ namespace Inquest_Module
                 queuePosLabel.Text = "X: " + x + " Y: " + y;
                 enqueueButton.Visible = true;
             };
-            var closeButton = new Image()
+            var closeButton = new Image
             {
                 Parent = mainPanel,
-                Texture = ContentService.Content.GetTexture("button-exit"),
+                Texture = GameService.Content.GetTexture("button-exit"),
                 Size = new Point(32, 32),
                 Location = new Point(mainPanel.Width - 37, 0)
             };
@@ -491,16 +521,19 @@ namespace Inquest_Module
             {
                 closeButton.Size = new Point(closeButton.Size.X - 2, closeButton.Size.Y - 2);
                 closeButton.Location = new Point(closeButton.Location.X + 2, closeButton.Location.Y + 2);
-                closeButton.Texture = ContentService.Content.GetTexture("button-exit-active");
+                closeButton.Texture = GameService.Content.GetTexture("button-exit-active");
             };
             closeButton.LeftMouseButtonReleased += delegate
             {
                 closeButton.Size = new Point(closeButton.Size.X + 2, closeButton.Size.Y + 2);
                 closeButton.Location = new Point(closeButton.Location.X - 2, closeButton.Location.Y - 2);
-                closeButton.Texture = ContentService.Content.GetTexture("button-exit");
+                closeButton.Texture = GameService.Content.GetTexture("button-exit");
 
-                mainPanel.Dispose();
-                QueuePanel = null;
+                GameService.Animation.Tweener.Tween(mainPanel, new {Opacity = 0.0f}, 0.2f).OnComplete(() =>
+                {
+                    mainPanel.Dispose();
+                    QueuePanel = null;
+                });
             };
             enqueueButton.LeftMouseButtonPressed += delegate
             {
@@ -531,15 +564,13 @@ namespace Inquest_Module
                     QueueStopWatch.Restart();
                 }
             };
-            var fadeIn = GameService.Animation.Tweener.Tween(mainPanel, new { Opacity = 1.0f }, 0.2f);
-            mainPanel.Disposed += delegate {
-                var fadeOut = GameService.Animation.Tweener.Tween(mainPanel, new { Opacity = 0.0f }, 0.2f);
-            };
+            GameService.Animation.Tweener.Tween(mainPanel, new {Opacity = 1.0f}, 0.35f);
             return mainPanel;
         }
+
         private void BuildCategoryMenus()
         {
-            var queueItem = new ContextMenuStripItem()
+            var queueItem = new ContextMenuStripItem
             {
                 Text = "Map Queue",
                 Parent = InquestIconMenu
@@ -550,7 +581,7 @@ namespace Inquest_Module
             };
             _moduleControls.Add(queueItem);
 
-            var deceiverItem = new ContextMenuStripItem()
+            var deceiverItem = new ContextMenuStripItem
             {
                 Text = "Kill Proof Deceiver",
                 CanCheck = true,
@@ -562,50 +593,63 @@ namespace Inquest_Module
                 KillProofDeceiverEnabled.Value = e.Checked;
 
                 if (e.Checked)
-                {
                     DeceiverPanel = BuildDeceiverPanel();
-                }
                 else
-                {
-                    DeceiverPanel.Dispose();
-                    DeceiverPanel = null;
-                }
+                    GameService.Animation.Tweener.Tween(DeceiverPanel, new {Opacity = 0.0f}, 0.2f)
+                        .OnComplete(() =>
+                            {
+                                DeceiverPanel.Dispose();
+                                DeceiverPanel = null;
+                            }
+                        );
             };
             _moduleControls.Add(deceiverItem);
 
-            var emoteItem = new ContextMenuStripItem() {
+            var emoteItem = new ContextMenuStripItem
+            {
                 Text = "Emote Panel",
                 CanCheck = true,
                 Checked = EmotePanelEnabled.Value,
                 Parent = InquestIconMenu
             };
-            emoteItem.CheckedChanged += delegate (object sender, CheckChangedEvent e) {
+            emoteItem.CheckedChanged += delegate(object sender, CheckChangedEvent e)
+            {
                 EmotePanelEnabled.Value = e.Checked;
 
-                if (e.Checked) {
+                if (e.Checked)
                     EmotePanel = BuildEmotePanel();
-                } else {
-                    EmotePanel.Dispose();
-                    EmotePanel = null;
-                }
+                else
+                    GameService.Animation.Tweener.Tween(EmotePanel, new {Opacity = 0.0f}, 0.2f)
+                        .OnComplete(() =>
+                            {
+                                EmotePanel.Dispose();
+                                EmotePanel = null;
+                            }
+                        );
             };
             _moduleControls.Add(emoteItem);
 
-            var surrenderItem = new ContextMenuStripItem() {
+            var surrenderItem = new ContextMenuStripItem
+            {
                 Text = "Surrender Button",
                 CanCheck = true,
                 Checked = SurrenderButtonEnabled.Value,
                 Parent = InquestIconMenu
             };
-            surrenderItem.CheckedChanged += delegate (object sender, CheckChangedEvent e) {
+            surrenderItem.CheckedChanged += delegate(object sender, CheckChangedEvent e)
+            {
                 SurrenderButtonEnabled.Value = e.Checked;
 
-                if (e.Checked) {
+                if (e.Checked)
                     SurrenderButton = BuildSurrenderButton();
-                } else {
-                    SurrenderButton.Dispose();
-                    SurrenderButton = null;
-                }
+                else
+                    GameService.Animation.Tweener.Tween(SurrenderButton, new {Opacity = 0.0f}, 0.2f)
+                        .OnComplete(() =>
+                            {
+                                SurrenderButton.Dispose();
+                                SurrenderButton = null;
+                            }
+                        );
             };
             _moduleControls.Add(surrenderItem);
 
@@ -622,12 +666,14 @@ namespace Inquest_Module
 
             var scale = Abilities[control].Item3 != 0 ? Abilities[control].Item3 : 58;
 
-            var img = new Image() {
+            var img = new Image
+            {
                 Parent = GameService.Graphics.SpriteScreen,
                 Texture = texture,
                 Size = new Point(scale, scale)
             };
-            img.Location = new Point(GameService.Graphics.SpriteScreen.Width / 2 - img.Width / 2 + Abilities[control].Item1,
+            img.Location = new Point(
+                GameService.Graphics.SpriteScreen.Width / 2 - img.Width / 2 + Abilities[control].Item1,
                 GameService.Graphics.SpriteScreen.Height - img.Height - Abilities[control].Item2);
 
             _moduleControls.Add(img);
@@ -642,11 +688,12 @@ namespace Inquest_Module
             else
                 SkillFrames[control] = img;
         }
+
         private void BuildSkillFramesMenu()
         {
             var skillFramesRootMenu = new ContextMenuStrip();
             _moduleControls.Add(skillFramesRootMenu);
-            var skillFramesItem = new ContextMenuStripItem()
+            var skillFramesItem = new ContextMenuStripItem
             {
                 Text = "Skill Frames",
                 Submenu = skillFramesRootMenu,
@@ -654,7 +701,7 @@ namespace Inquest_Module
                 Parent = InquestIconMenu,
                 Checked = SkillFramesEnabled.Value
             };
-            skillFramesItem.CheckedChanged += delegate(object sender, CheckChangedEvent e)
+            skillFramesItem.CheckedChanged += delegate
             {
                 SkillFramesEnabled.Value = skillFramesItem.Checked;
 
@@ -662,10 +709,7 @@ namespace Inquest_Module
                 {
                     var frames = SkillFrames.Select(x => x.Value).ToList();
                     frames.AddRange(SkillGlassFrames.Select(y => y.Value));
-                    foreach (Control frame in frames)
-                    {
-                        frame?.Dispose();
-                    }
+                    foreach (var frame in frames) frame?.Dispose();
 
                     SkillFrames.Clear();
                     SkillGlassFrames.Clear();
@@ -673,23 +717,25 @@ namespace Inquest_Module
                 }
                 else
                 {
-                    foreach(KeyValuePair<GuildWarsControls, Tuple<bool, bool>> frameSetting in SkillFramesSettings.Value)
+                    foreach (var frameSetting in SkillFramesSettings.Value)
                     {
                         if (frameSetting.Value.Item1) CreateSkillFrame(frameSetting.Key);
                         if (frameSetting.Value.Item2) CreateSkillFrame(frameSetting.Key, true);
                     }
-                    if (HealthpoolShadowEnabled.Value) {
-                        HealthpoolShadow = new Image() {
+
+                    if (HealthpoolShadowEnabled.Value)
+                        HealthpoolShadow = new Image
+                        {
                             Parent = GameService.Graphics.SpriteScreen,
                             Texture = ContentsManager.GetTexture("healthpool_shadow.png"),
                             Size = new Point(111, 111)
                         };
-                    }
                 }
             };
 
             _moduleControls.Add(skillFramesItem);
-            var healthPoolItem = new ContextMenuStripItem() {
+            var healthPoolItem = new ContextMenuStripItem
+            {
                 Text = "Healthpool Shadow",
                 CanCheck = true,
                 Parent = skillFramesRootMenu,
@@ -698,17 +744,17 @@ namespace Inquest_Module
             healthPoolItem.CheckedChanged += delegate(object sender, CheckChangedEvent e)
             {
                 HealthpoolShadowEnabled.Value = e.Checked;
-                if (e.Checked && SkillFramesEnabled.Value) {
-                    HealthpoolShadow = new Image()
+                if (e.Checked && SkillFramesEnabled.Value)
+                    HealthpoolShadow = new Image
                     {
                         Parent = GameService.Graphics.SpriteScreen,
                         Texture = ContentsManager.GetTexture("healthpool_shadow.png"),
                         Size = new Point(111, 111)
                     };
-                } else
+                else
                     HealthpoolShadow?.Dispose();
             };
-            foreach (KeyValuePair<GuildWarsControls, (int, int, int)> ability in Abilities)
+            foreach (var ability in Abilities)
             {
                 var frameEnabled = false;
                 var glassEnabled = false;
@@ -717,14 +763,17 @@ namespace Inquest_Module
                     var settingsEntry = SkillFramesSettings.Value[ability.Key];
                     frameEnabled = settingsEntry.Item1;
                     glassEnabled = settingsEntry.Item2;
-                } else
+                }
+                else
+                {
                     SkillFramesSettings.Value.Add(ability.Key, new Tuple<bool, bool>(false, false));
+                }
 
                 var friendlyName = Regex.Replace(ability.Key.ToString(), "([A-Z]|[1-9])", " $1", RegexOptions.Compiled)
                     .Trim();
                 var abilitySubmenu = new ContextMenuStrip();
                 _moduleControls.Add(abilitySubmenu);
-                var abilityItem = new ContextMenuStripItem()
+                var abilityItem = new ContextMenuStripItem
                 {
                     Text = friendlyName,
                     Submenu = abilitySubmenu,
@@ -733,72 +782,73 @@ namespace Inquest_Module
                 };
                 _moduleControls.Add(abilityItem);
 
-                var glassItem = new ContextMenuStripItem()
+                var glassItem = new ContextMenuStripItem
                 {
                     Text = "Glass",
                     CanCheck = true,
                     Parent = abilitySubmenu,
                     Checked = glassEnabled
                 };
-                glassItem.CheckedChanged += delegate (object sender, CheckChangedEvent e)
+                glassItem.CheckedChanged += delegate(object sender, CheckChangedEvent e)
                 {
-                    SkillFramesSettings.Value[ability.Key] = new Tuple<bool, bool>(SkillFramesSettings.Value[ability.Key].Item1, e.Checked);
-                    SkillFramesSettings.Value = new Dictionary<GuildWarsControls, Tuple<bool, bool>>(SkillFramesSettings.Value);
-                    if (e.Checked) {
+                    SkillFramesSettings.Value[ability.Key] =
+                        new Tuple<bool, bool>(SkillFramesSettings.Value[ability.Key].Item1, e.Checked);
+                    SkillFramesSettings.Value =
+                        new Dictionary<GuildWarsControls, Tuple<bool, bool>>(SkillFramesSettings.Value);
+                    if (e.Checked)
                         CreateSkillFrame(ability.Key, true);
-                    } else if (SkillGlassFrames.ContainsKey(ability.Key) && SkillGlassFrames[ability.Key] != null) {
+                    else if (SkillGlassFrames.ContainsKey(ability.Key) && SkillGlassFrames[ability.Key] != null)
                         SkillGlassFrames[ability.Key].Dispose();
-                    }
                 };
-                var frameItem = new ContextMenuStripItem()
+                var frameItem = new ContextMenuStripItem
                 {
                     Text = "Frame",
                     CanCheck = true,
                     Parent = abilitySubmenu,
                     Checked = frameEnabled
                 };
-                frameItem.CheckedChanged += delegate (object sender, CheckChangedEvent e)
+                frameItem.CheckedChanged += delegate(object sender, CheckChangedEvent e)
                 {
-                    SkillFramesSettings.Value[ability.Key] = new Tuple<bool, bool>(e.Checked, SkillFramesSettings.Value[ability.Key].Item2);
-                    SkillFramesSettings.Value = new Dictionary<GuildWarsControls, Tuple<bool, bool>>(SkillFramesSettings.Value);
-                    if (e.Checked) {
+                    SkillFramesSettings.Value[ability.Key] =
+                        new Tuple<bool, bool>(e.Checked, SkillFramesSettings.Value[ability.Key].Item2);
+                    SkillFramesSettings.Value =
+                        new Dictionary<GuildWarsControls, Tuple<bool, bool>>(SkillFramesSettings.Value);
+                    if (e.Checked)
                         CreateSkillFrame(ability.Key);
-                    } else if (SkillFrames.ContainsKey(ability.Key) && SkillFrames[ability.Key] != null) {
+                    else if (SkillFrames.ContainsKey(ability.Key) && SkillFrames[ability.Key] != null)
                         SkillFrames[ability.Key].Dispose();
-                    }
                 };
             }
         }
+
         private Panel BuildDeceiverPanel()
         {
-            var bgPanel = new Panel()
+            var bgPanel = new Panel
             {
                 Parent = GameService.Graphics.SpriteScreen,
                 Location = new Point(10, 38),
                 Size = new Point(410, 40),
-                Opacity = 0.4f,
+                Opacity = 0.0f,
                 Visible = false,
                 ShowBorder = true
             };
-            bgPanel.Resized += delegate (object sender, ResizedEventArgs args)
+            bgPanel.Resized += delegate { bgPanel.Location = new Point(10, 38); };
+            bgPanel.MouseEntered += delegate
             {
-                bgPanel.Location = new Point(10, 38);
+                GameService.Animation.Tweener.Tween(bgPanel, new {Opacity = 1.0f}, 0.45f);
             };
-            bgPanel.MouseEntered += delegate (object sender, MouseEventArgs e)
-            {
-                var fadeIn = GameService.Animation.Tweener.Tween(bgPanel, new { Opacity = 1.0f }, 0.45f);
-            };
-            var leftBracket = new Label()
+            var leftBracket = new Label
             {
                 Parent = bgPanel,
                 Size = bgPanel.Size,
-                Font = GameService.Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size20, ContentService.FontStyle.Regular),
+                Font = GameService.Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size20,
+                    ContentService.FontStyle.Regular),
                 Text = "[",
                 Location = new Point(0, 0),
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top
             };
-            var quantity = new CounterBox()
+            var quantity = new CounterBox
             {
                 Parent = bgPanel,
                 Size = new Point(60, 30),
@@ -806,34 +856,35 @@ namespace Inquest_Module
                 MinValue = 1,
                 MaxValue = 250,
                 ValueWidth = 24,
-                Numerator = 1,
+                Numerator = 1
             };
-            bgPanel.MouseLeft += delegate (object sender, MouseEventArgs e) {
+            bgPanel.MouseLeft += delegate
+            {
                 //TODO: Check for when dropdown IsExpanded
-                var fadeOut = GameService.Animation.Tweener.Tween(bgPanel, new { Opacity = 0.4f }, 0.45f);
+                GameService.Animation.Tweener.Tween(bgPanel, new {Opacity = 0.4f}, 0.45f);
             };
-            var dropdown = new Dropdown()
+            var dropdown = new Dropdown
             {
                 Parent = bgPanel,
                 Size = new Point(260, 20),
                 Location = new Point(quantity.Right + 2, 3)
             };
-            var rightBracket = new Label()
+            var rightBracket = new Label
             {
                 Parent = bgPanel,
                 Size = new Point(10, bgPanel.Height),
-                Font = GameService.Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size20, ContentService.FontStyle.Regular),
+                Font = GameService.Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size20,
+                    ContentService.FontStyle.Regular),
                 Text = "]",
                 Location = new Point(dropdown.Right, 0),
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top
             };
-            foreach (KeyValuePair<string, int> pair in TokenIdRepository)
-            {
-                dropdown.Items.Add(pair.Key);
-            }
+            foreach (var pair in TokenIdRepository) dropdown.Items.Add(pair.Key);
             dropdown.SelectedItem = "Legendary Insight";
-            quantity.Value = TokenQuantityRepository.ContainsKey(dropdown.SelectedItem) ? TokenQuantityRepository[dropdown.SelectedItem] : 125;
+            quantity.Value = TokenQuantityRepository.ContainsKey(dropdown.SelectedItem)
+                ? TokenQuantityRepository[dropdown.SelectedItem]
+                : 125;
             dropdown.ValueChanged += delegate
             {
                 try
@@ -847,7 +898,7 @@ namespace Inquest_Module
                     quantity.Value = 125;
                 }
             };
-            var sendButton = new Image()
+            var sendButton = new Image
             {
                 Parent = bgPanel,
                 Size = new Point(24, 24),
@@ -856,14 +907,15 @@ namespace Inquest_Module
                 SpriteEffects = SpriteEffects.FlipHorizontally,
                 BasicTooltipText = "Send"
             };
-            var randomizeButton = new StandardButton()
+            var randomizeButton = new StandardButton
             {
                 Parent = bgPanel,
                 Size = new Point(29, 24),
                 Location = new Point(sendButton.Right + 7, 0),
                 Text = "W1",
                 BackgroundColor = Color.Gray,
-                BasicTooltipText = "Random token from selected wing when pressing send.\nLeft-Click: Toggle\nRight-Click: Iterate wings"
+                BasicTooltipText =
+                    "Random token from selected wing when pressing send.\nLeft-Click: Toggle\nRight-Click: Iterate wings"
             };
             randomizeButton.LeftMouseButtonPressed += delegate
             {
@@ -872,19 +924,16 @@ namespace Inquest_Module
             };
 
             var tokens = new List<string>();
-            foreach (KeyValuePair<string, int> pair in TokenIdRepository)
-            {
+            foreach (var pair in TokenIdRepository)
                 if (pair.Key.StartsWith(randomizeButton.Text))
-                {
                     tokens.Add(pair.Key);
-                }
-            }
 
             randomizeButton.LeftMouseButtonReleased += delegate
             {
                 randomizeButton.Size = new Point(29, 24);
                 randomizeButton.Location = new Point(sendButton.Right + 7, 0);
-                randomizeButton.BackgroundColor = randomizeButton.BackgroundColor == Color.Gray ? Color.LightGreen : Color.Gray;
+                randomizeButton.BackgroundColor =
+                    randomizeButton.BackgroundColor == Color.Gray ? Color.LightGreen : Color.Gray;
             };
             randomizeButton.RightMouseButtonPressed += delegate
             {
@@ -899,13 +948,9 @@ namespace Inquest_Module
                 var next = current + 1 <= RaidWings.Count - 1 ? current + 1 : 0;
                 randomizeButton.Text = RaidWings[next];
                 tokens = new List<string>();
-                foreach (KeyValuePair<string, int> pair in TokenIdRepository)
-                {
+                foreach (var pair in TokenIdRepository)
                     if (pair.Key.StartsWith(randomizeButton.Text))
-                    {
                         tokens.Add(pair.Key);
-                    }
-                }
             };
             sendButton.LeftMouseButtonPressed += delegate
             {
@@ -917,7 +962,7 @@ namespace Inquest_Module
                 sendButton.Size = new Point(24, 24);
                 sendButton.Location = new Point(rightBracket.Right + 1, 0);
 
-                var chatLink = new Gw2Sharp.ChatLinks.ItemChatLink();
+                var chatLink = new ItemChatLink();
 
                 if (randomizeButton.BackgroundColor == Color.LightGreen)
                 {
@@ -927,17 +972,18 @@ namespace Inquest_Module
                     try
                     {
                         amount = TokenQuantityRepository[tokens[rand]];
-
                     }
                     catch (KeyNotFoundException ex)
                     {
                         Logger.Warn(ex.Message);
                         amount = 125;
                     }
+
                     chatLink.Quantity = Convert.ToByte(amount);
                     GameService.GameIntegration.Chat.Send(chatLink.ToString());
-
-                } else {
+                }
+                else
+                {
                     chatLink.ItemId = TokenIdRepository[dropdown.SelectedItem];
                     chatLink.Quantity = Convert.ToByte(quantity.Value);
                     GameService.GameIntegration.Chat.Send(chatLink.ToString());
@@ -946,21 +992,34 @@ namespace Inquest_Module
             quantity.LeftMouseButtonPressed += delegate
             {
                 if (!TokenQuantityRepository.ContainsKey(dropdown.SelectedItem))
-                {
                     TokenQuantityRepository.Add(dropdown.SelectedItem, quantity.Value);
-                }
                 else
-                {
                     TokenQuantityRepository[dropdown.SelectedItem] = quantity.Value;
-                }
                 TokenQuantity.Value = TokenQuantity.Value.MergeLeft(TokenQuantityRepository);
             };
-            bgPanel.Disposed += delegate
-            {
-                var fadeOut = GameService.Animation.Tweener.Tween(bgPanel, new { Opacity = 0.0f }, 0.2f);
-            };
+            GameService.Animation.Tweener.Tween(bgPanel, new {Opacity = 0.4}, 0.35f);
             return bgPanel;
         }
-    }
 
+        #region Service Managers
+
+        internal SettingsManager SettingsManager => ModuleParameters.SettingsManager;
+        internal ContentsManager ContentsManager => ModuleParameters.ContentsManager;
+        internal DirectoriesManager DirectoriesManager => ModuleParameters.DirectoriesManager;
+        internal Gw2ApiManager Gw2ApiManager => ModuleParameters.Gw2ApiManager;
+
+        #endregion
+
+        #region Settings
+
+        private SettingEntry<bool> KillProofDeceiverEnabled;
+        private SettingEntry<Dictionary<string, int>> TokenQuantity;
+        private SettingEntry<bool> SkillFramesEnabled;
+        private SettingEntry<Dictionary<GuildWarsControls, Tuple<bool, bool>>> SkillFramesSettings;
+        private SettingEntry<bool> EmotePanelEnabled;
+        private SettingEntry<bool> SurrenderButtonEnabled;
+        private SettingEntry<bool> HealthpoolShadowEnabled;
+
+        #endregion
+    }
 }
