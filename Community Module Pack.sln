@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compass Module", "Compass M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Loading Screen Hints Module", "Loading Screen Hints Module\Loading Screen Hints Module.csproj", "{F6C1BF91-DEAA-4413-946D-074C67672CB7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Musician Module", "Musician Module\Musician Module.csproj", "{6DECE0BA-3D4B-47E0-AB9D-66F31917D201}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Events Module", "Events Module\Events Module.csproj", "{D9B0225E-5C5D-4D98-906C-AAE89F4D04D9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Universal Search Module", "Universal Search Module\Universal Search Module.csproj", "{B7515421-CC85-4CB1-9EE3-F526B4509D60}"
@@ -47,13 +45,6 @@ Global
 		{F6C1BF91-DEAA-4413-946D-074C67672CB7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F6C1BF91-DEAA-4413-946D-074C67672CB7}.Release|x64.ActiveCfg = Release|x64
 		{F6C1BF91-DEAA-4413-946D-074C67672CB7}.Release|x64.Build.0 = Release|x64
-		{6DECE0BA-3D4B-47E0-AB9D-66F31917D201}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6DECE0BA-3D4B-47E0-AB9D-66F31917D201}.Debug|x64.ActiveCfg = Debug|x64
-		{6DECE0BA-3D4B-47E0-AB9D-66F31917D201}.Debug|x64.Build.0 = Debug|x64
-		{6DECE0BA-3D4B-47E0-AB9D-66F31917D201}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6DECE0BA-3D4B-47E0-AB9D-66F31917D201}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6DECE0BA-3D4B-47E0-AB9D-66F31917D201}.Release|x64.ActiveCfg = Release|x64
-		{6DECE0BA-3D4B-47E0-AB9D-66F31917D201}.Release|x64.Build.0 = Release|x64
 		{D9B0225E-5C5D-4D98-906C-AAE89F4D04D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D9B0225E-5C5D-4D98-906C-AAE89F4D04D9}.Debug|x64.ActiveCfg = Debug|x64
 		{D9B0225E-5C5D-4D98-906C-AAE89F4D04D9}.Debug|x64.Build.0 = Debug|x64
