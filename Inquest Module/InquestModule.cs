@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Diagnostics;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using Blish_HUD;
+﻿using Blish_HUD;
 using Blish_HUD.Controls;
-using Blish_HUD.Controls.Extern;
 using Blish_HUD.Controls.Intern;
 using Blish_HUD.Input;
 using Blish_HUD.Modules;
@@ -17,6 +8,14 @@ using Blish_HUD.Settings;
 using Gw2Sharp.Mumble.Models;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Diagnostics;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using VerticalAlignment = Blish_HUD.Controls.VerticalAlignment;
 
 namespace Inquest_Module
@@ -281,26 +280,6 @@ namespace Inquest_Module
             // All static members must be manually unset
             ModuleInstance = null;
         }
-        private void SendToChat(string message) {
-                ClipboardUtil.WindowsClipboardService.SetTextAsync(message)
-                    .ContinueWith((clipboardResult) => {
-                        if (clipboardResult.IsFaulted)
-                            Logger.Warn(clipboardResult.Exception, "Failed to set clipboard text to {message}!",
-                                message);
-                        else
-                            Task.Run(() => {
-                                Keyboard.Press(VirtualKeyShort.RETURN, true);
-                                Keyboard.Release(VirtualKeyShort.RETURN, true);
-                                Keyboard.Press(VirtualKeyShort.LCONTROL, true);
-                                Keyboard.Press(VirtualKeyShort.KEY_V, true);
-                                Thread.Sleep(50);
-                                Keyboard.Release(VirtualKeyShort.LCONTROL, true);
-                                Keyboard.Release(VirtualKeyShort.KEY_V, true);
-                                Keyboard.Press(VirtualKeyShort.RETURN, true);
-                                Keyboard.Release(VirtualKeyShort.RETURN, true);
-                            });
-                    });
-        }
         private Panel BuildEmotePanel() {
             var emotePanel = new Panel() {
                 Parent = GameService.Graphics.SpriteScreen,
@@ -335,7 +314,7 @@ namespace Inquest_Module
                     icon.Size = new Point(icon.Size.X + 2, icon.Size.Y + 2);
                     icon.Location = new Point(icon.Location.X - 2, icon.Location.Y - 2);
 
-                    SendToChat(emote.Key + " @");
+                    GameService.GameIntegration.Chat.Send(emote.Key + " @");
 
                 };
             }
@@ -375,7 +354,7 @@ namespace Inquest_Module
             surrenderButton.LeftMouseButtonReleased += delegate {
                 surrenderButton.Size = new Point(45, 45);
                 surrenderButton.Texture = ContentsManager.GetTexture("surrender_flag.png");
-                SendToChat("/gg");
+                GameService.GameIntegration.Chat.Send("/gg");
             };
             return surrenderButton;
         }
@@ -956,12 +935,12 @@ namespace Inquest_Module
                         amount = 125;
                     }
                     chatLink.Quantity = Convert.ToByte(amount);
-                    SendToChat(chatLink.ToString());
+                    GameService.GameIntegration.Chat.Send(chatLink.ToString());
 
                 } else {
                     chatLink.ItemId = TokenIdRepository[dropdown.SelectedItem];
                     chatLink.Quantity = Convert.ToByte(quantity.Value);
-                    SendToChat(chatLink.ToString());
+                    GameService.GameIntegration.Chat.Send(chatLink.ToString());
                 }
             };
             quantity.LeftMouseButtonPressed += delegate

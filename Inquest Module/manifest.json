@@ -1,16 +1,17 @@
 {
   "name": "Inquest Chipset",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "namespace": "bh.general.Inquest",
   "package": "Inquest Module.dll",
   "manifest_version": 1,
 
-  "description": "A set of electronic components used in integrated circuits by the Asuran Inquisition: -Emote Panel, -Kill Proof Deceiver, -Map Instance Queue, -Surrender Button, -Skill Frames",
+  "description": "A set of electronic components used in integrated circuits by the Asuran Inquisition:\n    -Emote Panel\n    -Kill Proof Deceiver\n    -Map Instance Queue\n    -Surrender Button\n    -Skill Frames",
   "dependencies": {
-    "bh.blishhud": ">=0.4.6"
+    "bh.blishhud": ">=0.5.2"
   },
   "url": "https://github.com/blish-hud",
   "author": {
-    "name": "Andrew \"Nekres.1038\" Gardner"
+    "name": "Andrew Gardner",
+    "username": "Nekres.1038"
   }
 }
