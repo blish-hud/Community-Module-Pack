@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
@@ -10,7 +6,6 @@ using Blish_HUD.Input;
 using Gw2Sharp.WebApi.V2.Models;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Color = Gw2Sharp.WebApi.V2.Models.Color;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace Universal_Search_Module.Controls {
