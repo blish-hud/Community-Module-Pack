@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Modules.Managers;
@@ -94,10 +90,11 @@ namespace Events_Module {
                 TimeSpan[] justTimes = e.Times.Select(time => time.ToLocalTime().TimeOfDay).OrderBy(time => time.TotalSeconds).ToArray();
                 var nextTime = justTimes.FirstOrDefault(ts => ts.TotalSeconds >= tsNow.TotalSeconds);
 
-                if (nextTime.Ticks == 0) // Timespan default is Ticks == 0
+                if (nextTime.Ticks == 0) { // Timespan default is Ticks == 0
                     e.NextTime = DateTime.Today.AddDays(1) + justTimes[0];
-                else
+                } else {
                     e.NextTime = DateTime.Today + nextTime;
+                }
 
                 double timeUntil = (e.NextTime - DateTime.Now).TotalMinutes;
                 if (timeUntil < (e.Reminder ?? -1) && e.IsWatched) {
@@ -149,10 +146,11 @@ namespace Events_Module {
 
                 var rootEvent = uniqueEvents.Find(m => m.Name == meta.Name && m.Category == meta.Category);
 
-                if (rootEvent != null)
+                if (rootEvent != null) {
                     rootEvent._times.AddRange(meta.Times);
-                else
+                } else {
                     uniqueEvents.Add(meta);
+                }
             }
 
             Events = uniqueEvents;
