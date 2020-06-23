@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Blish_HUD;
+﻿using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Microsoft.Xna.Framework;
@@ -89,7 +84,9 @@ namespace Events_Module {
         }
 
         private void Show(float duration) {
-            Content.PlaySoundEffectByName(@"audio\color-change");
+            if (EventsModule.ModuleInstance.ChimeEnabled) {
+                Content.PlaySoundEffectByName(@"audio\color-change");
+            }
 
             Animation.Tweener
                      .Tween(this, new { Opacity = 1f }, 0.2f)
