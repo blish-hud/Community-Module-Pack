@@ -1,6 +1,6 @@
 {
   "name": "Discord Rich Presence",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "namespace": "bh.general.discordrp",
   "package": "Discord Rich Presence Module.dll",
   "manifest_version": 1,
