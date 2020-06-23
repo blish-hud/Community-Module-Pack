@@ -37,8 +37,6 @@ namespace Compass_Module {
         }
 
         protected override void Initialize() {
-            DefineSettings(SettingsManager.ModuleSettings);
-
             _northBb = new Blish_HUD.Entities.Primitives.Billboard(ContentsManager.GetTexture("north.png"));
             _eastBb  = new Blish_HUD.Entities.Primitives.Billboard(ContentsManager.GetTexture("east.png"));
             _southBb = new Blish_HUD.Entities.Primitives.Billboard(ContentsManager.GetTexture("south.png"));
