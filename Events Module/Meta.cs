@@ -99,7 +99,7 @@ namespace Events_Module {
                 double timeUntil = (e.NextTime - DateTime.Now).TotalMinutes;
                 if (timeUntil < (e.Reminder ?? -1) && e.IsWatched) {
                     if (!e.HasAlerted && EventsModule.ModuleInstance.NotificationsEnabled) {
-                        EventNotification.ShowNotification(e.Name, e.Texture, $"Starts in {timeUntil.Minutes().Humanize()}", 10f);
+                        EventNotification.ShowNotification(e.Name, e.Texture, $"Starts in {timeUntil.Minutes().Humanize()}", 10f, e.Waypoint);
                         e.HasAlerted = true;
                     }
                 } else {
