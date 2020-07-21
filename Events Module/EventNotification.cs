@@ -26,34 +26,52 @@ namespace Events_Module {
 
         private static int _visibleNotifications = 0;
 
-        private EventNotification(string title, AsyncTexture2D icon, string message) {
+        private EventNotification(string title, AsyncTexture2D icon, string message, string waypoint) {
+            const string TOOLTIP_TEXT = "Left click to copy waypoint.\nRight click to dismiss.";
+
             _icon = icon;
 
             this.Opacity = 0f;
             this.Size = new Point(NOTIFICATION_WIDTH, NOTIFICATION_HEIGHT);
             this.Location = new Point(60, 60 + (NOTIFICATION_HEIGHT + 15) * _visibleNotifications);
-            this.BasicTooltipText = "Right click to dismiss";
+            this.BasicTooltipText = TOOLTIP_TEXT;
 
             string wrappedTitle = DrawUtil.WrapText(Content.DefaultFont14, title, this.Width - NOTIFICATION_HEIGHT - 20 - 32);
+
             var titleLbl = new Label() {
-                Parent = this,
-                Location = new Point(NOTIFICATION_HEIGHT + 10, 0),
-                Size = new Point(this.Width - NOTIFICATION_HEIGHT - 10 - 32, this.Height / 2),
-                Font = Content.DefaultFont14,
-                Text = wrappedTitle,
+                Parent           = this,
+                Location         = new Point(NOTIFICATION_HEIGHT                   + 10, 5),
+                Size             = new Point(this.Width - NOTIFICATION_HEIGHT - 10 - 32, this.Height / 2),
+                Font             = Content.DefaultFont14,
+                BasicTooltipText = TOOLTIP_TEXT,
+                Text             = wrappedTitle,
             };
 
             string wrapped = DrawUtil.WrapText(Content.DefaultFont14, message, this.Width - NOTIFICATION_HEIGHT - 20 - 32);
+
             var messageLbl = new Label() {
-                Parent = this,
-                Location = new Point(NOTIFICATION_HEIGHT + 10, this.Height / 2),
-                Size = new Point(this.Width - NOTIFICATION_HEIGHT - 10 - 32, this.Height / 2),
-                Text = wrapped,
+                Parent           = this,
+                Location         = new Point(NOTIFICATION_HEIGHT                   + 10, this.Height / 2),
+                Size             = new Point(this.Width - NOTIFICATION_HEIGHT - 10 - 32, this.Height / 2),
+                BasicTooltipText = TOOLTIP_TEXT,
+                Text             = wrapped,
             };
 
             _visibleNotifications++;
 
             this.RightMouseButtonReleased += delegate { this.Dispose(); };
+            this.LeftMouseButtonReleased += delegate {
+                ClipboardUtil.WindowsClipboardService.SetTextAsync(waypoint)
+                             .ContinueWith((clipboardResult) => {
+                                  if (clipboardResult.IsFaulted) {
+                                      ScreenNotification.ShowNotification("Failed to copy waypoint to clipboard. Try again.", ScreenNotification.NotificationType.Red, duration: 2);
+                                  } else {
+                                      ScreenNotification.ShowNotification("Copied waypoint to clipboard!", duration: 2);
+                                  }
+                              });
+
+                this.Dispose();
+            };
         }
 
         protected override CaptureType CapturesInput() {
@@ -96,8 +114,8 @@ namespace Events_Module {
                      .OnComplete(Dispose);
         }
 
-        public static void ShowNotification(string title, AsyncTexture2D icon, string message, float duration) {
-            var notif = new EventNotification(title, icon, message) {
+        public static void ShowNotification(string title, AsyncTexture2D icon, string message, float duration, string waypoint) {
+            var notif = new EventNotification(title, icon, message, waypoint) {
                 Parent = Graphics.SpriteScreen
             };
 

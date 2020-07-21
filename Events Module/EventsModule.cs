@@ -64,9 +64,12 @@ namespace Events_Module {
         }
 
         protected override void DefineSettings(SettingCollection settings) {
-            _watchCollection             = settings.AddSubCollection("Watching");
-            _settingNotificationsEnabled = settings.DefineSetting("notificationsEnabled", true);
-            _settingChimeEnabled         = settings.DefineSetting("chimeEnabled",         true);
+            var selfManagedSettings = settings.AddSubCollection("Managed Settings");
+
+            _settingNotificationsEnabled = selfManagedSettings.DefineSetting("notificationsEnabled", true);
+            _settingChimeEnabled         = selfManagedSettings.DefineSetting("chimeEnabled",         true);
+
+            _watchCollection = settings.AddSubCollection("Watching");
         }
 
         protected override void Initialize() {
