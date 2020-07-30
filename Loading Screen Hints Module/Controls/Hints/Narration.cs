@@ -104,5 +104,9 @@ namespace Loading_Screen_Hints_Module.Controls {
             int srcPaddingX = centerRight - (srcWidth / 2);
             spriteBatch.DrawStringOnCtrl(this, source, this.SourceFont, new Rectangle(srcPaddingX, srcPaddingY, srcWidth, srcHeight), Color.White, false, true, 2, HorizontalAlignment.Left, alignTop);
         }
+
+        protected override CaptureType CapturesInput() {
+            return CaptureType.ForceNone;
+        }
     }
 }

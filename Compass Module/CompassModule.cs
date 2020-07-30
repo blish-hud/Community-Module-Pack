@@ -59,10 +59,16 @@ namespace Compass_Module {
             _westBb.Size  = newSize;
         }
 
+        private const float VERTICALOFFSET_MIDDLE = 2.5f;
+
         protected override void DefineSettings(SettingCollection settings) {
             _settingCompassSize    = settings.DefineSetting("CompassSize",    0.5f, "Compass Size",    "Size of the compass elements.");
             _settingCompassRadius  = settings.DefineSetting("CompassRadius",  0f,   "Compass Radius",  "Radius of the compass.");
-            _settingVerticalOffset = settings.DefineSetting("VerticalOffset", 0f,   "Vertical Offset", "How high to offset the compass off the ground.");
+            _settingVerticalOffset = settings.DefineSetting("VerticalOffset", VERTICALOFFSET_MIDDLE,   "Vertical Offset", "How high to offset the compass off the ground.");
+
+            _settingCompassSize.SetRange(0.1f, 2f);
+            _settingCompassRadius.SetRange(0f, 4f);
+            _settingVerticalOffset.SetRange(0f, VERTICALOFFSET_MIDDLE * 2);
 
             _settingCompassSize.SettingChanged += UpdateBillboardSize;
         }
@@ -77,10 +83,10 @@ namespace Compass_Module {
         }
 
         private void UpdateBillboardPosition() {
-            _northBb.Position = GameService.Gw2Mumble.PlayerCharacter.Position + new Vector3(0, 1 + _settingCompassRadius.Value, _settingVerticalOffset.Value);
-            _eastBb.Position  = GameService.Gw2Mumble.PlayerCharacter.Position + new Vector3(1    + _settingCompassRadius.Value, 0,                                _settingVerticalOffset.Value);
-            _southBb.Position = GameService.Gw2Mumble.PlayerCharacter.Position + new Vector3(0,                                  -1 - _settingCompassRadius.Value, _settingVerticalOffset.Value);
-            _westBb.Position  = GameService.Gw2Mumble.PlayerCharacter.Position + new Vector3(-1                                     - _settingCompassRadius.Value, 0, _settingVerticalOffset.Value);
+            _northBb.Position = GameService.Gw2Mumble.PlayerCharacter.Position + new Vector3(0, 1 + _settingCompassRadius.Value, _settingVerticalOffset.Value    - VERTICALOFFSET_MIDDLE);
+            _eastBb.Position  = GameService.Gw2Mumble.PlayerCharacter.Position + new Vector3(1    + _settingCompassRadius.Value, 0, _settingVerticalOffset.Value - VERTICALOFFSET_MIDDLE);
+            _southBb.Position = GameService.Gw2Mumble.PlayerCharacter.Position + new Vector3(0,                                  -1                              - _settingCompassRadius.Value, _settingVerticalOffset.Value    - VERTICALOFFSET_MIDDLE);
+            _westBb.Position  = GameService.Gw2Mumble.PlayerCharacter.Position + new Vector3(-1                                                                  - _settingCompassRadius.Value, 0, _settingVerticalOffset.Value - VERTICALOFFSET_MIDDLE);
         }
 
         private void UpdateBillboardOpacity() {

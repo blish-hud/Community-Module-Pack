@@ -122,5 +122,9 @@ namespace Loading_Screen_Hints_Module.Controls {
             var titleCenter = new Point(centerRight - (titleWidth / 2), center.Y - (titleHeight / 2));
             spriteBatch.DrawStringOnCtrl(this, wrappedTitle, this.Font, new Rectangle(titleCenter.X, titleCenter.Y, this.Size.X, this.Size.Y), Color.White, false, true, 2, left, top);
         }
+
+        protected override CaptureType CapturesInput() {
+            return CaptureType.ForceNone;
+        }
     }
 }

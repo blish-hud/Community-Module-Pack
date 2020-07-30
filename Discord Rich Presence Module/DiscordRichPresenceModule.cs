@@ -60,7 +60,7 @@ namespace Discord_Rich_Presence_Module {
         }
 
         protected override void DefineSettings(SettingCollection settings) {
-            settings.DefineSetting("HideInWvW", false, "Hide Detailed Location while in WvW", "Prevents people on Discord from being able to see closest landmark details while you're in WvW.");
+            //settings.DefineSetting("HideInWvW", false, "Hide Detailed Location while in WvW", "Prevents people on Discord from being able to see closest landmark details while you're in WvW.");
         }
 
         protected override void Initialize() { /* NOOP */ }

@@ -88,6 +88,10 @@ namespace Loading_Screen_Hints_Module.Controls {
             var tipCenter = new Point(center.X - (tipWidth / 2), center.Y - (tipHeight / 2));
             spriteBatch.DrawStringOnCtrl(this, wrappedTip, this.Font, new Rectangle(tipCenter.X, tipCenter.Y, tipWidth, tipHeight), Color.White, false, true, 2, left, top);
         }
+
+        protected override CaptureType CapturesInput() {
+            return CaptureType.ForceNone;
+        }
     }
 
 }
