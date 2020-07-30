@@ -78,6 +78,11 @@ namespace Loading_Screen_Hints_Module.Controls {
             if (Opacity != 0.0f) return;
             AnimationService.Animation.Tweener.Tween(this, new { Opacity = 1.0f }, 0.2f);
         }
+
+        protected override CaptureType CapturesInput() {
+            return CaptureType.ForceNone;
+        }
+
         private void OnDisposed(object sender, EventArgs e)
         {
             if (LoadScreenTip != null)
