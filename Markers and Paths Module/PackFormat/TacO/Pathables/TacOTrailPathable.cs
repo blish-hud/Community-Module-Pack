@@ -1,14 +1,11 @@
 ﻿using Blish_HUD.Pathing.Format;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 using Blish_HUD;
 using Blish_HUD.Pathing;
 using Blish_HUD.Pathing.Content;
+using Microsoft.Xna.Framework;
 
 namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
     public sealed class TacOTrailPathable : LoadedTrailPathable, ITacOPathable {
@@ -131,6 +128,8 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Pathables {
             }
 
             _category?.AddPathable(this);
+
+            this.ManagedEntity.PostProcessFunctions = new List<Func<List<Vector3>, List<Vector3>>>() { x => x.SetResolution(30f) };
 
             // Load trl file
             using (var trlStream = this.PathableManager.DataReader.GetFileStream(this.TrlFilePath)) {
