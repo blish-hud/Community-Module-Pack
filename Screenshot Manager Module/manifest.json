@@ -7,11 +7,11 @@
 
   "description": "View and manage your Guild Wars 2 screenshots.",
   "dependencies": {
-    "bh.blishhud": ">=0.5.2"
+    "bh.blishhud": ">=0.6.0"
   },
-  "url": "https://github.com/blish-hud/Community-Module-Pack",
+  "url": "https://github.com/blish-hud/",
   "author": {
-    "name": "Andrew Gardner",
+    "name": "Nekres",
     "username": "Nekres.1038"
   }
 }

@@ -11,6 +11,7 @@ using Screenshot_Manager_Module.Controls;
 using Screenshot_Manager_Module.Properties;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -40,9 +41,9 @@ namespace Screenshot_Manager_Module
 
         private readonly string[] _imageFilters = {"*.bmp", "*.jpg", "*.png"};
         private readonly IEnumerable<char> _invalidFileNameCharacters;
+        private readonly Point _thumbnailSize = new Point(306, 175);
         private Texture2D _completeHeartIcon;
         private Texture2D _deleteSearchBoxContentIcon;
-        internal Point _thumbnailSize = new Point(306, 175);
 
         private Texture2D _icon64;
 
@@ -87,7 +88,8 @@ namespace Screenshot_Manager_Module
 
         protected override void DefineSettings(SettingCollection settings)
         {
-            favorites = settings.DefineSetting("favorites", new List<string>());
+            var selfManagedSettings = settings.AddSubCollection("ManagedSettings", false, false);
+            favorites = selfManagedSettings.DefineSetting("favorites", new List<string>());
         }
 
         protected void LoadTextures()
@@ -162,7 +164,7 @@ namespace Screenshot_Manager_Module
             moduleCornerIcon = new CornerIcon
             {
                 IconName = Name,
-                Icon = ContentsManager.GetTexture("screenshots_icon_64x64.png"),
+                Icon = _icon64,
                 Priority = Name.GetHashCode()
             };
             moduleCornerIcon.Click += delegate
@@ -674,6 +676,11 @@ namespace Screenshot_Manager_Module
                 Collapsed = false,
                 ShowTint = true,
                 ShowBorder = true
+            };
+            thumbnailFlowPanel.PropertyChanged += delegate (object o, PropertyChangedEventArgs e) {
+                if (!e.PropertyName.Equals(nameof(thumbnailFlowPanel.VerticalScrollOffset))) return;
+                 //TODO: Load/Unload displayed thumbnails that are (not) in view while scrolling.
+
             };
             var searchBox = new TextBox
             {

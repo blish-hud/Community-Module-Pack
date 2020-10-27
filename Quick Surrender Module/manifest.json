@@ -1,0 +1,16 @@
+{
+  "name": "Quick Surrender",
+  "version": "0.1.0",
+  "namespace": "Quick_Surrender_Module",
+  "package": "Quick Surrender Module.dll",
+  "manifest_version": 1,
+  "description": "Allows to quickly surrender and defeat your character for when you are so done with everything.",
+  "dependencies": {
+    "bh.blishhud": ">=0.6.0"
+  },
+  "url": "https://github.com/blish-hud/",
+  "author": {
+    "name": "Nekres",
+    "username": "Nekres.1038"
+  }
+}

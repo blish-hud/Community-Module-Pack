@@ -5,9 +5,12 @@
   "package": "Loading Screen Hints Module.dll",
   "manifest_version": 1,
   "description": "Shows tips, Tyrian knowledge, narrations, and character quizzes during the loading screen.",
-  "url": "https://github.com/blish-hud/Blish-HUD",
+  "dependencies": {
+    "bh.blishhud": ">=0.6.0"
+  },
+  "url": "https://github.com/blish-hud/",
   "author": {
-    "name": "Andy",
+    "name": "Nekres",
     "username": "Nekres.1038"
   }
 }
