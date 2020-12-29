@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Content;
@@ -86,13 +84,13 @@ namespace Markers_and_Paths_Module {
             loadingMenuItem.Enabled = false;
         }
 
-        protected override async Task LoadAsync() {
-            //GameService.Debug.StartTimeFunc("Markers and Paths");
-
+        protected override Task LoadAsync() {
             LoadPacks();
             BuildMenu();
             
             Logger.Info("Loaded {pathableCount} markers!", _currentReader.Pathables.Count);
+
+            return Task.CompletedTask;
         }
 
         private List<PathableResourceManager> _allPathableResourceManagers;
@@ -213,8 +211,6 @@ namespace Markers_and_Paths_Module {
 
             _currentReader.UpdatePathableStates();
             GameService.Pathing.NewMapLoaded += _onNewMapLoaded;
-
-            //GameService.Debug.StopTimeFuncAndOutput("Markers and Paths");
         }
 
         protected override void OnModuleLoaded(EventArgs e) {

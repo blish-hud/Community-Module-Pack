@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Controls;
-using Blish_HUD.GameServices.Content;
 using Blish_HUD.Modules;
 using Blish_HUD.Modules.Managers;
 using Blish_HUD.Settings;
@@ -46,6 +43,7 @@ namespace Events_Module {
 
         private SettingCollection  _watchCollection;
         private SettingEntry<bool> _settingNotificationsEnabled;
+        private SettingEntry<bool> _settingChimeEnabled;
 
         private Texture2D _textureWatch;
         private Texture2D _textureWatchActive;
@@ -55,14 +53,23 @@ namespace Events_Module {
             set => _settingNotificationsEnabled.Value = value;
         }
 
+        public bool ChimeEnabled {
+            get => _settingChimeEnabled.Value;
+            set => _settingChimeEnabled.Value = value;
+        }
+
         [ImportingConstructor]
         public EventsModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) {
             ModuleInstance = this;
         }
 
         protected override void DefineSettings(SettingCollection settings) {
-            _watchCollection             = settings.AddSubCollection("Watching");
-            _settingNotificationsEnabled = settings.DefineSetting("notificationsEnabled", true);
+            var selfManagedSettings = settings.AddSubCollection("Managed Settings");
+
+            _settingNotificationsEnabled = selfManagedSettings.DefineSetting("notificationsEnabled", true);
+            _settingChimeEnabled         = selfManagedSettings.DefineSetting("chimeEnabled",         true);
+
+            _watchCollection = settings.AddSubCollection("Watching");
         }
 
         protected override void Initialize() {
@@ -74,11 +81,13 @@ namespace Events_Module {
             _textureWatchActive = ContentsManager.GetTexture(@"textures\605019.png");
         }
 
-        protected override async Task LoadAsync() {
+        protected override Task LoadAsync() {
             Meta.Load(this.ContentsManager);
             LoadTextures();
 
             _tabPanel = BuildSettingPanel(GameService.Overlay.BlishHudWindow.ContentRegion);
+
+            return Task.CompletedTask;
         }
 
         protected override void OnModuleLoaded(EventArgs e) {
@@ -107,7 +116,16 @@ namespace Events_Module {
 
             notificationToggle.Location = new Point(ddSortMethod.Left - notificationToggle.Width - 10, ddSortMethod.Top + 6);
 
-            notificationToggle.CheckedChanged += delegate(object sender, CheckChangedEvent e) { this.NotificationsEnabled = e.Checked; };
+            var chimeToggle = new Checkbox {
+                Text    = "Mute Notifications",
+                Checked = !this.ChimeEnabled,
+                Parent  = etPanel,
+                Top     = notificationToggle.Top,
+                Right   = notificationToggle.Left - 10
+            };
+
+            notificationToggle.CheckedChanged += delegate (object sender, CheckChangedEvent e) { this.NotificationsEnabled = e.Checked; };
+            chimeToggle.CheckedChanged        += delegate (object sender, CheckChangedEvent e) { this.ChimeEnabled         = !e.Checked; };
 
             int topOffset = ddSortMethod.Bottom + Panel.MenuStandard.ControlOffset.Y;
 

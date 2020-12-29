@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
+﻿using System.Linq;
 using Blish_HUD;
 using Blish_HUD.Pathing.Content;
 using NanoXml;
@@ -13,7 +8,7 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
 
         private static readonly Logger Logger = Logger.GetLogger(typeof(PoiBuilder));
 
-        private const string ELEMENT_POITYPE_POI   = "poi";
+        private const string ELEMENT_POITYPE_POI = "poi";
         private const string ELEMENT_POITYPE_TRAIL = "trail";
         private const string ELEMENT_POITYPE_ROUTE = "route";
 
@@ -44,7 +39,13 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
                     break;
 
                 case ELEMENT_POITYPE_ROUTE:
-                    Logger.Warn("Support for routes has not been added yet. They have been skipped.");
+                    var poiNodes = pathableNode.SelectNodes("poi");
+
+                    foreach(var poiNode in poiNodes)
+                    {
+                        UnpackPathable(poiNode, pathableResourceManager, rootCategory);
+                    }
+
                     break;
 
                 default:

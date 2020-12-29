@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Modules;
@@ -64,7 +60,7 @@ namespace Discord_Rich_Presence_Module {
         }
 
         protected override void DefineSettings(SettingCollection settings) {
-            settings.DefineSetting("HideInWvW", false, "Hide Detailed Location while in WvW", "Prevents people on Discord from being able to see closest landmark details while you're in WvW.");
+            //settings.DefineSetting("HideInWvW", false, "Hide Detailed Location while in WvW", "Prevents people on Discord from being able to see closest landmark details while you're in WvW.");
         }
 
         protected override void Initialize() { /* NOOP */ }
@@ -86,6 +82,8 @@ namespace Discord_Rich_Presence_Module {
         }
 
         private void CurrentMapOnMapChanged(object sender, ValueEventArgs<int> e) {
+            // Stop-gap until we switch this over to the other Discord app where
+            // map names are added to Discord via map ID instead of by name
             Gw2ApiManager.Gw2ApiClient.V2.Maps.GetAsync(e.Value)
                          .ContinueWith(mapTask => {
                                            if (!mapTask.IsFaulted && mapTask.Result != null) {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Controls;
@@ -227,7 +226,7 @@ namespace Universal_Search_Module.Controls {
 
             _spinner.Hide();
 
-            _results = new List<SearchResultItem>(landMarkResults.Count + wikiResults.Count);
+            _results = new List<SearchResultItem>(landMarkResults.Count() + wikiResults.Count());
 
             int lastResultBottom = _searchbox.Bottom;
 
@@ -238,7 +237,7 @@ namespace Universal_Search_Module.Controls {
                     sri.Landmark = landMarkResults[i].Landmark;
                     _results.Add(sri);
                 }
-                for (int i = 0; i < Math.Min(MAX_RESULT_COUNT_WIKI, wikiResults.Count); i++)
+                for (int i = 0; i < Math.Min(MAX_RESULT_COUNT_WIKI, wikiResults.Count()); i++)
                 {
                     SearchResultItem sri = BuildSearchResultItem(lastResultBottom);
                     lastResultBottom = sri.Bottom;

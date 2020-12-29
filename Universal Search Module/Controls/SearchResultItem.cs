@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
@@ -157,7 +153,12 @@ namespace Universal_Search_Module.Controls {
                         if (clipboardResult.IsFaulted) {
                             ScreenNotification.ShowNotification("Failed to copy waypoint to clipboard. Try again.", ScreenNotification.NotificationType.Red, duration: 2);
                         } else {
-                            ScreenNotification.ShowNotification("Copied waypoint to clipboard!", duration: 2);
+                            if (UniversalSearchModule.ModuleInstance._settingShowNotificationWhenLandmarkIsCopied.Value) {
+                                ScreenNotification.ShowNotification("Copied waypoint to clipboard!", duration: 2);
+                            }
+                            if (UniversalSearchModule.ModuleInstance._settingHideWindowAfterSelection.Value) {
+                                this.Parent.Hide();
+                            }
                         }
                     });
             }

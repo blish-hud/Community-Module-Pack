@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Blish_HUD;
+using Blish_HUD.Pathing;
 using NanoXml;
 
 namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
@@ -52,6 +53,10 @@ namespace Markers_and_Paths_Module.PackFormat.TacO.Builders {
             subjCategory.DefaultToggle = categoryNode.GetAttribute(MARKERCATEGORY_DEFAULTTOGGLE_ATTR)?.Value != "0";
 
             subjCategory.SetAttributes(AttributeBuilder.FromNanoXmlNode(categoryNode));
+            if (parent.Namespace == "Tactical.GuildMission.Bounty")
+            {
+                subjCategory.SetAttributes(new PathableAttributeCollection(new List<PathableAttribute> { new PathableAttribute("IconFile", "Data\\Bounty.png") }));
+            }
 
             return subjCategory;
         }
