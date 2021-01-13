@@ -690,7 +690,7 @@
   },
   {
     "name": "Trial by Fire",
-    "offset": "01:15Z",
+    "offset": "00:45Z",
     "repeat": "02:00",
     "difficulty": "",
     "category": "Meta Event",
@@ -704,7 +704,7 @@
   {
     "name": "Battle in Tarir",
     "colloquial": "Octovine",
-    "offset": "23:30Z",
+    "offset": "01:00Z",
     "repeat": "02:00",
     "difficulty": "",
     "category": "Meta Event",
