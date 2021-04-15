@@ -629,7 +629,7 @@
   },
   {
     "name": "Choya Pinata",
-    "offset": "00:25Z",
+    "offset": "00:21Z",
     "repeat": "02:00",
     "difficulty": "Standard",
     "category": "Meta Event",
@@ -637,7 +637,7 @@
     "waypoint": "[&BLsKAAA=]",
     "wiki": "https://wiki.guildwars2.com/wiki/Choya_Pinata",
     "duration": "5",
-    "alert": 10,
+    "alert": 20,
     "icon": "55D703EF65C8317C36A837A7E162BE907492AE53/1769811"
   },
   {
