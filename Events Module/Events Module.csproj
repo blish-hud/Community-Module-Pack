@@ -70,8 +70,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="app.config" />
-    <None Include="BuildScripts\CopyRef.ps1" />
-    <None Include="BuildScripts\PackageModule.ps1" />
     <None Include="manifest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -79,9 +77,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ref\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="BuildScripts\_DoNotModify.txt" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Blish HUD.DebugHelper.exe" />
