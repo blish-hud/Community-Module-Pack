@@ -117,4 +117,64 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="All Events" xml:space="preserve">
+    <value>All Events</value>
+    <comment>Event category</comment>
+  </data>
+  <data name="Alphabetical" xml:space="preserve">
+    <value>Alphabetical</value>
+  </data>
+  <data name="Events and Metas" xml:space="preserve">
+    <value>Events and Metas</value>
+    <comment>Main tab name</comment>
+  </data>
+  <data name="Hidden Events" xml:space="preserve">
+    <value>Hidden Events</value>
+  </data>
+  <data name="Next Up" xml:space="preserve">
+    <value>Next Up</value>
+  </data>
+  <data name="Enable Notifications" xml:space="preserve">
+    <value>Enable Notifications</value>
+  </data>
+  <data name="Mute Notifications" xml:space="preserve">
+    <value>Mute Notifications</value>
+  </data>
+  <data name="Event Categories" xml:space="preserve">
+    <value>Event Categories</value>
+  </data>
+  <data name="Event Search" xml:space="preserve">
+    <value>Event Search</value>
+  </data>
+  <data name="Read about this event on the wiki." xml:space="preserve">
+    <value>Read about this event on the wiki.</value>
+  </data>
+  <data name="Nearby waypoint: {0}" xml:space="preserve">
+    <value>Nearby waypoint: {0}</value>
+  </data>
+  <data name="Failed to copy waypoint to clipboard. Try again." xml:space="preserve">
+    <value>Failed to copy waypoint to clipboard. Try again.</value>
+    <comment>Error message</comment>
+  </data>
+  <data name="Copied waypoint to clipboard!" xml:space="preserve">
+    <value>Copied waypoint to clipboard!</value>
+  </data>
+  <data name="Click to toggle tracking for this event." xml:space="preserve">
+    <value>Click to toggle tracking for this event.</value>
+  </data>
+  <data name="Starts in {0}" xml:space="preserve">
+    <value>Starts in {0}</value>
+    <comment>{0} is time</comment>
+  </data>
+  <data name="Upcoming Event Times:" xml:space="preserve">
+    <value>Upcoming Event Times:</value>
+  </data>
+  <data name="Notification_Tooltip" xml:space="preserve">
+    <value>Left click to copy waypoint.
+Right click to dismiss.</value>
+  </data>
+  <data name="Failed to load metas from events.json!" xml:space="preserve">
+    <value>Failed to load metas from events.json!</value>
+    <comment>Error message</comment>
+  </data>
 </root>

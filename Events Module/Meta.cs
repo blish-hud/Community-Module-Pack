@@ -5,6 +5,7 @@ using System.Linq;
 using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Modules.Managers;
+using Events_Module.Properties;
 using Humanizer;
 using Newtonsoft.Json;
 
@@ -79,7 +80,7 @@ namespace Events_Module {
         }
 
         [JsonIgnore]
-        public AsyncTexture2D Texture { get; private set; } = new AsyncTexture2D(GameService.Content.GetTexture("102377"));
+        public AsyncTexture2D Texture { get; private set; } = new AsyncTexture2D(GameService.Content.GetTexture(@"102377"));
 
         public static void UpdateEventSchedules() {
             if (Events == null) return;
@@ -99,7 +100,7 @@ namespace Events_Module {
                 double timeUntil = (e.NextTime - DateTime.Now).TotalMinutes;
                 if (timeUntil < (e.Reminder ?? -1) && e.IsWatched) {
                     if (!e.HasAlerted && EventsModule.ModuleInstance.NotificationsEnabled) {
-                        EventNotification.ShowNotification(e.Name, e.Texture, $"Starts in {timeUntil.Minutes().Humanize()}", 10f, e.Waypoint);
+                        EventNotification.ShowNotification(e.Name, e.Texture, string.Format(Resources.Starts_in__0_, timeUntil.Minutes().Humanize()), 10f, e.Waypoint);
                         e.HasAlerted = true;
                     }
                 } else {
@@ -112,11 +113,11 @@ namespace Events_Module {
             List<Meta> metas = null;
 
             try {
-                using (var eventsReader = new StreamReader(cm.GetFileStream("events.json"))) {
+                using (var eventsReader = new StreamReader(cm.GetFileStream(@"events.json"))) {
                     metas = JsonConvert.DeserializeObject<List<Meta>>(eventsReader.ReadToEnd());
                 }
             } catch (Exception e) {
-                Logger.Error(e, "Failed to load metas from events.json!");
+                Logger.Error(e, Resources.Failed_to_load_metas_from_events_json_);
             }
 
             if (metas == null) {
@@ -155,7 +156,7 @@ namespace Events_Module {
 
             Events = uniqueEvents;
 
-            Logger.Info("Loaded {eventCount} events.", Events.Count);
+            Logger.Info(@"Loaded {eventCount} events.", Events.Count);
 
             UpdateEventSchedules();
         }

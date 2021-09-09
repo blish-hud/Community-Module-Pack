@@ -10,8 +10,8 @@
 
 namespace Events_Module.Properties {
     using System;
-
-
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -23,15 +23,15 @@ namespace Events_Module.Properties {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
-
+        
         private static global::System.Resources.ResourceManager resourceMan;
-
+        
         private static global::System.Globalization.CultureInfo resourceCulture;
-
+        
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal Resources() {
         }
-
+        
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
@@ -45,7 +45,7 @@ namespace Events_Module.Properties {
                 return resourceMan;
             }
         }
-
+        
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
@@ -57,6 +57,169 @@ namespace Events_Module.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All Events.
+        /// </summary>
+        internal static string All_Events {
+            get {
+                return ResourceManager.GetString("All Events", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alphabetical.
+        /// </summary>
+        internal static string Alphabetical {
+            get {
+                return ResourceManager.GetString("Alphabetical", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click to toggle tracking for this event..
+        /// </summary>
+        internal static string Click_to_toggle_tracking_for_this_event_ {
+            get {
+                return ResourceManager.GetString("Click to toggle tracking for this event.", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copied waypoint to clipboard!.
+        /// </summary>
+        internal static string Copied_waypoint_to_clipboard_ {
+            get {
+                return ResourceManager.GetString("Copied waypoint to clipboard!", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable Notifications.
+        /// </summary>
+        internal static string Enable_Notifications {
+            get {
+                return ResourceManager.GetString("Enable Notifications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Event Categories.
+        /// </summary>
+        internal static string Event_Categories {
+            get {
+                return ResourceManager.GetString("Event Categories", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Event Search.
+        /// </summary>
+        internal static string Event_Search {
+            get {
+                return ResourceManager.GetString("Event Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Events and Metas.
+        /// </summary>
+        internal static string Events_and_Metas {
+            get {
+                return ResourceManager.GetString("Events and Metas", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to copy waypoint to clipboard. Try again..
+        /// </summary>
+        internal static string Failed_to_copy_waypoint_to_clipboard__Try_again_ {
+            get {
+                return ResourceManager.GetString("Failed to copy waypoint to clipboard. Try again.", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to load metas from events.json!.
+        /// </summary>
+        internal static string Failed_to_load_metas_from_events_json_ {
+            get {
+                return ResourceManager.GetString("Failed to load metas from events.json!", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hidden Events.
+        /// </summary>
+        internal static string Hidden_Events {
+            get {
+                return ResourceManager.GetString("Hidden Events", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mute Notifications.
+        /// </summary>
+        internal static string Mute_Notifications {
+            get {
+                return ResourceManager.GetString("Mute Notifications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nearby waypoint: {0}.
+        /// </summary>
+        internal static string Nearby_waypoint___0_ {
+            get {
+                return ResourceManager.GetString("Nearby waypoint: {0}", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Next Up.
+        /// </summary>
+        internal static string Next_Up {
+            get {
+                return ResourceManager.GetString("Next Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left click to copy waypoint.
+        ///Right click to dismiss..
+        /// </summary>
+        internal static string Notification_Tooltip {
+            get {
+                return ResourceManager.GetString("Notification_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Read about this event on the wiki..
+        /// </summary>
+        internal static string Read_about_this_event_on_the_wiki_ {
+            get {
+                return ResourceManager.GetString("Read about this event on the wiki.", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Starts in {0}.
+        /// </summary>
+        internal static string Starts_in__0_ {
+            get {
+                return ResourceManager.GetString("Starts in {0}", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upcoming Event Times:.
+        /// </summary>
+        internal static string Upcoming_Event_Times_ {
+            get {
+                return ResourceManager.GetString("Upcoming Event Times:", resourceCulture);
             }
         }
     }
