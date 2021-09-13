@@ -125,9 +125,11 @@
   </data>
   <data name="Starts in {0}" xml:space="preserve">
     <value>Débute dans {0}</value>
+    <comment>{0} is time</comment>
   </data>
   <data name="All Events" xml:space="preserve">
     <value>Tous les événements</value>
+    <comment>Event category</comment>
   </data>
   <data name="Enable Notifications" xml:space="preserve">
     <value>Activer les notifications</value>
@@ -140,6 +142,7 @@
   </data>
   <data name="Events and Metas" xml:space="preserve">
     <value>Evénements et Méta-événements</value>
+    <comment>Main tab name</comment>
   </data>
   <data name="Next Up" xml:space="preserve">
     <value>Suivants</value>
@@ -161,9 +164,11 @@
   </data>
   <data name="Failed to load metas from events.json!" xml:space="preserve">
     <value>Echec du chargement des événemets depuis events.json !</value>
+    <comment>Error message</comment>
   </data>
   <data name="Failed to copy waypoint to clipboard. Try again." xml:space="preserve">
     <value>Echec de la copie du point de passage. Réessayez.</value>
+    <comment>Error message</comment>
   </data>
   <data name="Notification_Tooltip" xml:space="preserve">
     <value>Clic gauche pour copier le point de passage.
