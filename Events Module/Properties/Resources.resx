@@ -177,4 +177,220 @@ Right click to dismiss.</value>
     <value>Failed to load metas from events.json!</value>
     <comment>Error message</comment>
   </data>
+  <data name="Day-Night Cycle" xml:space="preserve">
+    <value>Day-Night Cycle</value>
+    <comment>Event category</comment>
+  </data>
+  <data name="Day" xml:space="preserve">
+    <value>Day</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Night" xml:space="preserve">
+    <value>Night</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Dawn" xml:space="preserve">
+    <value>Dawn</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Dusk" xml:space="preserve">
+    <value>Dusk</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Server Reset" xml:space="preserve">
+    <value>Server Reset</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Other" xml:space="preserve">
+    <value>Other</value>
+    <comment>Event category</comment>
+  </data>
+  <data name="Group Event" xml:space="preserve">
+    <value>Group Event</value>
+    <comment>Event category</comment>
+  </data>
+  <data name="Ley-Line Anomaly (Timberline Falls)" xml:space="preserve">
+    <value>Ley-Line Anomaly (Timberline Falls)</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Ley-Line Anomaly (Iron Marches)" xml:space="preserve">
+    <value>Ley-Line Anomaly (Iron Marches)</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Ley-Line Anomaly (Gendarran Fields)" xml:space="preserve">
+    <value>Ley-Line Anomaly (Gendarran Fields)</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="World Bosses" xml:space="preserve">
+    <value>World Bosses</value>
+    <comment>Event category</comment>
+  </data>
+  <data name="Admiral Taidha Covington" xml:space="preserve">
+    <value>Admiral Taidha Covington</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Claw of Jormag" xml:space="preserve">
+    <value>Claw of Jormag</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Drakkar, the Ice Dragon's Champion" xml:space="preserve">
+    <value>Drakkar, the Ice Dragon's Champion</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Evolved Jungle Wurm" xml:space="preserve">
+    <value>Evolved Jungle Wurm</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Fire Elemental" xml:space="preserve">
+    <value>Fire Elemental</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Great Jungle Wurm" xml:space="preserve">
+    <value>Great Jungle Wurm</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Inquest Golem Mark II" xml:space="preserve">
+    <value>Inquest Golem Mark II</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Karka Queen" xml:space="preserve">
+    <value>Karka Queen</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Megadestroyer" xml:space="preserve">
+    <value>Megadestroyer</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Modniir Ulgoth" xml:space="preserve">
+    <value>Modniir Ulgoth</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Shadow Behemoth" xml:space="preserve">
+    <value>Shadow Behemoth</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="The Shatterer" xml:space="preserve">
+    <value>The Shatterer</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Svanir Shaman Chief" xml:space="preserve">
+    <value>Svanir Shaman Chief</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Tequatl the Sunless" xml:space="preserve">
+    <value>Tequatl the Sunless</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Meta Event" xml:space="preserve">
+    <value>Meta Event</value>
+    <comment>Event category</comment>
+  </data>
+  <data name="Crash Site" xml:space="preserve">
+    <value>Crash Site</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Sandstorm" xml:space="preserve">
+    <value>Sandstorm</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Securing Verdant Brink" xml:space="preserve">
+    <value>Securing Verdant Brink</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Night and the Enemy" xml:space="preserve">
+    <value>Night and the Enemy</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Night Bosses" xml:space="preserve">
+    <value>Night Bosses</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Trial by Fire" xml:space="preserve">
+    <value>Trial by Fire</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Battle in Tarir" xml:space="preserve">
+    <value>Battle in Tarir</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Defending Tarir" xml:space="preserve">
+    <value>Defending Tarir</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Chak Gerent" xml:space="preserve">
+    <value>Chak Gerent</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Advancing on the Blighting Towers" xml:space="preserve">
+    <value>Advancing on the Blighting Towers</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Casino Blitz" xml:space="preserve">
+    <value>Casino Blitz</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Choya Pinata" xml:space="preserve">
+    <value>Choya Piñata</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="The Search for Buried Treasure" xml:space="preserve">
+    <value>The Search for Buried Treasure</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="The Path to Ascension" xml:space="preserve">
+    <value>The Path to Ascension</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Junundu Rising" xml:space="preserve">
+    <value>Junundu Rising</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Maws of Torment" xml:space="preserve">
+    <value>Maws of Torment</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Forged with Fire" xml:space="preserve">
+    <value>Forged with Fire</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Serpents' Ire" xml:space="preserve">
+    <value>Serpents' Ire</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Palawadan, Jewel of Istan" xml:space="preserve">
+    <value>Palawadan, Jewel of Istan</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Dangerous Prey" xml:space="preserve">
+    <value>Dangerous Prey</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Thunderhead Keep" xml:space="preserve">
+    <value>Thunderhead Keep</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="The Oil Floes" xml:space="preserve">
+    <value>The Oil Floes</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="A Concert for the Ages" xml:space="preserve">
+    <value>A Concert for the Ages</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Ceremony of the Sacred Flame" xml:space="preserve">
+    <value>Ceremony of the Sacred Flame</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="The Haunting of Doomlore Shrine" xml:space="preserve">
+    <value>The Haunting of Doomlore Shrine</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="The Ooze Pit Trials" xml:space="preserve">
+    <value>The Ooze Pit Trials</value>
+    <comment>Event name</comment>
+  </data>
+  <data name="Storms of Winter" xml:space="preserve">
+    <value>Storms of Winter</value>
+    <comment>Event name</comment>
+  </data>
 </root>
