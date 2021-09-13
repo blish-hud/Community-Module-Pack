@@ -83,13 +83,11 @@ namespace Events_Module {
             _textureWatchActive = ContentsManager.GetTexture(@"textures\605019.png");
         }
 
-        protected override Task LoadAsync() {
-            Meta.Load(this.ContentsManager);
+        protected override async Task LoadAsync() {
+            await Meta.Load(this.ContentsManager);
             LoadTextures();
 
             _tabPanel = BuildSettingPanel(GameService.Overlay.BlishHudWindow.ContentRegion);
-
-            return Task.CompletedTask;
         }
 
         protected override void OnModuleLoaded(EventArgs e) {

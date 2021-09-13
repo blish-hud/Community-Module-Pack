@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using Flurl;
+using Flurl.Http;
 using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Modules.Managers;
@@ -33,7 +38,17 @@ namespace Events_Module {
         public string   Difficulty { get; set; }
         public string   Location   { get; set; }
         public string   Waypoint   { get; set; }
-        public string   Wiki       { get; set; }
+
+        public string Wiki
+        {
+            get
+            {
+                var lang = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+                return _wikiLinks?.ContainsKey(lang) == true ? _wikiLinks[lang] : _wikiEn;
+            }
+            set => _wikiEn = value;
+        }
+
         public int?     Duration   { get; set; }
 
         [JsonProperty(PropertyName = "Alert")]
@@ -66,6 +81,9 @@ namespace Events_Module {
         protected bool HasAlerted = false;
 
         private string _icon;
+        private string _wikiEn;
+        private Dictionary<string, string> _wikiLinks;
+
         public string Icon {
             get => _icon;
             set {
@@ -115,12 +133,12 @@ namespace Events_Module {
             }
         }
 
-        public static void Load(ContentsManager cm) {
+        public static async Task Load(ContentsManager cm) {
             List<Meta> metas = null;
 
             try {
                 using (var eventsReader = new StreamReader(cm.GetFileStream(@"events.json"))) {
-                    metas = JsonConvert.DeserializeObject<List<Meta>>(eventsReader.ReadToEnd());
+                    metas = JsonConvert.DeserializeObject<List<Meta>>(await eventsReader.ReadToEndAsync());
                 }
             } catch (Exception e) {
                 Logger.Error(e, Resources.Failed_to_load_metas_from_events_json_);
@@ -131,6 +149,8 @@ namespace Events_Module {
             }
 
             var uniqueEvents = new List<Meta>();
+
+            var wikiTasks = new List<Task>();
 
             foreach (var meta in metas) {
                 meta._times.Add(meta.Offset);
@@ -158,7 +178,15 @@ namespace Events_Module {
                 } else {
                     uniqueEvents.Add(meta);
                 }
+
+                if (!string.IsNullOrEmpty(meta._wikiEn)) {
+                    var pageEn = new Uri(meta._wikiEn).Segments.Last();
+                    var task = interwikiLinks(pageEn).ContinueWith(async v => meta._wikiLinks = await v);
+                    wikiTasks.Add(task);
+                }
             }
+
+            await Task.WhenAll(wikiTasks.ToArray());
 
             Events = uniqueEvents;
 
@@ -167,6 +195,32 @@ namespace Events_Module {
             UpdateEventSchedules();
         }
 
+        [Localizable(false)]
+        private static async Task<Dictionary<string, string>> interwikiLinks(string page) {
+            var url = "https://wiki.guildwars2.com"
+                     .AppendPathSegment("api.php")
+                     .SetQueryParams(new {
+                          action = "query",
+                          format = "json",
+                          prop = "langlinks",
+                          titles = page,
+                          redirects = 1,
+                          converttitles = 1,
+                          formatversion = 2,
+                          llprop = "url"
+                      });
+            var json = await url.GetJsonAsync();
+            var wikiPage = json.query.pages[0];
+            if (((IDictionary<string, object>)wikiPage).ContainsKey("langlinks")) {
+                var links = new Dictionary<string, string>();
+                foreach (var link in wikiPage.langlinks) {
+                    links.Add(link.lang, ((string)link.url).Replace("http://", "https://"));
+                }
+                return links;
+            }
+            
+            return null;
+        }
     }
 
 }
