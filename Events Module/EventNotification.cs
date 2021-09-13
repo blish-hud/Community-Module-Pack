@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Events_Module {
     public class EventNotification : Container {
 
-        private const int NOTIFICATION_WIDTH = 264;
+        private const int NOTIFICATION_WIDTH = 280;
         private const int NOTIFICATION_HEIGHT = 64;
 
         private const int ICON_SIZE = 64;
@@ -37,23 +37,23 @@ namespace Events_Module {
             this.Location = new Point(180, 60 + (NOTIFICATION_HEIGHT + 15) * _visibleNotifications);
             this.BasicTooltipText = tooltipText;
 
-            string wrappedTitle = DrawUtil.WrapText(Content.DefaultFont14, title, this.Width - NOTIFICATION_HEIGHT - 20 - 32);
+            string wrappedTitle = DrawUtil.WrapText(Content.DefaultFont14, title, this.Width - NOTIFICATION_HEIGHT - 20);
 
             var titleLbl = new Label() {
                 Parent           = this,
                 Location         = new Point(NOTIFICATION_HEIGHT                   + 10, 5),
-                Size             = new Point(this.Width - NOTIFICATION_HEIGHT - 10 - 32, this.Height / 2),
+                Size             = new Point(this.Width - NOTIFICATION_HEIGHT - 10, this.Height / 2),
                 Font             = Content.DefaultFont14,
                 BasicTooltipText = tooltipText,
                 Text             = wrappedTitle,
             };
 
-            string wrapped = DrawUtil.WrapText(Content.DefaultFont14, message, this.Width - NOTIFICATION_HEIGHT - 20 - 32);
+            string wrapped = DrawUtil.WrapText(Content.DefaultFont14, message, this.Width - NOTIFICATION_HEIGHT - 20);
 
             var messageLbl = new Label() {
                 Parent           = this,
                 Location         = new Point(NOTIFICATION_HEIGHT                   + 10, this.Height / 2),
-                Size             = new Point(this.Width - NOTIFICATION_HEIGHT - 10 - 32, this.Height / 2),
+                Size             = new Point(this.Width - NOTIFICATION_HEIGHT - 10, this.Height / 2),
                 BasicTooltipText = tooltipText,
                 Text             = wrapped,
             };
