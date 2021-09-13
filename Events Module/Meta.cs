@@ -100,7 +100,13 @@ namespace Events_Module {
                 double timeUntil = (e.NextTime - DateTime.Now).TotalMinutes;
                 if (timeUntil < (e.Reminder ?? -1) && e.IsWatched) {
                     if (!e.HasAlerted && EventsModule.ModuleInstance.NotificationsEnabled) {
-                        EventNotification.ShowNotification(e.Name, e.Texture, string.Format(Resources.Starts_in__0_, timeUntil.Minutes().Humanize()), 10f, e.Waypoint);
+                        EventNotification.ShowNotification(
+                            Resources.ResourceManager.GetString(e.Name) ?? e.Name,
+                            e.Texture,
+                            string.Format(Resources.Starts_in__0_, timeUntil.Minutes().Humanize()),
+                            10f,
+                            e.Waypoint
+                        );
                         e.HasAlerted = true;
                     }
                 } else {

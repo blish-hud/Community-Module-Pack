@@ -166,8 +166,8 @@ namespace Events_Module {
 
                 var es2 = new DetailsButton {
                     Parent           = eventPanel,
-                    BasicTooltipText = meta.Category,
-                    Text             = meta.Name,
+                    BasicTooltipText = Resources.ResourceManager.GetString(meta.Category) ?? meta.Category,
+                    Text             = Resources.ResourceManager.GetString(meta.Name) ?? meta.Name,
                     IconSize         = DetailsIconSize.Small,
                     ShowVignette     = false,
                     HighlightType    = DetailsHighlightType.LightHighlight,
@@ -268,9 +268,10 @@ namespace Events_Module {
             };
 
             foreach (IGrouping<string, Meta> e in submetas) {
-                var ev = eventCategories.AddMenuItem(e.Key);
+                var category = Resources.ResourceManager.GetString(e.Key) ?? e.Key;
+                var ev = eventCategories.AddMenuItem(category);
                 ev.Click += delegate {
-                    eventPanel.FilterChildren<DetailsButton>(db => string.Equals(db.BasicTooltipText, e.Key));
+                    eventPanel.FilterChildren<DetailsButton>(db => string.Equals(db.BasicTooltipText, category));
                 };
             }
 
@@ -376,7 +377,9 @@ namespace Events_Module {
         }
 
         private IList<string> GetOrderedNextUpEventNames() {
-            return Meta.Events.OrderBy(el => el.NextTime).Select(el => el.Name).ToList();
+            return Meta.Events.OrderBy(el => el.NextTime)
+                       .Select(el => Resources.ResourceManager.GetString(el.Name) ?? el.Name)
+                       .ToList();
         }
 
         private void ChangeLocalization(object sender, EventArgs e) {
