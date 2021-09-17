@@ -127,7 +127,7 @@
   {
     "name": "Drakkar, the Ice Dragon's Champion",
     "colloquial": "Drakkar",
-    "offset": "00:05Z",
+    "offset": "01:05Z",
     "repeat": "02:00",
     "difficulty": "Standard",
     "category": "World Bosses",
@@ -830,7 +830,7 @@
   },
   {
     "name": "Storms of Winter",
-    "offset": "01:35Z",
+    "offset": "01:45Z",
     "repeat": "02:00",
     "difficulty": "",
     "category": "Meta Event",
