@@ -840,5 +840,31 @@
     "duration": "20",
     "alert": 10,
     "icon": "0AAD072E707AE02AE1B9984FD8BCE1A113E759B7/2221432"
+  },
+  {
+    "name": "Dragonstorm (Public)",
+    "offset": "01:00Z",
+    "repeat": "02:00",
+    "difficulty": "",
+    "category": "Eye of the North",
+    "location": "Eye of the North",
+    "waypoint": "[&BAkMAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/Storms_of_Winter",
+    "duration": "20",
+    "alert": 10,
+    "icon": "145C02AFEEFFDD58C75C0A1DD61FE5DF28176C15/2433330"
+  },
+  {
+    "name": "Twisted Marionette (Public)",
+    "offset": "02:00Z",
+    "repeat": "02:00",
+    "difficulty": "",
+    "category": "Eye of the North",
+    "location": "Eye of the North",
+    "waypoint": "[&BAkMAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/The_Twisted_Marionette",
+    "duration": "20",
+    "alert": 10,
+    "icon": "0D5CD907A06D0AD70750505CC49AB149DABAEFE7/710687"
   }
 ]
