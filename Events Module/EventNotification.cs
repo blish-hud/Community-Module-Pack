@@ -1,13 +1,14 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
+using Events_Module.Properties;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Events_Module {
     public class EventNotification : Container {
 
-        private const int NOTIFICATION_WIDTH = 264;
+        private const int NOTIFICATION_WIDTH = 280;
         private const int NOTIFICATION_HEIGHT = 64;
 
         private const int ICON_SIZE = 64;
@@ -27,33 +28,33 @@ namespace Events_Module {
         private static int _visibleNotifications = 0;
 
         private EventNotification(string title, AsyncTexture2D icon, string message, string waypoint) {
-            const string TOOLTIP_TEXT = "Left click to copy waypoint.\nRight click to dismiss.";
+            string tooltipText = Resources.Notification_Tooltip;
 
             _icon = icon;
 
             this.Opacity = 0f;
             this.Size = new Point(NOTIFICATION_WIDTH, NOTIFICATION_HEIGHT);
             this.Location = new Point(180, 60 + (NOTIFICATION_HEIGHT + 15) * _visibleNotifications);
-            this.BasicTooltipText = TOOLTIP_TEXT;
+            this.BasicTooltipText = tooltipText;
 
-            string wrappedTitle = DrawUtil.WrapText(Content.DefaultFont14, title, this.Width - NOTIFICATION_HEIGHT - 20 - 32);
+            string wrappedTitle = DrawUtil.WrapText(Content.DefaultFont14, title, this.Width - NOTIFICATION_HEIGHT - 20);
 
             var titleLbl = new Label() {
                 Parent           = this,
                 Location         = new Point(NOTIFICATION_HEIGHT                   + 10, 5),
-                Size             = new Point(this.Width - NOTIFICATION_HEIGHT - 10 - 32, this.Height / 2),
+                Size             = new Point(this.Width - NOTIFICATION_HEIGHT - 10, this.Height / 2),
                 Font             = Content.DefaultFont14,
-                BasicTooltipText = TOOLTIP_TEXT,
+                BasicTooltipText = tooltipText,
                 Text             = wrappedTitle,
             };
 
-            string wrapped = DrawUtil.WrapText(Content.DefaultFont14, message, this.Width - NOTIFICATION_HEIGHT - 20 - 32);
+            string wrapped = DrawUtil.WrapText(Content.DefaultFont14, message, this.Width - NOTIFICATION_HEIGHT - 20);
 
             var messageLbl = new Label() {
                 Parent           = this,
                 Location         = new Point(NOTIFICATION_HEIGHT                   + 10, this.Height / 2),
-                Size             = new Point(this.Width - NOTIFICATION_HEIGHT - 10 - 32, this.Height / 2),
-                BasicTooltipText = TOOLTIP_TEXT,
+                Size             = new Point(this.Width - NOTIFICATION_HEIGHT - 10, this.Height / 2),
+                BasicTooltipText = tooltipText,
                 Text             = wrapped,
             };
 
@@ -64,9 +65,9 @@ namespace Events_Module {
                 ClipboardUtil.WindowsClipboardService.SetTextAsync(waypoint)
                              .ContinueWith((clipboardResult) => {
                                   if (clipboardResult.IsFaulted) {
-                                      ScreenNotification.ShowNotification("Failed to copy waypoint to clipboard. Try again.", ScreenNotification.NotificationType.Red, duration: 2);
+                                      ScreenNotification.ShowNotification(Resources.Failed_to_copy_waypoint_to_clipboard__Try_again_, ScreenNotification.NotificationType.Red, duration: 2);
                                   } else {
-                                      ScreenNotification.ShowNotification("Copied waypoint to clipboard!", duration: 2);
+                                      ScreenNotification.ShowNotification(Resources.Copied_waypoint_to_clipboard_, duration: 2);
                                   }
                               });
 

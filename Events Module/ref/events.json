@@ -598,7 +598,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Against_the_Chak_Gerent",
     "duration": "",
     "alert": 10,
-  	"icon": "A45192752E983E0AB026A8539BE601E668019840/1228232"
+    "icon": "A45192752E983E0AB026A8539BE601E668019840/1228232"
   },
   {
     "name": "Advancing on the Blighting Towers",
@@ -729,7 +729,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Palawadan,_Jewel_of_Istan_(meta_event)",
     "duration": "30",
     "alert": 10,
-	"icon": "056C32B97B15F04E2BD6A660FC451946ED086040/1895981"
+    "icon": "056C32B97B15F04E2BD6A660FC451946ED086040/1895981"
   },
   {
     "name": "Dangerous Prey",
@@ -742,7 +742,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Dangerous_Prey",
     "duration": "30",
     "alert": 10,
-	"icon": "29C575F5601EC9D003B80BE497077E424FA2F704/2039753"
+    "icon": "29C575F5601EC9D003B80BE497077E424FA2F704/2039753"
   },
   {
     "name": "Thunderhead Keep",
@@ -756,7 +756,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/Thunderhead_Keep_(meta_event)",
     "duration": "20",
     "alert": 10,
-	"icon": "9F2162C048B268C30F1172C71DB107A45BCEF905/2084714"
+    "icon": "9F2162C048B268C30F1172C71DB107A45BCEF905/2084714"
   },
   {
     "name": "The Oil Floes",
@@ -770,7 +770,7 @@
     "wiki": "https://wiki.guildwars2.com/wiki/The_Oil_Floes",
     "duration": "15",
     "alert": 10,
-	"icon": "9F2162C048B268C30F1172C71DB107A45BCEF905/2084714"
+    "icon": "9F2162C048B268C30F1172C71DB107A45BCEF905/2084714"
   },
   {
     "name": "A Concert for the Ages",

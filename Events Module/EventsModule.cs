@@ -10,6 +10,7 @@ using Blish_HUD.Controls;
 using Blish_HUD.Modules;
 using Blish_HUD.Modules.Managers;
 using Blish_HUD.Settings;
+using Events_Module.Properties;
 using Humanizer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -27,11 +28,11 @@ namespace Events_Module {
         internal DirectoriesManager DirectoriesManager => this.ModuleParameters.DirectoriesManager;
         internal Gw2ApiManager      Gw2ApiManager      => this.ModuleParameters.Gw2ApiManager;
 
-        private const string DD_ALPHABETICAL = "Alphabetical";
-        private const string DD_NEXTUP       = "Next Up";
+        private string _ddAlphabetical = Resources.Alphabetical;
+        private string _ddNextup = Resources.Next_Up;
 
-        private const string EC_ALLEVENTS = "All Events";
-        private const string EC_HIDDEN    = "Hidden Events";
+        private string _ecAllevents = Resources.All_Events;
+        private string _ecHidden    = Resources.Hidden_Events;
 
         private const int TIMER_RECALC_RATE = 5;
 
@@ -64,16 +65,17 @@ namespace Events_Module {
         }
 
         protected override void DefineSettings(SettingCollection settings) {
-            var selfManagedSettings = settings.AddSubCollection("Managed Settings");
+            var selfManagedSettings = settings.AddSubCollection(@"Managed Settings");
 
-            _settingNotificationsEnabled = selfManagedSettings.DefineSetting("notificationsEnabled", true);
-            _settingChimeEnabled         = selfManagedSettings.DefineSetting("chimeEnabled",         true);
+            _settingNotificationsEnabled = selfManagedSettings.DefineSetting(@"notificationsEnabled", true);
+            _settingChimeEnabled         = selfManagedSettings.DefineSetting(@"chimeEnabled",         true);
 
-            _watchCollection = settings.AddSubCollection("Watching");
+            _watchCollection = settings.AddSubCollection(@"Watching");
         }
 
         protected override void Initialize() {
             _displayedEvents = new List<DetailsButton>();
+            GameService.Overlay.UserLocaleChanged += ChangeLocalization;
         }
 
         private void LoadTextures() {
@@ -81,17 +83,15 @@ namespace Events_Module {
             _textureWatchActive = ContentsManager.GetTexture(@"textures\605019.png");
         }
 
-        protected override Task LoadAsync() {
-            Meta.Load(this.ContentsManager);
+        protected override async Task LoadAsync() {
+            await Meta.Load(this.ContentsManager);
             LoadTextures();
 
             _tabPanel = BuildSettingPanel(GameService.Overlay.BlishHudWindow.ContentRegion);
-
-            return Task.CompletedTask;
         }
 
         protected override void OnModuleLoaded(EventArgs e) {
-            _eventsTab = GameService.Overlay.BlishHudWindow.AddTab("Events and Metas", this.ContentsManager.GetTexture(@"textures\1466345.png"), _tabPanel);
+            _eventsTab = GameService.Overlay.BlishHudWindow.AddTab(Resources.Events_and_Metas, this.ContentsManager.GetTexture(@"textures\1466345.png"), _tabPanel);
 
             base.OnModuleLoaded(e);
         }
@@ -109,7 +109,7 @@ namespace Events_Module {
             };
 
             var notificationToggle = new Checkbox() {
-                Text     = "Enable Notifications",
+                Text     = Resources.Enable_Notifications,
                 Checked  = this.NotificationsEnabled,
                 Parent   = etPanel
             };
@@ -117,7 +117,7 @@ namespace Events_Module {
             notificationToggle.Location = new Point(ddSortMethod.Left - notificationToggle.Width - 10, ddSortMethod.Top + 6);
 
             var chimeToggle = new Checkbox {
-                Text    = "Mute Notifications",
+                Text    = Resources.Mute_Notifications,
                 Checked = !this.ChimeEnabled,
                 Parent  = etPanel,
                 Top     = notificationToggle.Top,
@@ -130,7 +130,7 @@ namespace Events_Module {
             int topOffset = ddSortMethod.Bottom + Panel.MenuStandard.ControlOffset.Y;
 
             var menuSection = new Panel {
-                Title      = "Event Categories",
+                Title      = Resources.Event_Categories,
                 ShowBorder = true,
                 Size       = Panel.MenuStandard.Size - new Point(0, topOffset + Panel.MenuStandard.ControlOffset.Y),
                 Location   = new Point(Panel.MenuStandard.PanelOffset.X, topOffset),
@@ -147,7 +147,7 @@ namespace Events_Module {
             };
 
             var searchBox = new TextBox() {
-                PlaceholderText = "Event Search",
+                PlaceholderText = Resources.Event_Search,
                 Width           = menuSection.Width,
                 Location        = new Point(ddSortMethod.Top, menuSection.Left),
                 Parent          = etPanel
@@ -158,14 +158,14 @@ namespace Events_Module {
             };
 
             foreach (var meta in Meta.Events) {
-                var setting = _watchCollection.DefineSetting("watchEvent:" + meta.Name, true);
+                var setting = _watchCollection.DefineSetting(@"watchEvent:" + meta.Name, true);
 
                 meta.IsWatched = setting.Value;
 
                 var es2 = new DetailsButton {
                     Parent           = eventPanel,
-                    BasicTooltipText = meta.Category,
-                    Text             = meta.Name,
+                    BasicTooltipText = Resources.ResourceManager.GetString(meta.Category) ?? meta.Category,
+                    Text             = Resources.ResourceManager.GetString(meta.Name) ?? meta.Name,
                     IconSize         = DetailsIconSize.Small,
                     ShowVignette     = false,
                     HighlightType    = DetailsHighlightType.LightHighlight,
@@ -189,9 +189,9 @@ namespace Events_Module {
 
                 if (!string.IsNullOrEmpty(meta.Wiki)) {
                     var glowWikiBttn = new GlowButton {
-                        Icon = GameService.Content.GetTexture("102530"),
-                        ActiveIcon = GameService.Content.GetTexture("glow-wiki"),
-                        BasicTooltipText = "Read about this event on the wiki.",
+                        Icon = GameService.Content.GetTexture(@"102530"),
+                        ActiveIcon = GameService.Content.GetTexture(@"glow-wiki"),
+                        BasicTooltipText = Resources.Read_about_this_event_on_the_wiki_,
                         Parent = es2,
                         GlowColor = Color.White * 0.1f
                     };
@@ -205,9 +205,9 @@ namespace Events_Module {
 
                 if (!string.IsNullOrEmpty(meta.Waypoint)) {
                     var glowWaypointBttn = new GlowButton {
-                        Icon = GameService.Content.GetTexture("waypoint"),
-                        ActiveIcon = GameService.Content.GetTexture("glow-waypoint"),
-                        BasicTooltipText = $"Nearby waypoint: {meta.Waypoint}",
+                        Icon = GameService.Content.GetTexture(@"waypoint"),
+                        ActiveIcon = GameService.Content.GetTexture(@"glow-waypoint"),
+                        BasicTooltipText = string.Format(Resources.Nearby_waypoint___0_, meta.Waypoint),
                         Parent = es2,
                         GlowColor = Color.White * 0.1f
                     };
@@ -216,9 +216,9 @@ namespace Events_Module {
                         ClipboardUtil.WindowsClipboardService.SetTextAsync(meta.Waypoint)
                                      .ContinueWith((clipboardResult) => {
                                            if (clipboardResult.IsFaulted) {
-                                               ScreenNotification.ShowNotification("Failed to copy waypoint to clipboard. Try again.", ScreenNotification.NotificationType.Red, duration: 2);
+                                               ScreenNotification.ShowNotification(Resources.Failed_to_copy_waypoint_to_clipboard__Try_again_, ScreenNotification.NotificationType.Red, duration: 2);
                                            } else {
-                                               ScreenNotification.ShowNotification("Copied waypoint to clipboard!", duration: 2);
+                                               ScreenNotification.ShowNotification(Resources.Copied_waypoint_to_clipboard_, duration: 2);
                                            }
                                        });
                     };
@@ -227,7 +227,7 @@ namespace Events_Module {
                 var toggleFollowBttn = new GlowButton() {
                     Icon             = _textureWatch,
                     ActiveIcon       = _textureWatchActive,
-                    BasicTooltipText = "Click to toggle tracking for this event.",
+                    BasicTooltipText = Resources.Click_to_toggle_tracking_for_this_event_,
                     ToggleGlow       = true,
                     Checked          = meta.IsWatched,
                     Parent           = es2,
@@ -259,16 +259,17 @@ namespace Events_Module {
 
             List<IGrouping<string, Meta>> submetas = Meta.Events.GroupBy(e => e.Category).ToList();
 
-            var evAll = eventCategories.AddMenuItem(EC_ALLEVENTS);
+            var evAll = eventCategories.AddMenuItem(_ecAllevents);
             evAll.Select();
             evAll.Click += delegate {
                 eventPanel.FilterChildren<DetailsButton>(db => true);
             };
 
             foreach (IGrouping<string, Meta> e in submetas) {
-                var ev = eventCategories.AddMenuItem(e.Key);
+                var category = Resources.ResourceManager.GetString(e.Key) ?? e.Key;
+                var ev = eventCategories.AddMenuItem(category);
                 ev.Click += delegate {
-                    eventPanel.FilterChildren<DetailsButton>(db => string.Equals(db.BasicTooltipText, e.Key));
+                    eventPanel.FilterChildren<DetailsButton>(db => string.Equals(db.BasicTooltipText, category));
                 };
             }
 
@@ -276,14 +277,14 @@ namespace Events_Module {
             //eventCategories.AddMenuItem(EC_HIDDEN);
 
             // Add dropdown for sorting events
-            ddSortMethod.Items.Add(DD_ALPHABETICAL);
-            ddSortMethod.Items.Add(DD_NEXTUP);
+            ddSortMethod.Items.Add(_ddAlphabetical);
+            ddSortMethod.Items.Add(_ddNextup);
 
             ddSortMethod.ValueChanged += delegate (object sender, ValueChangedEventArgs args) {
                 SortEventPanel(args.CurrentValue, ref eventPanel);
             };
 
-            ddSortMethod.SelectedItem = DD_NEXTUP;
+            ddSortMethod.SelectedItem = _ddNextup;
             UpdateSort(ddSortMethod, EventArgs.Empty);
 
             return etPanel;
@@ -310,14 +311,14 @@ namespace Events_Module {
 
             var msg = new StringBuilder();
 
-            msg.AppendLine("Starts in " +
-                           timeUntil.Humanize(maxUnit: Humanizer.Localisation.TimeUnit.Hour,
-                                              minUnit: Humanizer.Localisation.TimeUnit.Minute,
-                                              precision: 2,
-                                              collectionSeparator: null)
-                          );
+            msg.AppendLine(string.Format(Resources.Starts_in__0_,
+                                         timeUntil.Humanize(maxUnit: Humanizer.Localisation.TimeUnit.Hour,
+                                                            minUnit: Humanizer.Localisation.TimeUnit.Minute,
+                                                            precision: 2,
+                                                            collectionSeparator: null))
+            );
 
-            msg.Append(Environment.NewLine + "Upcoming Event Times:");
+            msg.Append(Environment.NewLine + Resources.Upcoming_Event_Times_);
             foreach (var utime in assignedMeta.Times.Select(time => time > DateTime.UtcNow ? time.ToLocalTime() : time.ToLocalTime() + 1.Days()).OrderBy(time => time.Ticks).ToList()) {
                 msg.Append(Environment.NewLine + utime.ToShortTimeString());
             }
@@ -326,32 +327,27 @@ namespace Events_Module {
         }
 
         private void UpdateSort(object sender, EventArgs e) {
-            switch (((Dropdown)sender).SelectedItem) {
-                case DD_ALPHABETICAL:
-                    _displayedEvents.Sort((e1, e2) => string.Compare(e1.Text, e2.Text, StringComparison.CurrentCultureIgnoreCase));
-                    break;
-                case DD_NEXTUP:
-                    var orderedEvents = GetOrderedNextUpEventNames();
-                    _displayedEvents.Sort((db1, db2) => {
-                        return orderedEvents.IndexOf(db1.Text) - orderedEvents.IndexOf(db2.Text);
-                    });
-                    break;
+            var item = ((Dropdown)sender).SelectedItem;
+            if (item == _ddAlphabetical) {
+                _displayedEvents.Sort((e1, e2) => string.Compare(e1.Text, e2.Text, StringComparison.CurrentCultureIgnoreCase));
+            } else if (item == _ddNextup) {
+                var orderedEvents = GetOrderedNextUpEventNames();
+                _displayedEvents.Sort((db1, db2) => {
+                    return orderedEvents.IndexOf(db1.Text) - orderedEvents.IndexOf(db2.Text);
+                });
             }
 
             RepositionES();
         }
 
         private void SortEventPanel(string ddSortMethodValue, ref FlowPanel eventPanel) {
-            switch (ddSortMethodValue) {
-                case DD_ALPHABETICAL:
-                    eventPanel.SortChildren<DetailsButton>((db1, db2) => string.Compare(db1.Text, db2.Text, StringComparison.CurrentCultureIgnoreCase));
-                    break;
-                case DD_NEXTUP:
-                    var orderedEvents = GetOrderedNextUpEventNames();
-                    eventPanel.SortChildren<DetailsButton>((db1, db2) => {
-                        return orderedEvents.IndexOf(db1.Text) - orderedEvents.IndexOf(db2.Text);
-                    });
-                    break;
+            if (ddSortMethodValue == _ddAlphabetical) {
+                eventPanel.SortChildren<DetailsButton>((db1, db2) => string.Compare(db1.Text, db2.Text, StringComparison.CurrentCultureIgnoreCase));
+            } else if (ddSortMethodValue == _ddNextup) {
+                var orderedEvents = GetOrderedNextUpEventNames();
+                eventPanel.SortChildren<DetailsButton>((db1, db2) => {
+                    return orderedEvents.IndexOf(db1.Text) - orderedEvents.IndexOf(db2.Text);
+                });
             }
         }
 
@@ -372,13 +368,34 @@ namespace Events_Module {
         protected override void Unload() {
             ModuleInstance = null;
 
+            GameService.Overlay.UserLocaleChanged -= ChangeLocalization;
             GameService.Overlay.BlishHudWindow.RemoveTab(_eventsTab);
             _displayedEvents.ForEach(de => de.Dispose());
             _displayedEvents.Clear();
         }
 
         private IList<string> GetOrderedNextUpEventNames() {
-            return Meta.Events.OrderBy(el => el.NextTime).Select(el => el.Name).ToList();
+            return Meta.Events.OrderBy(el => el.NextTime)
+                       .Select(el => Resources.ResourceManager.GetString(el.Name) ?? el.Name)
+                       .ToList();
+        }
+
+        private void ChangeLocalization(object sender, EventArgs e) {
+            _ddAlphabetical = Resources.Alphabetical;
+            _ddNextup = Resources.Next_Up;
+            _ecAllevents = Resources.All_Events;
+            _ecHidden = Resources.Hidden_Events;
+
+            //TODO: Implement as View so panel reloads automatically.
+            if (_tabPanel != null) {
+                _tabPanel?.Dispose();
+                _tabPanel = BuildSettingPanel(GameService.Overlay.BlishHudWindow.ContentRegion);
+
+                if (_eventsTab != null)
+                    GameService.Overlay.BlishHudWindow.RemoveTab(_eventsTab);
+
+                _eventsTab = GameService.Overlay.BlishHudWindow.AddTab(Resources.Events_and_Metas, this.ContentsManager.GetTexture(@"textures\1466345.png"), _tabPanel);
+            }
         }
 
     }

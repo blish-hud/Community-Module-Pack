@@ -117,280 +117,273 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="All Events" xml:space="preserve">
-    <value>All Events</value>
-    <comment>Event category</comment>
-  </data>
   <data name="Alphabetical" xml:space="preserve">
-    <value>Alphabetical</value>
-  </data>
-  <data name="Events and Metas" xml:space="preserve">
-    <value>Events and Metas</value>
-    <comment>Main tab name</comment>
-  </data>
-  <data name="Hidden Events" xml:space="preserve">
-    <value>Hidden Events</value>
-  </data>
-  <data name="Next Up" xml:space="preserve">
-    <value>Next Up</value>
-  </data>
-  <data name="Enable Notifications" xml:space="preserve">
-    <value>Enable Notifications</value>
-  </data>
-  <data name="Mute Notifications" xml:space="preserve">
-    <value>Mute Notifications</value>
-  </data>
-  <data name="Event Categories" xml:space="preserve">
-    <value>Event Categories</value>
+    <value>Alphabétique</value>
   </data>
   <data name="Event Search" xml:space="preserve">
-    <value>Event Search</value>
-  </data>
-  <data name="Read about this event on the wiki." xml:space="preserve">
-    <value>Read about this event on the wiki.</value>
-  </data>
-  <data name="Nearby waypoint: {0}" xml:space="preserve">
-    <value>Nearby waypoint: {0}</value>
-  </data>
-  <data name="Failed to copy waypoint to clipboard. Try again." xml:space="preserve">
-    <value>Failed to copy waypoint to clipboard. Try again.</value>
-    <comment>Error message</comment>
-  </data>
-  <data name="Copied waypoint to clipboard!" xml:space="preserve">
-    <value>Copied waypoint to clipboard!</value>
-  </data>
-  <data name="Click to toggle tracking for this event." xml:space="preserve">
-    <value>Click to toggle tracking for this event.</value>
+    <value>Recherche d'événement</value>
   </data>
   <data name="Starts in {0}" xml:space="preserve">
-    <value>Starts in {0}</value>
+    <value>Débute dans {0}</value>
     <comment>{0} is time</comment>
   </data>
-  <data name="Upcoming Event Times:" xml:space="preserve">
-    <value>Upcoming Event Times:</value>
+  <data name="All Events" xml:space="preserve">
+    <value>Tous les événements</value>
+    <comment>Event category</comment>
   </data>
-  <data name="Notification_Tooltip" xml:space="preserve">
-    <value>Left click to copy waypoint.
-Right click to dismiss.</value>
+  <data name="Enable Notifications" xml:space="preserve">
+    <value>Activer les notifications</value>
+  </data>
+  <data name="Event Categories" xml:space="preserve">
+    <value>Catégories d'événement</value>
+  </data>
+  <data name="Hidden Events" xml:space="preserve">
+    <value>Evénements masqués</value>
+  </data>
+  <data name="Events and Metas" xml:space="preserve">
+    <value>Evénements et Méta-événements</value>
+    <comment>Main tab name</comment>
+  </data>
+  <data name="Next Up" xml:space="preserve">
+    <value>Suivants</value>
+  </data>
+  <data name="Upcoming Event Times:" xml:space="preserve">
+    <value>Horaires suivantes :</value>
+  </data>
+  <data name="Read about this event on the wiki." xml:space="preserve">
+    <value>Voir cet événement sur le wiki.</value>
+  </data>
+  <data name="Copied waypoint to clipboard!" xml:space="preserve">
+    <value>Point de passage copié !</value>
+  </data>
+  <data name="Click to toggle tracking for this event." xml:space="preserve">
+    <value>Cliquer pour activer le suivi de cet événement.</value>
+  </data>
+  <data name="Nearby waypoint: {0}" xml:space="preserve">
+    <value>Point de passage à proximité : {0}</value>
   </data>
   <data name="Failed to load metas from events.json!" xml:space="preserve">
-    <value>Failed to load metas from events.json!</value>
+    <value>Echec du chargement des événemets depuis events.json !</value>
     <comment>Error message</comment>
   </data>
+  <data name="Failed to copy waypoint to clipboard. Try again." xml:space="preserve">
+    <value>Echec de la copie du point de passage. Réessayez.</value>
+    <comment>Error message</comment>
+  </data>
+  <data name="Notification_Tooltip" xml:space="preserve">
+    <value>Clic gauche pour copier le point de passage.
+Clic droit pour fermer.</value>
+  </data>
+  <data name="Mute Notifications" xml:space="preserve">
+    <value>Notifications silencieuses</value>
+  </data>
   <data name="Day-Night Cycle" xml:space="preserve">
-    <value>Day-Night Cycle</value>
+    <value>Cycle Jour/Nuit</value>
     <comment>Event category</comment>
   </data>
   <data name="Day" xml:space="preserve">
-    <value>Day</value>
+    <value>Jour</value>
     <comment>Event name</comment>
   </data>
   <data name="Night" xml:space="preserve">
-    <value>Night</value>
+    <value>Nuit</value>
     <comment>Event name</comment>
   </data>
   <data name="Dawn" xml:space="preserve">
-    <value>Dawn</value>
-    <comment>Event name</comment>
+    <value>Aube</value><comment>Event name</comment>
   </data>
   <data name="Dusk" xml:space="preserve">
-    <value>Dusk</value>
+    <value>Crépuscule</value>
     <comment>Event name</comment>
   </data>
   <data name="Server Reset" xml:space="preserve">
-    <value>Server Reset</value>
+    <value>Réinitialisation du serveur</value>
     <comment>Event name</comment>
   </data>
   <data name="Other" xml:space="preserve">
-    <value>Other</value>
-    <comment>Event category</comment>
+    <value>Autre</value><comment>Event category</comment>
   </data>
   <data name="Group Event" xml:space="preserve">
-    <value>Group Event</value>
+    <value>Evénement de groupe</value>
     <comment>Event category</comment>
   </data>
   <data name="Ley-Line Anomaly (Timberline Falls)" xml:space="preserve">
-    <value>Ley-Line Anomaly (Timberline Falls)</value>
+    <value>Anomalie des lignes de force (Chutes de la canopée)</value>
     <comment>Event name</comment>
   </data>
   <data name="Ley-Line Anomaly (Iron Marches)" xml:space="preserve">
-    <value>Ley-Line Anomaly (Iron Marches)</value>
+    <value>Anomalie des lignes de force (Marais de fer)</value>
     <comment>Event name</comment>
   </data>
   <data name="Ley-Line Anomaly (Gendarran Fields)" xml:space="preserve">
-    <value>Ley-Line Anomaly (Gendarran Fields)</value>
+    <value>Anomalie des lignes de force (Champs de Gendarran)</value>
     <comment>Event name</comment>
-  </data>
-  <data name="World Bosses" xml:space="preserve">
-    <value>World Bosses</value>
-    <comment>Event category</comment>
   </data>
   <data name="Admiral Taidha Covington" xml:space="preserve">
-    <value>Admiral Taidha Covington</value>
-    <comment>Event name</comment>
+    <value>Amiral Taidha Covington</value><comment>Event name</comment>
+  </data>
+  <data name="World Bosses" xml:space="preserve">
+    <value>Boss mondiaux</value><comment>Event category</comment>
   </data>
   <data name="Claw of Jormag" xml:space="preserve">
-    <value>Claw of Jormag</value>
+    <value>Griffe de Jormag</value>
     <comment>Event name</comment>
   </data>
   <data name="Drakkar, the Ice Dragon's Champion" xml:space="preserve">
-    <value>Drakkar, the Ice Dragon's Champion</value>
+    <value>Drakkar, le champion du dragon des glaces</value>
     <comment>Event name</comment>
   </data>
   <data name="Evolved Jungle Wurm" xml:space="preserve">
-    <value>Evolved Jungle Wurm</value>
+    <value>Triple terreur</value>
     <comment>Event name</comment>
   </data>
   <data name="Fire Elemental" xml:space="preserve">
-    <value>Fire Elemental</value>
+    <value>Elémentaire de feu</value>
     <comment>Event name</comment>
   </data>
   <data name="Great Jungle Wurm" xml:space="preserve">
-    <value>Great Jungle Wurm</value>
+    <value>Grande guivre de la jungle</value>
     <comment>Event name</comment>
   </data>
   <data name="Inquest Golem Mark II" xml:space="preserve">
-    <value>Inquest Golem Mark II</value>
+    <value>Golem de l'Enqueste Marque II</value>
     <comment>Event name</comment>
   </data>
   <data name="Karka Queen" xml:space="preserve">
-    <value>Karka Queen</value>
+    <value>Reine karka</value>
     <comment>Event name</comment>
   </data>
   <data name="Megadestroyer" xml:space="preserve">
-    <value>Megadestroyer</value>
+    <value>Mégadestructeur</value>
     <comment>Event name</comment>
   </data>
   <data name="Modniir Ulgoth" xml:space="preserve">
-    <value>Modniir Ulgoth</value>
+    <value>Ulgoth le Modniir</value>
     <comment>Event name</comment>
   </data>
   <data name="Shadow Behemoth" xml:space="preserve">
-    <value>Shadow Behemoth</value>
+    <value>Béhémoth des ombres</value>
     <comment>Event name</comment>
   </data>
   <data name="The Shatterer" xml:space="preserve">
-    <value>The Shatterer</value>
+    <value>Le Destructeur</value>
     <comment>Event name</comment>
   </data>
   <data name="Svanir Shaman Chief" xml:space="preserve">
-    <value>Svanir Shaman Chief</value>
+    <value>Chef chamane de Svanir</value>
     <comment>Event name</comment>
   </data>
   <data name="Tequatl the Sunless" xml:space="preserve">
-    <value>Tequatl the Sunless</value>
+    <value>Tequatl le Sans-soleil</value>
     <comment>Event name</comment>
   </data>
   <data name="Meta Event" xml:space="preserve">
-    <value>Meta Event</value>
+    <value>Méta-événement</value>
     <comment>Event category</comment>
   </data>
   <data name="Crash Site" xml:space="preserve">
-    <value>Crash Site</value>
+    <value>Site du crash</value>
     <comment>Event name</comment>
   </data>
   <data name="Sandstorm" xml:space="preserve">
-    <value>Sandstorm</value>
+    <value>Tempête de sable</value>
     <comment>Event name</comment>
   </data>
   <data name="Securing Verdant Brink" xml:space="preserve">
-    <value>Securing Verdant Brink</value>
+    <value>Sécuriser l'Orée d'émeraude</value>
     <comment>Event name</comment>
   </data>
   <data name="Night and the Enemy" xml:space="preserve">
-    <value>Night and the Enemy</value>
+    <value>La nuit et l'ennemi</value>
     <comment>Event name</comment>
   </data>
   <data name="Night Bosses" xml:space="preserve">
-    <value>Night Bosses</value>
-    <comment>Event name</comment>
+    <value>Boss de nuit</value><comment>Event name</comment>
   </data>
   <data name="Trial by Fire" xml:space="preserve">
-    <value>Trial by Fire</value>
+    <value>L'épreuve du feu</value>
     <comment>Event name</comment>
   </data>
   <data name="Battle in Tarir" xml:space="preserve">
-    <value>Battle in Tarir</value>
+    <value>Bataille de Tarir</value>
     <comment>Event name</comment>
   </data>
   <data name="Defending Tarir" xml:space="preserve">
-    <value>Defending Tarir</value>
+    <value>Protéger Tarir</value>
     <comment>Event name</comment>
   </data>
   <data name="Chak Gerent" xml:space="preserve">
-    <value>Chak Gerent</value>
+    <value>Régents Chaks</value>
     <comment>Event name</comment>
   </data>
   <data name="Advancing on the Blighting Towers" xml:space="preserve">
-    <value>Advancing on the Blighting Towers</value>
+    <value>Repli du Dragon</value>
     <comment>Event name</comment>
   </data>
   <data name="Casino Blitz" xml:space="preserve">
-    <value>Casino Blitz</value>
+    <value>Casino express</value>
     <comment>Event name</comment>
   </data>
   <data name="Choya Pinata" xml:space="preserve">
-    <value>Choya Piñata</value>
+    <value>Piñata de choya</value>
     <comment>Event name</comment>
   </data>
   <data name="The Search for Buried Treasure" xml:space="preserve">
-    <value>The Search for Buried Treasure</value>
-    <comment>Event name</comment>
+    <value>À la recherche d'un trésor enfoui</value><comment>Event name</comment>
   </data>
   <data name="The Path to Ascension" xml:space="preserve">
-    <value>The Path to Ascension</value>
+    <value>Le chemin de l'Ascension</value>
     <comment>Event name</comment>
   </data>
   <data name="Junundu Rising" xml:space="preserve">
-    <value>Junundu Rising</value>
+    <value>Le soulèvement des junundus</value>
     <comment>Event name</comment>
   </data>
   <data name="Maws of Torment" xml:space="preserve">
-    <value>Maws of Torment</value>
-    <comment>Event name</comment>
-  </data>
-  <data name="Forged with Fire" xml:space="preserve">
-    <value>Forged with Fire</value>
+    <value>Gueules des tourments</value>
     <comment>Event name</comment>
   </data>
   <data name="Serpents' Ire" xml:space="preserve">
-    <value>Serpents' Ire</value>
+    <value>Le courroux des serpents</value><comment>Event name</comment>
+  </data>
+  <data name="Forged with Fire" xml:space="preserve">
+    <value />
     <comment>Event name</comment>
   </data>
   <data name="Palawadan, Jewel of Istan" xml:space="preserve">
-    <value>Palawadan, Jewel of Istan</value>
+    <value>Palawadan, le joyau d'Istan</value>
     <comment>Event name</comment>
   </data>
   <data name="Dangerous Prey" xml:space="preserve">
-    <value>Dangerous Prey</value>
+    <value>Proie dangereuse</value>
     <comment>Event name</comment>
   </data>
   <data name="Thunderhead Keep" xml:space="preserve">
-    <value>Thunderhead Keep</value>
+    <value>Donjon de Chef-Tonnerre</value>
     <comment>Event name</comment>
   </data>
   <data name="The Oil Floes" xml:space="preserve">
-    <value>The Oil Floes</value>
+    <value>Les flaques d'huiles</value>
     <comment>Event name</comment>
   </data>
   <data name="A Concert for the Ages" xml:space="preserve">
-    <value>A Concert for the Ages</value>
+    <value>Un concert qui restera dans les annales</value>
     <comment>Event name</comment>
   </data>
   <data name="Ceremony of the Sacred Flame" xml:space="preserve">
-    <value>Ceremony of the Sacred Flame</value>
+    <value>Cérémonie de la flamme sacrée</value>
     <comment>Event name</comment>
   </data>
   <data name="The Haunting of Doomlore Shrine" xml:space="preserve">
-    <value>The Haunting of Doomlore Shrine</value>
+    <value>L'apparition du Sanctuaire de la légende funeste</value>
     <comment>Event name</comment>
   </data>
   <data name="The Ooze Pit Trials" xml:space="preserve">
-    <value>The Ooze Pit Trials</value>
+    <value>Épreuves de la Fosse à limons</value>
     <comment>Event name</comment>
   </data>
   <data name="Storms of Winter" xml:space="preserve">
-    <value>Storms of Winter</value>
+    <value>Tempêtes hivernales</value>
     <comment>Event name</comment>
   </data>
 </root>
