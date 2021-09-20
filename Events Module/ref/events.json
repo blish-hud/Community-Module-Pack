@@ -127,7 +127,7 @@
   {
     "name": "Drakkar, the Ice Dragon's Champion",
     "colloquial": "Drakkar",
-    "offset": "00:05Z",
+    "offset": "01:05Z",
     "repeat": "02:00",
     "difficulty": "Standard",
     "category": "World Bosses",
@@ -733,7 +733,7 @@
   },
   {
     "name": "Dangerous Prey",
-    "offset": "00:00Z",
+    "offset": "01:00Z",
     "repeat": "02:00",
     "difficulty": "",
     "category": "Meta Event",
@@ -830,7 +830,7 @@
   },
   {
     "name": "Storms of Winter",
-    "offset": "01:35Z",
+    "offset": "01:45Z",
     "repeat": "02:00",
     "difficulty": "",
     "category": "Meta Event",
@@ -849,7 +849,7 @@
     "category": "Eye of the North",
     "location": "Eye of the North",
     "waypoint": "[&BAkMAAA=]",
-    "wiki": "https://wiki.guildwars2.com/wiki/Storms_of_Winter",
+    "wiki": "https://wiki.guildwars2.com/wiki/Dragonstorm",
     "duration": "20",
     "alert": 10,
     "icon": "145C02AFEEFFDD58C75C0A1DD61FE5DF28176C15/2433330"
