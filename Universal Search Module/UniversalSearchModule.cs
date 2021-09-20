@@ -59,8 +59,10 @@ namespace Universal_Search_Module {
             Areas           = new HashSet<ContinentFloorRegionMapSector>();
 
             _searchWindow = new SearchWindow() {
-                Location = GameService.Graphics.SpriteScreen.Size / new Point(2) - new Point(256, 178) / new Point(2),
-                Parent   = GameService.Graphics.SpriteScreen
+                Location      = GameService.Graphics.SpriteScreen.Size / new Point(2) - new Point(256, 178) / new Point(2),
+                Parent        = GameService.Graphics.SpriteScreen,
+                Id            = $"{nameof(SearchWindow)}_{nameof(UniversalSearchModule)}_090afc97-559c-4f1d-8196-0b77f5d0a9c9",
+                SavesPosition = true
             };
         }
 

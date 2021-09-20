@@ -68,7 +68,6 @@ namespace Universal_Search_Module.Controls {
 
         private void BuildWindow() {
             this.Title  = "Landmark Search";
-            this.ZIndex = Screen.TOOLWINDOW_BASEZINDEX;
 
             ConstructWindow(_textureWindowBackground,
                             new Vector2(0, TITLEBAR_HEIGHT),
