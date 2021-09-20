@@ -1,13 +1,13 @@
 {
   "name": "Compass",
-  "version": "2.0.0",
+  "version": "3.0.1",
   "namespace": "bh.general.compass",
   "package": "Compass Module.dll",
   "manifest_version": 1,
 
   "description": "Displays a basic indicator at your feet that shows you North, East, South, and West.",
   "dependencies": {
-    "bh.blishhud": ">=0.5.3"
+    "bh.blishhud": ">=0.8.0"
   },
   "url": "https://github.com/blish-hud/Blish-HUD",
   "author": {

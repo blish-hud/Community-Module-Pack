@@ -15,48 +15,21 @@ namespace Compass_Module {
         internal static CompassModule ModuleInstance;
 
         // Service Managers
-        internal SettingsManager    SettingsManager    => this.ModuleParameters.SettingsManager;
-        internal ContentsManager    ContentsManager    => this.ModuleParameters.ContentsManager;
+        internal SettingsManager SettingsManager => this.ModuleParameters.SettingsManager;
+        internal ContentsManager ContentsManager => this.ModuleParameters.ContentsManager;
 
         private SettingEntry<float> _settingCompassSize;
         private SettingEntry<float> _settingCompassRadius;
         private SettingEntry<float> _settingVerticalOffset;
 
-        private Blish_HUD.Entities.Primitives.Billboard _northBb;
-        private Blish_HUD.Entities.Primitives.Billboard _eastBb;
-        private Blish_HUD.Entities.Primitives.Billboard _southBb;
-        private Blish_HUD.Entities.Primitives.Billboard _westBb;
+        private CompassBillboard _northBb;
+        private CompassBillboard _eastBb;
+        private CompassBillboard _southBb;
+        private CompassBillboard _westBb;
 
-        /// <summary>
-        /// Ideally you should keep the constructor as is.
-        /// Use "Initialize()" to handle initializing the module.
-        /// </summary>
         [ImportingConstructor]
         public CompassModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) {
             ModuleInstance = this;
-        }
-
-        protected override void Initialize() {
-            _northBb = new Blish_HUD.Entities.Primitives.Billboard(ContentsManager.GetTexture("north.png"));
-            _eastBb  = new Blish_HUD.Entities.Primitives.Billboard(ContentsManager.GetTexture("east.png"));
-            _southBb = new Blish_HUD.Entities.Primitives.Billboard(ContentsManager.GetTexture("south.png"));
-            _westBb  = new Blish_HUD.Entities.Primitives.Billboard(ContentsManager.GetTexture("west.png"));
-
-            UpdateBillboardSize(null);
-
-            GameService.Graphics.World.Entities.Add(_northBb);
-            GameService.Graphics.World.Entities.Add(_eastBb);
-            GameService.Graphics.World.Entities.Add(_southBb);
-            GameService.Graphics.World.Entities.Add(_westBb);
-        }
-
-        private void UpdateBillboardSize(object sender = null, ValueChangedEventArgs<float> e = null) {
-            var newSize = new Vector2(_settingCompassSize.Value);
-
-            _northBb.Size = newSize;
-            _eastBb.Size  = newSize;
-            _southBb.Size = newSize;
-            _westBb.Size  = newSize;
         }
 
         private const float VERTICALOFFSET_MIDDLE = 2.5f;
@@ -69,24 +42,44 @@ namespace Compass_Module {
             _settingCompassSize.SetRange(0.1f, 2f);
             _settingCompassRadius.SetRange(0f, 4f);
             _settingVerticalOffset.SetRange(0f, VERTICALOFFSET_MIDDLE * 2);
-
-            _settingCompassSize.SettingChanged += UpdateBillboardSize;
         }
 
         protected override Task LoadAsync() {
             return Task.CompletedTask;
         }
 
+        protected override void OnModuleLoaded(EventArgs e) {
+            _northBb = new CompassBillboard(ContentsManager.GetTexture("north.png"));
+            _eastBb = new CompassBillboard(ContentsManager.GetTexture("east.png"));
+            _southBb = new CompassBillboard(ContentsManager.GetTexture("south.png"));
+            _westBb = new CompassBillboard(ContentsManager.GetTexture("west.png"));
+
+            GameService.Graphics.World.AddEntity(_northBb);
+            GameService.Graphics.World.AddEntity(_eastBb);
+            GameService.Graphics.World.AddEntity(_southBb);
+            GameService.Graphics.World.AddEntity(_westBb);
+
+            base.OnModuleLoaded(e);
+        }
+
         protected override void Update(GameTime gameTime) {
-            UpdateBillboardPosition();
+            UpdateBillboardSize();
+            UpdateBillboardOffset();
             UpdateBillboardOpacity();
         }
 
-        private void UpdateBillboardPosition() {
-            _northBb.Position = GameService.Gw2Mumble.PlayerCharacter.Position + new Vector3(0, 1 + _settingCompassRadius.Value, _settingVerticalOffset.Value    - VERTICALOFFSET_MIDDLE);
-            _eastBb.Position  = GameService.Gw2Mumble.PlayerCharacter.Position + new Vector3(1    + _settingCompassRadius.Value, 0, _settingVerticalOffset.Value - VERTICALOFFSET_MIDDLE);
-            _southBb.Position = GameService.Gw2Mumble.PlayerCharacter.Position + new Vector3(0,                                  -1                              - _settingCompassRadius.Value, _settingVerticalOffset.Value    - VERTICALOFFSET_MIDDLE);
-            _westBb.Position  = GameService.Gw2Mumble.PlayerCharacter.Position + new Vector3(-1                                                                  - _settingCompassRadius.Value, 0, _settingVerticalOffset.Value - VERTICALOFFSET_MIDDLE);
+        private void UpdateBillboardSize() {
+            _northBb.Scale = _settingCompassSize.Value;
+            _eastBb.Scale  = _settingCompassSize.Value;
+            _southBb.Scale = _settingCompassSize.Value;
+            _westBb.Scale  = _settingCompassSize.Value;
+        }
+
+        private void UpdateBillboardOffset() {
+            _northBb.Offset = new Vector3(0, 1 + _settingCompassRadius.Value, _settingVerticalOffset.Value - VERTICALOFFSET_MIDDLE);
+            _eastBb.Offset = new Vector3(1 + _settingCompassRadius.Value, 0, _settingVerticalOffset.Value - VERTICALOFFSET_MIDDLE);
+            _southBb.Offset = new Vector3(0, -1 - _settingCompassRadius.Value, _settingVerticalOffset.Value - VERTICALOFFSET_MIDDLE);
+            _westBb.Offset = new Vector3(-1 - _settingCompassRadius.Value, 0, _settingVerticalOffset.Value - VERTICALOFFSET_MIDDLE);
         }
 
         private void UpdateBillboardOpacity() {
@@ -100,10 +93,10 @@ namespace Compass_Module {
         protected override void Unload() {
             ModuleInstance = null;
 
-            GameService.Graphics.World.Entities.Remove(_northBb);
-            GameService.Graphics.World.Entities.Remove(_eastBb);
-            GameService.Graphics.World.Entities.Remove(_southBb);
-            GameService.Graphics.World.Entities.Remove(_westBb);
+            GameService.Graphics.World.RemoveEntity(_northBb);
+            GameService.Graphics.World.RemoveEntity(_eastBb);
+            GameService.Graphics.World.RemoveEntity(_southBb);
+            GameService.Graphics.World.RemoveEntity(_westBb);
         }
 
     }
