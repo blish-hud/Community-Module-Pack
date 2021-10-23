@@ -701,6 +701,15 @@ namespace Events_Module.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Watched Events.
+        /// </summary>
+        internal static string Watched_Events {
+            get {
+                return ResourceManager.GetString("Watched Events", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to World Bosses.
         /// </summary>
         internal static string World_Bosses {
