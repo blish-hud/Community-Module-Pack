@@ -31,8 +31,9 @@ namespace Events_Module {
         private string _ddAlphabetical = Resources.Alphabetical;
         private string _ddNextup = Resources.Next_Up;
 
-        private string _ecAllevents = Resources.All_Events;
-        private string _ecHidden    = Resources.Hidden_Events;
+        private string _ecAllevents     = Resources.All_Events;
+        private string _ecWatchedEvents = Resources.Watched_Events;
+        private string _ecHidden        = Resources.Hidden_Events;
 
         private const int TIMER_RECALC_RATE = 5;
 
@@ -263,6 +264,13 @@ namespace Events_Module {
             evAll.Select();
             evAll.Click += delegate {
                 eventPanel.FilterChildren<DetailsButton>(db => true);
+            };
+
+            var evWatched = eventCategories.AddMenuItem(_ecWatchedEvents);
+            evWatched.Click += delegate {
+                eventPanel.FilterChildren<DetailsButton>(db =>
+                    Meta.Events.Find(m => db.Text == (Resources.ResourceManager.GetString(m.Name) ?? m.Name)).IsWatched
+                );
             };
 
             foreach (IGrouping<string, Meta> e in submetas) {

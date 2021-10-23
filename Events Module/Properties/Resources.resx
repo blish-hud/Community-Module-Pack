@@ -393,4 +393,8 @@ Right click to dismiss.</value>
     <value>Storms of Winter</value>
     <comment>Event name</comment>
   </data>
+  <data name="Watched Events" xml:space="preserve">
+    <value>Watched Events</value>
+    <comment>Event category</comment>
+  </data>
 </root>
