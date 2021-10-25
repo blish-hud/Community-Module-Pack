@@ -19,7 +19,7 @@ namespace Events_Module {
     [JsonObject]
     public class Meta {
 
-        private static readonly Logger Logger = Logger.GetLogger(typeof(Meta));
+        private static readonly Logger Logger = Logger.GetLogger<Meta>();
 
         [JsonObject]
         public struct Phase {
@@ -181,7 +181,7 @@ namespace Events_Module {
 
                 if (!string.IsNullOrEmpty(meta._wikiEn)) {
                     var pageEn = new Uri(meta._wikiEn).Segments.Last();
-                    var task = interwikiLinks(pageEn).ContinueWith(async v => meta._wikiLinks = await v);
+                    var task = GetInterwikiLinks(pageEn).ContinueWith(async v => meta._wikiLinks = await v);
                     wikiTasks.Add(task);
                 }
             }
@@ -196,7 +196,7 @@ namespace Events_Module {
         }
 
         [Localizable(false)]
-        private static async Task<Dictionary<string, string>> interwikiLinks(string page) {
+        private static async Task<Dictionary<string, string>> GetInterwikiLinks(string page) {
             var url = "https://wiki.guildwars2.com"
                      .AppendPathSegment("api.php")
                      .SetQueryParams(new {

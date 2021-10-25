@@ -32,9 +32,9 @@ namespace Events_Module {
 
             _icon = icon;
 
-            this.Opacity = 0f;
-            this.Size = new Point(NOTIFICATION_WIDTH, NOTIFICATION_HEIGHT);
-            this.Location = new Point(180, 60 + (NOTIFICATION_HEIGHT + 15) * _visibleNotifications);
+            this.Opacity          = 0f;
+            this.Size             = new Point(NOTIFICATION_WIDTH,                                 NOTIFICATION_HEIGHT);
+            this.Location         = new Point(EventsModule.ModuleInstance.NotificationPosition.X, EventsModule.ModuleInstance.NotificationPosition.Y + (NOTIFICATION_HEIGHT + 15) * _visibleNotifications);
             this.BasicTooltipText = tooltipText;
 
             string wrappedTitle = DrawUtil.WrapText(Content.DefaultFont14, title, this.Width - NOTIFICATION_HEIGHT - 20);
