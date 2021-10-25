@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Controls;
+using Blish_HUD.Graphics.UI;
 using Blish_HUD.Modules;
 using Blish_HUD.Modules.Managers;
 using Blish_HUD.Settings;
@@ -47,6 +48,8 @@ namespace Events_Module {
         private SettingEntry<bool> _settingNotificationsEnabled;
         private SettingEntry<bool> _settingChimeEnabled;
 
+        private SettingEntry<Point> _settingNotificationsPosition;
+
         private Texture2D _textureWatch;
         private Texture2D _textureWatchActive;
 
@@ -60,6 +63,11 @@ namespace Events_Module {
             set => _settingChimeEnabled.Value = value;
         }
 
+        public Point NotificationPosition {
+            get => _settingNotificationsPosition.Value;
+            set => _settingNotificationsPosition.Value = value;
+        }
+
         [ImportingConstructor]
         public EventsModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) {
             ModuleInstance = this;
@@ -70,6 +78,8 @@ namespace Events_Module {
 
             _settingNotificationsEnabled = selfManagedSettings.DefineSetting(@"notificationsEnabled", true);
             _settingChimeEnabled         = selfManagedSettings.DefineSetting(@"chimeEnabled",         true);
+
+            _settingNotificationsPosition = selfManagedSettings.DefineSetting("notificationPosition", new Point(180, 60));
 
             _watchCollection = settings.AddSubCollection(@"Watching");
         }
@@ -95,6 +105,20 @@ namespace Events_Module {
             _eventsTab = GameService.Overlay.BlishHudWindow.AddTab(Resources.Events_and_Metas, this.ContentsManager.GetTexture(@"textures\1466345.png"), _tabPanel);
 
             base.OnModuleLoaded(e);
+        }
+
+        public override IView GetSettingsView() {
+            return new BasicSettingsView();
+        }
+
+        internal void ShowSetNotificationPositions() {
+            var tempSizeSetting = new SettingEntry<Point>() {
+                Value = new Point(280, 512)
+            };
+
+            var choseLocation = new NotificationMover(new ScreenRegion("Notifications", _settingNotificationsPosition, tempSizeSetting));
+            choseLocation.Parent = GameService.Graphics.SpriteScreen;
+            choseLocation.Size = GameService.Graphics.SpriteScreen.ContentRegion.Size;
         }
 
         private Panel BuildSettingPanel(Rectangle panelBounds) {
@@ -158,6 +182,8 @@ namespace Events_Module {
                 eventPanel.FilterChildren<DetailsButton>(db => db.Text.ToLower().Contains(searchBox.Text.ToLower()));
             };
 
+            eventPanel.SuspendLayout();
+
             foreach (var meta in Meta.Events) {
                 var setting = _watchCollection.DefineSetting(@"watchEvent:" + meta.Name, true);
 
@@ -185,8 +211,6 @@ namespace Events_Module {
                     VerticalAlignment   = VerticalAlignment.Middle,
                     Parent              = es2,
                 };
-
-                Adhesive.Binding.CreateOneWayBinding(() => nextTimeLabel.Height, () => es2.ContentRegion, (rectangle => rectangle.Height), true);
 
                 if (!string.IsNullOrEmpty(meta.Wiki)) {
                     var glowWikiBttn = new GlowButton {
@@ -224,6 +248,8 @@ namespace Events_Module {
                                        });
                     };
                 }
+
+                eventPanel.ResumeLayout();
 
                 var toggleFollowBttn = new GlowButton() {
                     Icon             = _textureWatch,
@@ -308,9 +334,11 @@ namespace Events_Module {
 
                 if (es.Visible) pos++;
 
-                // TODO: Just expose the panel to the module so that we don't have to do it this dumb way:
-                ((Panel)es.Parent).VerticalScrollOffset = 0;
-                es.Parent.Invalidate();
+                if (es.Parent != null) {
+                    // TODO: Just expose the panel to the module so that we don't have to do it this dumb way:
+                    ((Panel)es.Parent).VerticalScrollOffset = 0;
+                    es.Parent.Invalidate();
+                }
             }
         }
 
@@ -378,8 +406,6 @@ namespace Events_Module {
 
             GameService.Overlay.UserLocaleChanged -= ChangeLocalization;
             GameService.Overlay.BlishHudWindow.RemoveTab(_eventsTab);
-            _displayedEvents.ForEach(de => de.Dispose());
-            _displayedEvents.Clear();
         }
 
         private IList<string> GetOrderedNextUpEventNames() {
