@@ -92,7 +92,7 @@ namespace Universal_Search_Module {
                     }
                 }
             }
-            
+
             _searchIcon.LoadingMessage = null;
 
             _searchIcon.Click += delegate { _searchWindow.ToggleWindow(); };
