@@ -77,9 +77,11 @@ namespace Universal_Search_Module {
             // Continent 1 = Tyria
             // Continent 2 = Mists
             // Fetching a single floor will return all nested subresources as well, so fetch all floors
-            var floors = await Gw2ApiManager.Gw2ApiClient.V2.Continents[1].Floors.AllAsync();
+            var floors = await Gw2ApiManager.Gw2ApiClient.V2.Continents[1].Floors.IdsAsync();
 
-            foreach (var floor in floors) {
+            foreach (var floorId in floors) {
+                _searchIcon.LoadingMessage = $"Loading floor {floorId}...";
+                var floor = await Gw2ApiManager.Gw2ApiClient.V2.Continents[1].Floors[floorId].GetAsync();
                 foreach (var regionPair in floor.Regions) {
                     foreach (var mapPair in regionPair.Value.Maps) {
                         LoadedLandmarks.UnionWith(mapPair.Value.PointsOfInterest.Values.Where(landmark => landmark.Name != null));
