@@ -73,21 +73,23 @@ namespace Universal_Search_Module {
                 HoverIcon = ContentsManager.GetTexture(@"textures\landmark-search-hover.png"),
                 Priority  = 5
             };
+            
+            // Continent 1 = Tyria
+            // Continent 2 = Mists
+            // Fetching a single floor will return all nested subresources as well, so fetch all floors
+            var floors = await Gw2ApiManager.Gw2ApiClient.V2.Continents[1].Floors.IdsAsync();
 
-            var regions = await Gw2ApiManager.Gw2ApiClient.V2.Continents[1].Floors[1].Regions.AllAsync();
-
-            foreach (var region in regions) {
-                _searchIcon.LoadingMessage = $"Loading {region.Name}...";
-                var maps = await Gw2ApiManager.Gw2ApiClient.V2.Continents[1].Floors[1].Regions[region.Id].Maps.AllAsync();
-
-                foreach (var map in maps) {
-                    _searchIcon.LoadingMessage = $"Loading {region.Name}: {map.Name}...";
-
-                    LoadedLandmarks.UnionWith(map.PointsOfInterest.Values.Where(landmark => landmark.Name != null));
-                    HeroPoints.UnionWith(map.SkillChallenges);
-                    MasteryPoints.UnionWith(map.MasteryPoints);
-                    HeroHearts.UnionWith(map.Tasks.Values);
-                    Areas.UnionWith(map.Sectors.Values);
+            foreach (var floorId in floors) {
+                _searchIcon.LoadingMessage = $"Loading floor {floorId}...";
+                var floor = await Gw2ApiManager.Gw2ApiClient.V2.Continents[1].Floors[floorId].GetAsync();
+                foreach (var regionPair in floor.Regions) {
+                    foreach (var mapPair in regionPair.Value.Maps) {
+                        LoadedLandmarks.UnionWith(mapPair.Value.PointsOfInterest.Values.Where(landmark => landmark.Name != null));
+                        HeroPoints.UnionWith(mapPair.Value.SkillChallenges);
+                        MasteryPoints.UnionWith(mapPair.Value.MasteryPoints);
+                        HeroHearts.UnionWith(mapPair.Value.Tasks.Values);
+                        Areas.UnionWith(mapPair.Value.Sectors.Values);
+                    }
                 }
             }
 
