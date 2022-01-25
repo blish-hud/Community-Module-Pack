@@ -52,9 +52,17 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Controls\SearchResultItems\LandmarkSearchResultItem.cs" />
+    <Compile Include="Controls\SearchResultItems\SkillSearchResultItem.cs" />
     <Compile Include="Controls\SearchWindow.cs" />
-    <Compile Include="Controls\SearchResultItem.cs" />
+    <Compile Include="Controls\SearchResultItems\SearchResultItem.cs" />
+    <Compile Include="Services\SearchHandler\WordScoreResult.cs" />
+    <Compile Include="Services\SearchHandler\LandmarkSearchHandler.cs" />
     <Compile Include="LandmarkUtil.cs" />
+    <Compile Include="Services\MapApiService.cs" />
+    <Compile Include="Services\SearchHandler\SearchHandler.cs" />
+    <Compile Include="Services\SearchHandler\SearchHandler{T}.cs" />
+    <Compile Include="Services\SearchHandler\SkillSearchHandler.cs" />
     <Compile Include="StringUtil.cs" />
     <Compile Include="UniversalSearchModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
