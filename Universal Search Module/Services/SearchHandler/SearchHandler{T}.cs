@@ -7,6 +7,8 @@ namespace Universal_Search_Module.Services.SearchHandler {
     public abstract class SearchHandler {
         public const int MAX_RESULT_COUNT = 3;
 
+        public abstract string Name { get; }
+
         public abstract Task Initialize(Action<string> progress);
 
         public abstract IEnumerable<SearchResultItem> Search(string searchText);

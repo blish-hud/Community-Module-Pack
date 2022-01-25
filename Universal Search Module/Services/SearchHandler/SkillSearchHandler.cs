@@ -11,6 +11,7 @@ namespace Universal_Search_Module.Services.SearchHandler {
         private readonly Gw2ApiManager _gw2ApiManager;
         private readonly HashSet<Skill> _skills = new HashSet<Skill>();
 
+        public override string Name => "Skills";
 
         public SkillSearchHandler(Gw2ApiManager gw2ApiManager) {
             _gw2ApiManager = gw2ApiManager;

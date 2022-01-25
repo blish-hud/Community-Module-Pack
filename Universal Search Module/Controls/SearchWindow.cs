@@ -16,9 +16,10 @@ namespace Universal_Search_Module.Controls {
 
         private const int WINDOW_WIDTH = 512;
         private const int WINDOW_HEIGHT = 178;
-
         private const int TITLEBAR_HEIGHT = 32;
-        private readonly IEnumerable<SearchHandler> _searchHandlers;
+        private const int DROPDOWN_WIDTH = 100;
+
+        private readonly IDictionary<string, SearchHandler> _searchHandlers;
 
         #region Load Static
 
@@ -41,17 +42,20 @@ namespace Universal_Search_Module.Controls {
         }
 
         private List<SearchResultItem> _results;
+        private SearchHandler _selectedSearchHandler;
 
         private Tooltip _resultDetails;
         private TextBox _searchbox;
         private LoadingSpinner _spinner;
         private Label _noneLabel;
+        private Dropdown _searchHandlerSelect;
 
         private Label _ttDetailsName;
         private Label _ttDetailsInfRes1;
 
         public SearchWindow(IEnumerable<SearchHandler> searchHandlers) : base() {
-            _searchHandlers = searchHandlers;
+            _searchHandlers = searchHandlers.ToDictionary(x => x.Name, y => y);
+            _selectedSearchHandler = _searchHandlers.First().Value;
             BuildWindow();
             BuildContents();
         }
@@ -65,8 +69,24 @@ namespace Universal_Search_Module.Controls {
         }
 
         private void BuildContents() {
+            _searchHandlerSelect = new Dropdown() {
+                Size = new Point(DROPDOWN_WIDTH, Dropdown.Standard.Size.Y),
+                SelectedItem = _selectedSearchHandler.Name,
+                Parent = this,
+            };
+
+            foreach (var searchHandler in _searchHandlers) {
+                _searchHandlerSelect.Items.Add(searchHandler.Key);
+            }
+
+            _searchHandlerSelect.ValueChanged += (s, e) => {
+                _selectedSearchHandler = _searchHandlers[e.CurrentValue];
+                Search();
+            };
+
             _searchbox = new TextBox() {
-                Size = new Point(_size.X, TextBox.Standard.Size.Y),
+                Location = new Point(DROPDOWN_WIDTH, 0),
+                Size = new Point(_size.X - DROPDOWN_WIDTH, TextBox.Standard.Size.Y),
                 PlaceholderText = "Search",
                 Parent = this
             };
@@ -171,7 +191,7 @@ namespace Universal_Search_Module.Controls {
             }
         }
 
-        private void SearchboxOnTextChanged(object sender, EventArgs e) {
+        private void Search() {
             _results.ForEach(r => r.Dispose());
             _results.Clear();
             string searchText = _searchbox.Text;
@@ -184,15 +204,17 @@ namespace Universal_Search_Module.Controls {
             _noneLabel.Hide();
             _spinner.Show();
 
-            var searchHandler = _searchHandlers.Skip(1).First();
-
-            AddSearchResultItems(searchHandler.Search(searchText));
+            AddSearchResultItems(_selectedSearchHandler.Search(searchText));
 
             _spinner.Hide();
 
             if (!_results.Any()) {
                 _noneLabel.Show();
             }
+        }
+
+        private void SearchboxOnTextChanged(object sender, EventArgs e) {
+            Search();
         }
 
         private void ResultActivated(object sender, EventArgs e) {

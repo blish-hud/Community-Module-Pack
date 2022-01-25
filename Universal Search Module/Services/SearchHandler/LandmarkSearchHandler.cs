@@ -9,6 +9,7 @@ namespace Universal_Search_Module.Services.SearchHandler {
         private readonly MapApiService _mapApiService;
         private HashSet<ContinentFloorRegionMapPoi> _landmarks;
 
+        public override string Name => "Landmarks";
 
         public LandmarkSearchHandler(MapApiService mapApiService) {
             _mapApiService = mapApiService;
