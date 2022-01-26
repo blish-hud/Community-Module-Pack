@@ -18,7 +18,6 @@ namespace Universal_Search_Module {
 
         private readonly List<SearchHandler> _searchHandlers = new List<SearchHandler>();
 
-        private MapApiService _mapApiService;
         private SearchWindow _searchWindow;
         private CornerIcon _searchIcon;
 
@@ -46,10 +45,8 @@ namespace Universal_Search_Module {
         }
 
         protected override void Initialize() {
-            _mapApiService = new MapApiService(Gw2ApiManager);
-
             _searchHandlers.AddRange(new SearchHandler[] {
-                new LandmarkSearchHandler(_mapApiService),
+                new LandmarkSearchHandler(Gw2ApiManager),
                 new SkillSearchHandler(Gw2ApiManager),
             });
 
@@ -68,9 +65,6 @@ namespace Universal_Search_Module {
                 HoverIcon = ContentsManager.GetTexture(@"textures\landmark-search-hover.png"),
                 Priority = 5
             };
-
-            await _mapApiService.Initialize(progress => _searchIcon.LoadingMessage = progress);
-            _searchIcon.LoadingMessage = null;
 
             foreach (var searchHandler in _searchHandlers) {
                 await searchHandler.Initialize(progress => _searchIcon.LoadingMessage = progress);

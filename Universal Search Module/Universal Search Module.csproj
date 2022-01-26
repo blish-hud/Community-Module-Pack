@@ -59,7 +59,6 @@
     <Compile Include="Services\SearchHandler\WordScoreResult.cs" />
     <Compile Include="Services\SearchHandler\LandmarkSearchHandler.cs" />
     <Compile Include="LandmarkUtil.cs" />
-    <Compile Include="Services\MapApiService.cs" />
     <Compile Include="Services\SearchHandler\SearchHandler.cs" />
     <Compile Include="Services\SearchHandler\SearchHandler{T}.cs" />
     <Compile Include="Services\SearchHandler\SkillSearchHandler.cs" />
