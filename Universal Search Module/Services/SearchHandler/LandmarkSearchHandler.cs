@@ -13,6 +13,8 @@ namespace Universal_Search_Module.Services.SearchHandler {
 
         public override string Name => "Landmarks";
 
+        public override string Prefix => "l";
+
         public LandmarkSearchHandler(Gw2ApiManager gw2ApiManager) {
             _gw2ApiManager = gw2ApiManager;
         }

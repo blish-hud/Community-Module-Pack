@@ -13,6 +13,8 @@ namespace Universal_Search_Module.Services.SearchHandler {
 
         public override string Name => "Skills";
 
+        public override string Prefix => "s";
+
         public SkillSearchHandler(Gw2ApiManager gw2ApiManager) {
             _gw2ApiManager = gw2ApiManager;
         }

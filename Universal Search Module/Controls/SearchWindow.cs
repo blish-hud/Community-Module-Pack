@@ -79,10 +79,7 @@ namespace Universal_Search_Module.Controls {
                 _searchHandlerSelect.Items.Add(searchHandler.Key);
             }
 
-            _searchHandlerSelect.ValueChanged += (s, e) => {
-                _selectedSearchHandler = _searchHandlers[e.CurrentValue];
-                Search();
-            };
+            _searchHandlerSelect.ValueChanged += SearchHandlerSelectValueChanged;
 
             _searchbox = new TextBox() {
                 Location = new Point(DROPDOWN_WIDTH, 0),
@@ -174,6 +171,12 @@ namespace Universal_Search_Module.Controls {
             _searchbox.TextChanged += SearchboxOnTextChanged;
         }
 
+        private void SearchHandlerSelectValueChanged(object sender, ValueChangedEventArgs e) {
+            _selectedSearchHandler = _searchHandlers[e.CurrentValue];
+            Search();
+
+        }
+
         private void AddSearchResultItems(IEnumerable<SearchResultItem> items) {
             int lastResultBottom = _searchbox.Bottom;
 
@@ -191,12 +194,35 @@ namespace Universal_Search_Module.Controls {
             }
         }
 
+        private bool HandlePrefix(string searchText) {
+            const int MAX_PREFIX_LENGTH = 2;
+
+            if (searchText.Length > 1 && searchText.Length <= MAX_PREFIX_LENGTH && searchText.EndsWith(" ")) {
+                searchText = searchText.Replace(" ", string.Empty);
+                foreach (var possibleSearchHandler in _searchHandlers) {
+                    if (possibleSearchHandler.Value.Prefix.Equals(searchText, StringComparison.OrdinalIgnoreCase)) {
+
+                        // Temporarily remove event handler to prevent another search on combox change
+                        _searchHandlerSelect.ValueChanged -= SearchHandlerSelectValueChanged;
+                        _searchHandlerSelect.SelectedItem = possibleSearchHandler.Value.Name;
+                        _selectedSearchHandler = possibleSearchHandler.Value;
+                        _searchHandlerSelect.ValueChanged += SearchHandlerSelectValueChanged;
+
+                        _searchbox.Text = string.Empty;
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
         private void Search() {
             _results.ForEach(r => r.Dispose());
             _results.Clear();
             string searchText = _searchbox.Text;
 
-            if (!(searchText.Length >= 2)) {
+            if (!HandlePrefix(searchText) || searchText.Length <= 2) {
                 _noneLabel.Show();
                 return;
             }

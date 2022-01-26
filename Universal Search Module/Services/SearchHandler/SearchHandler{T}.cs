@@ -9,6 +9,8 @@ namespace Universal_Search_Module.Services.SearchHandler {
 
         public abstract string Name { get; }
 
+        public abstract string Prefix { get; }
+
         public abstract Task Initialize(Action<string> progress);
 
         public abstract IEnumerable<SearchResultItem> Search(string searchText);

@@ -13,7 +13,9 @@ namespace Universal_Search_Module.Services.SearchHandler {
         private readonly HashSet<Trait> _traits = new HashSet<Trait>();
         
         public override string Name => "Traits";
-        
+
+        public override string Prefix => "t";
+
         protected override HashSet<Trait> SearchItems => _traits;
 
         public TraitSearchHandler(Gw2ApiManager gw2ApiManager) {
