@@ -69,8 +69,8 @@ namespace Universal_Search_Module {
 
             foreach (var searchHandler in _searchHandlers) {
                 await searchHandler.Initialize(progress => _searchIcon.LoadingMessage = progress);
-                _searchIcon.LoadingMessage = null;
             }
+            _searchIcon.LoadingMessage = null;
 
 
             _searchIcon.Click += delegate { _searchWindow.ToggleWindow(); };
