@@ -54,8 +54,10 @@
   <ItemGroup>
     <Compile Include="Controls\SearchResultItems\LandmarkSearchResultItem.cs" />
     <Compile Include="Controls\SearchResultItems\SkillSearchResultItem.cs" />
+    <Compile Include="Controls\SearchResultItems\TraitSearchResultItem.cs" />
     <Compile Include="Controls\SearchWindow.cs" />
     <Compile Include="Controls\SearchResultItems\SearchResultItem.cs" />
+    <Compile Include="Services\SearchHandler\TraitSearchHandler.cs" />
     <Compile Include="Services\SearchHandler\WordScoreResult.cs" />
     <Compile Include="Services\SearchHandler\LandmarkSearchHandler.cs" />
     <Compile Include="LandmarkUtil.cs" />

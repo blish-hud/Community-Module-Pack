@@ -9,7 +9,7 @@ using Universal_Search_Module.Controls.SearchResultItems;
 namespace Universal_Search_Module.Services.SearchHandler {
     public class LandmarkSearchHandler : SearchHandler<ContinentFloorRegionMapPoi> {
         private readonly Gw2ApiManager _gw2ApiManager;
-        private HashSet<ContinentFloorRegionMapPoi> _landmarks;
+        private readonly HashSet<ContinentFloorRegionMapPoi> _landmarks = new HashSet<ContinentFloorRegionMapPoi>();
 
         public override string Name => "Landmarks";
 

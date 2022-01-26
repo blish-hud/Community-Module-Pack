@@ -48,6 +48,7 @@ namespace Universal_Search_Module {
             _searchHandlers.AddRange(new SearchHandler[] {
                 new LandmarkSearchHandler(Gw2ApiManager),
                 new SkillSearchHandler(Gw2ApiManager),
+                new TraitSearchHandler(Gw2ApiManager),
             });
 
             _searchWindow = new SearchWindow(_searchHandlers) {
