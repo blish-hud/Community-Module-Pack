@@ -67,7 +67,7 @@ namespace Universal_Search_Module.Controls {
         }
 
         private void BuildWindow() {
-            this.Title  = "Landmark Search";
+            this.Title  = Strings.General.SearchWindow_Title;
 
             ConstructWindow(_textureWindowBackground,
                             new Vector2(0, TITLEBAR_HEIGHT),
@@ -82,14 +82,14 @@ namespace Universal_Search_Module.Controls {
         private void BuildContents() {
             _searchbox = new TextBox() {
                 Size            = new Point(_size.X, TextBox.Standard.Size.Y),
-                PlaceholderText = "Search",
+                PlaceholderText = Strings.General.SearchWindow_Search,
                 Parent          = this
             };
 
             _resultDetails = new Tooltip();
 
             _ttDetailsName = new Label() {
-                Text = "Name Loading...",
+                Text = Strings.General.SearchWindow_NameLoading,
                 Font = Content.DefaultFont16,
                 Location = new Point(10, 10),
                 Height = 11,
@@ -102,7 +102,7 @@ namespace Universal_Search_Module.Controls {
             };
 
             var ttDetailsInfHint1 = new Label() {
-                Text           = "Enter: Copy landmark to clipboard.",
+                Text           = Strings.General.SearchWindow_Copy,
                 Font           = Content.DefaultFont16,
                 Location       = new Point(10, _ttDetailsName.Bottom + 5),
                 TextColor      = Color.White,
@@ -113,7 +113,7 @@ namespace Universal_Search_Module.Controls {
             };
 
             var ttDetailsInf1 = new Label() {
-                Text           = "Closest Waypoint",
+                Text           = Strings.General.SearchWindow_ClosestWaypoint,
                 Font           = Content.DefaultFont16,
                 Location       = new Point(10, ttDetailsInfHint1.Bottom + 12),
                 Height         = 11,
@@ -138,7 +138,7 @@ namespace Universal_Search_Module.Controls {
             };
 
             var ttDetailsInfHint2 = new Label() {
-                Text           = "Shift + Enter: Copy closest waypoint to clipboard.",
+                Text           = Strings.General.SearchWindow_ClosestWaypoint2,
                 Font           = Content.DefaultFont14,
                 Location       = new Point(10, _ttDetailsInfRes1.Bottom + 5),
                 TextColor      = Color.White,
@@ -161,7 +161,7 @@ namespace Universal_Search_Module.Controls {
                 Location            = new Point(0, TextBox.Standard.Size.Y),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Visible             = false,
-                Text                = "No Results",
+                Text                = Strings.General.SearchWindow_NoResults,
                 Parent              = this
             };
 
@@ -240,7 +240,7 @@ namespace Universal_Search_Module.Controls {
                 this.ActiveSearchResult = activatedSearchResult;
 
                 _ttDetailsName.Text    = activatedSearchResult.Name;
-                _ttDetailsInfRes1.Text = "none found";
+                _ttDetailsInfRes1.Text = Strings.General.SearchWindow_NoneFound;
 
                 _resultDetails.CurrentControl = activatedSearchResult;
 
@@ -269,7 +269,7 @@ namespace Universal_Search_Module.Controls {
             base.PaintBeforeChildren(spriteBatch, bounds);
 
             spriteBatch.DrawStringOnCtrl(this,
-                                         "Landmark Search",
+                                         Strings.General.Button_Search,
                                          Content.DefaultFont14,
                                          _layoutTitleTextBounds,
                                          Color.White);

@@ -47,8 +47,9 @@ namespace Universal_Search_Module {
         internal HashSet<ContinentFloorRegionMapSector>         Areas;
 
         protected override void DefineSettings(SettingCollection settingsManager) {
-            _settingShowNotificationWhenLandmarkIsCopied = settingsManager.DefineSetting("ShowNotificationOnCopy", true, "Show Notification When Landmark is Copied", "If checked, a notification will be displayed in the center of the screen confirming the landmark was copied.");
-            _settingHideWindowAfterSelection             = settingsManager.DefineSetting("HideWindowOnSelection",  true, "Hide Window After Selection",               "If checked, the landmark search window will automatically hide after a landmark is selected from the results.");
+            
+            _settingShowNotificationWhenLandmarkIsCopied = settingsManager.DefineSetting("ShowNotificationOnCopy", true, Strings.General.Settings_ShowNotification, Strings.General.Settings_ShowNotificationHover);
+            _settingHideWindowAfterSelection             = settingsManager.DefineSetting("HideWindowOnSelection",  true, Strings.General.Settings_HideWindow, Strings.General.Settings_HideWindowHover);
         }
 
         protected override void Initialize() {
@@ -68,7 +69,7 @@ namespace Universal_Search_Module {
 
         protected override async Task LoadAsync() {
             _searchIcon = new CornerIcon() {
-                IconName  = "Landmark Search",
+                IconName  = Strings.General.Button_Search,
                 Icon      = ContentsManager.GetTexture(@"textures\landmark-search.png"),
                 HoverIcon = ContentsManager.GetTexture(@"textures\landmark-search-hover.png"),
                 Priority  = 5
@@ -80,7 +81,7 @@ namespace Universal_Search_Module {
             var floors = await Gw2ApiManager.Gw2ApiClient.V2.Continents[1].Floors.IdsAsync();
 
             foreach (var floorId in floors) {
-                _searchIcon.LoadingMessage = $"Loading floor {floorId}...";
+                _searchIcon.LoadingMessage = string.Format(Strings.General.Settings_Floor, floorId);
                 var floor = await Gw2ApiManager.Gw2ApiClient.V2.Continents[1].Floors[floorId].GetAsync();
                 foreach (var regionPair in floor.Regions) {
                     foreach (var mapPair in regionPair.Value.Maps) {

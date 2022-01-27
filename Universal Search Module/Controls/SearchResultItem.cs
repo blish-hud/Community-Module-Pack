@@ -120,10 +120,10 @@ namespace Universal_Search_Module.Controls {
                 ClipboardUtil.WindowsClipboardService.SetTextAsync(_landmark.ChatLink)
                     .ContinueWith((clipboardResult) => {
                         if (clipboardResult.IsFaulted) {
-                            ScreenNotification.ShowNotification("Failed to copy waypoint to clipboard. Try again.", ScreenNotification.NotificationType.Red, duration: 2);
+                            ScreenNotification.ShowNotification(Strings.General.SearchResultItem_Failed, ScreenNotification.NotificationType.Red, duration: 2);
                         } else {
                             if (UniversalSearchModule.ModuleInstance._settingShowNotificationWhenLandmarkIsCopied.Value) {
-                                ScreenNotification.ShowNotification("Copied waypoint to clipboard!", duration: 2);
+                                ScreenNotification.ShowNotification(Strings.General.SearchResultItem_Copied, duration: 2);
                             }
                             if (UniversalSearchModule.ModuleInstance._settingHideWindowAfterSelection.Value) {
                                 this.Parent.Hide();

@@ -55,6 +55,11 @@
     <Compile Include="Controls\SearchWindow.cs" />
     <Compile Include="Controls\SearchResultItem.cs" />
     <Compile Include="LandmarkUtil.cs" />
+    <Compile Include="Strings\General.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>General.resx</DependentUpon>
+    </Compile>
     <Compile Include="StringUtil.cs" />
     <Compile Include="UniversalSearchModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -69,6 +74,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Strings\General.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>General.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="manifest.json">
