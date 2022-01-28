@@ -1,5 +1,6 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Content;
+using Blish_HUD.Controls;
 using Gw2Sharp.WebApi.V2.Models;
 
 namespace Universal_Search_Module.Controls.SearchResultItems {
@@ -14,15 +15,15 @@ namespace Universal_Search_Module.Controls.SearchResultItems {
                         Icon = _skill.Icon != null ? Content.GetRenderServiceTexture(_skill.Icon) : (AsyncTexture2D)ContentService.Textures.Error;
                         Name = _skill.Name;
                         Description = _skill.Description;
-
-                        Show();
-                    } else {
-                        Hide();
                     }
                 }
             }
         }
 
         protected override string ChatLink => Skill?.ChatLink;
+
+        protected override Tooltip BuildTooltip() {
+            return new SkillTooltip(Skill);
+        }
     }
 }
