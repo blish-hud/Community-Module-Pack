@@ -1,6 +1,10 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Content;
+using Blish_HUD.Controls;
+using Blish_HUD.Input;
 using Gw2Sharp.WebApi.V2.Models;
+using Microsoft.Xna.Framework;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace Universal_Search_Module.Controls.SearchResultItems {
     public class LandmarkSearchResultItem : SearchResultItem {
@@ -19,13 +23,77 @@ namespace Universal_Search_Module.Controls.SearchResultItems {
                         Icon = GetTextureForLandmarkAsync(_landmark);
                         Name = _landmark.Name;
                         Description = _landmark.ChatLink;
-
-                        Show();
-                    } else {
-                        Hide();
                     }
                 }
             }
+        }
+
+        protected override Tooltip BuildTooltip() {
+            var tooltip = new Tooltip() { CurrentControl = this };
+
+            var detailsName = new Label() {
+                Text = Name,
+                Font = Content.DefaultFont16,
+                Location = new Point(10, 10),
+                Height = 11,
+                TextColor = ContentService.Colors.Chardonnay,
+                ShowShadow = true,
+                AutoSizeWidth = true,
+                AutoSizeHeight = true,
+                VerticalAlignment = VerticalAlignment.Middle,
+                Parent = tooltip,
+            };
+
+            var detailsHintCopyChatCode = new Label() {
+                Text = "Enter: Copy chat code to clipboard.",
+                Font = Content.DefaultFont16,
+                Location = new Point(10, detailsName.Bottom + 5),
+                TextColor = Color.White,
+                ShowShadow = true,
+                AutoSizeWidth = true,
+                AutoSizeHeight = true,
+                Parent = tooltip,
+            };
+
+            var detailsClosestWaypointTitle = new Label() {
+                Text = "Closest Waypoint",
+                Font = Content.DefaultFont16,
+                Location = new Point(10, detailsHintCopyChatCode.Bottom + 12),
+                Height = 11,
+                TextColor = ContentService.Colors.Chardonnay,
+                ShadowColor = Color.Black,
+                ShowShadow = true,
+                AutoSizeWidth = true,
+                AutoSizeHeight = true,
+                Parent = tooltip,
+            };
+
+            var detailsClosestWaypoint = new Label() {
+                Text = "none found",
+                Font = Content.DefaultFont14,
+                Location = new Point(10, detailsClosestWaypointTitle.Bottom + 5),
+                TextColor = Color.White,
+                ShadowColor = Color.Black,
+                ShowShadow = true,
+                AutoSizeWidth = true,
+                AutoSizeHeight = true,
+                Parent = tooltip,
+            };
+
+            new Label() {
+                Text = "Shift + Enter: Copy closest waypoint to clipboard.",
+                Font = Content.DefaultFont14,
+                Location = new Point(10, detailsClosestWaypoint.Bottom + 5),
+                TextColor = Color.White,
+                ShadowColor = Color.Black,
+                ShowShadow = true,
+                AutoSizeWidth = true,
+                AutoSizeHeight = true,
+                Visible = true,
+                Parent = tooltip,
+            };
+
+            return tooltip;
         }
 
 

@@ -26,12 +26,6 @@ namespace Universal_Search_Module.Controls.SearchResultItems {
 
         #endregion
 
-        public event EventHandler<EventArgs> Activated;
-
-        private void OnActivated(EventArgs e) {
-            Activated?.Invoke(this, e);
-        }
-
         private AsyncTexture2D _icon;
         public AsyncTexture2D Icon {
             get => _icon;
@@ -48,16 +42,6 @@ namespace Universal_Search_Module.Controls.SearchResultItems {
         public string Description {
             get => _description;
             set => SetProperty(ref _description, value);
-        }
-
-        private bool _active;
-        public bool Active {
-            get => _active;
-            set {
-                if (SetProperty(ref _active, value)) {
-                    OnActivated(EventArgs.Empty);
-                }
-            }
         }
 
         public SearchResultItem() {
@@ -87,8 +71,15 @@ namespace Universal_Search_Module.Controls.SearchResultItems {
             base.OnClick(e);
         }
 
+        protected virtual Tooltip BuildTooltip()
+            => null;
+
         protected override void OnMouseEntered(MouseEventArgs e) {
-            this.Active = true;
+            if (Tooltip == null) {
+                Tooltip = BuildTooltip();
+            }
+
+            Tooltip?.Show(AbsoluteBounds.Location + new Point(Width + 5, 0));
 
             base.OnMouseEntered(e);
         }

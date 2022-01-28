@@ -31,27 +31,13 @@ namespace Universal_Search_Module.Controls {
 
         #endregion
 
-        private SearchResultItem _activeSearchResult;
-        public SearchResultItem ActiveSearchResult {
-            get => _activeSearchResult;
-            set {
-                _activeSearchResult = value;
-
-                _results.ForEach(r => r.Active = r == _activeSearchResult);
-            }
-        }
-
         private List<SearchResultItem> _results;
         private SearchHandler _selectedSearchHandler;
-
-        private Tooltip _resultDetails;
+        
         private TextBox _searchbox;
         private LoadingSpinner _spinner;
         private Label _noneLabel;
         private Dropdown _searchHandlerSelect;
-
-        private Label _ttDetailsName;
-        private Label _ttDetailsInfRes1;
 
         public SearchWindow(IEnumerable<SearchHandler> searchHandlers) : base() {
             _searchHandlers = searchHandlers.ToDictionary(x => x.Name, y => y);
@@ -88,70 +74,6 @@ namespace Universal_Search_Module.Controls {
                 Parent = this
             };
 
-            _resultDetails = new Tooltip();
-
-            _ttDetailsName = new Label() {
-                Text = "Name Loading...",
-                Font = Content.DefaultFont16,
-                Location = new Point(10, 10),
-                Height = 11,
-                TextColor = ContentService.Colors.Chardonnay,
-                ShowShadow = true,
-                AutoSizeWidth = true,
-                AutoSizeHeight = true,
-                VerticalAlignment = VerticalAlignment.Middle,
-                Parent = _resultDetails
-            };
-
-            var ttDetailsInfHint1 = new Label() {
-                Text = "Enter: Copy chat code to clipboard.",
-                Font = Content.DefaultFont16,
-                Location = new Point(10, _ttDetailsName.Bottom + 5),
-                TextColor = Color.White,
-                ShowShadow = true,
-                AutoSizeWidth = true,
-                AutoSizeHeight = true,
-                Parent = _resultDetails
-            };
-
-            var ttDetailsInf1 = new Label() {
-                Text = "Closest Waypoint",
-                Font = Content.DefaultFont16,
-                Location = new Point(10, ttDetailsInfHint1.Bottom + 12),
-                Height = 11,
-                TextColor = ContentService.Colors.Chardonnay,
-                ShadowColor = Color.Black,
-                ShowShadow = true,
-                AutoSizeWidth = true,
-                AutoSizeHeight = true,
-                Parent = _resultDetails
-            };
-
-            _ttDetailsInfRes1 = new Label() {
-                Text = " ",
-                Font = Content.DefaultFont14,
-                Location = new Point(10, ttDetailsInf1.Bottom + 5),
-                TextColor = Color.White,
-                ShadowColor = Color.Black,
-                ShowShadow = true,
-                AutoSizeWidth = true,
-                AutoSizeHeight = true,
-                Parent = _resultDetails
-            };
-
-            var ttDetailsInfHint2 = new Label() {
-                Text = "Shift + Enter: Copy closest waypoint to clipboard.",
-                Font = Content.DefaultFont14,
-                Location = new Point(10, _ttDetailsInfRes1.Bottom + 5),
-                TextColor = Color.White,
-                ShadowColor = Color.Black,
-                ShowShadow = true,
-                AutoSizeWidth = true,
-                AutoSizeHeight = true,
-                Visible = false,
-                Parent = _resultDetails
-            };
-
             _spinner = new LoadingSpinner() {
                 Location = ContentRegion.Size / new Point(2) - new Point(32, 32),
                 Visible = false,
@@ -182,12 +104,9 @@ namespace Universal_Search_Module.Controls {
 
             foreach (var searchItem in items) {
                 searchItem.Width = _size.X - 4;
-                searchItem.Tooltip = _resultDetails;
                 searchItem.Parent = this;
                 searchItem.Location = new Point(2, lastResultBottom + 3);
-                searchItem.Activated += ResultActivated;
-                searchItem.MouseEntered += ResultActivated;
-
+                
                 lastResultBottom = searchItem.Bottom;
 
                 _results.Add(searchItem);
@@ -241,21 +160,6 @@ namespace Universal_Search_Module.Controls {
 
         private void SearchboxOnTextChanged(object sender, EventArgs e) {
             Search();
-        }
-
-        private void ResultActivated(object sender, EventArgs e) {
-            if (sender is SearchResultItem activatedSearchResult && activatedSearchResult.Active) {
-                this.ActiveSearchResult = activatedSearchResult;
-
-                _ttDetailsName.Text = activatedSearchResult.Name;
-                _ttDetailsInfRes1.Text = "none found";
-
-                _resultDetails.CurrentControl = activatedSearchResult;
-
-                if (!activatedSearchResult.MouseOver) {
-                    _resultDetails.Show(activatedSearchResult.AbsoluteBounds.Location + new Point(activatedSearchResult.Width + 5, 0));
-                }
-            }
         }
 
         /// <inheritdoc />
