@@ -1,5 +1,6 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Content;
+using Blish_HUD.Controls;
 using Gw2Sharp.WebApi.V2.Models;
 using System;
 using System.Collections.Generic;
@@ -18,17 +19,16 @@ namespace Universal_Search_Module.Controls.SearchResultItems {
                     if (_trait != null) {
                         Icon = _trait.Icon != null ? Content.GetRenderServiceTexture(_trait.Icon) : (AsyncTexture2D)ContentService.Textures.Error;
                         Name = _trait.Name;
-                        Description = _trait.Description;
-
-                        Show();
-                    } else {
-                        Hide();
+                        Description = StringUtil.SanitizeTraitDescription(_trait.Description);
                     }
                 }
             }
         }
 
         protected override string ChatLink => GenerateChatLink(Trait);
+
+        protected override Tooltip BuildTooltip()
+            => new TraitTooltip(Trait);
 
         private static string GenerateChatLink(Trait trait) {
             const byte TRAIT_CHATLINK_TYPE = 0x07;

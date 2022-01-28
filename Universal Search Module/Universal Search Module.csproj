@@ -57,6 +57,7 @@
     <Compile Include="Controls\SearchResultItems\TraitSearchResultItem.cs" />
     <Compile Include="Controls\SearchWindow.cs" />
     <Compile Include="Controls\SearchResultItems\SearchResultItem.cs" />
+    <Compile Include="Controls\TraitTooltip.cs" />
     <Compile Include="Controls\SkillTooltip.cs" />
     <Compile Include="Services\SearchHandler\TraitSearchHandler.cs" />
     <Compile Include="Services\SearchHandler\WordScoreResult.cs" />

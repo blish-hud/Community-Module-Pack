@@ -5,16 +5,16 @@ using Gw2Sharp.WebApi.V2.Models;
 using Microsoft.Xna.Framework;
 
 namespace Universal_Search_Module.Controls {
-    public class SkillTooltip : Tooltip {
+    public class TraitTooltip : Tooltip {
         private const int MAX_WIDTH = 400;
 
-        private readonly Skill _skill;
+        private readonly Trait _trait;
 
-        public SkillTooltip(Skill skill) {
-            _skill = skill;
+        public TraitTooltip(Trait trait) {
+            _trait = trait;
 
-            var skillTitle = new Label() {
-                Text = _skill.Name,
+            var traitTitle = new Label() {
+                Text = _trait.Name,
                 Font = Content.DefaultFont18,
                 TextColor = ContentService.Colors.Chardonnay,
                 AutoSizeHeight = true,
@@ -22,49 +22,30 @@ namespace Universal_Search_Module.Controls {
                 Parent = this,
             };
 
-            Label categoryText = null;
-            var description = _skill.Description;
-
-            if (_skill.Categories != null) {
-                categoryText = new Label() {
-                    Text = string.Join(", ", skill.Categories),
-                    Font = Content.DefaultFont16,
-                    AutoSizeHeight = true,
-                    AutoSizeWidth = true,
-                    Location = new Point(0, skillTitle.Bottom + 5),
-                    TextColor = ContentService.Colors.ColonialWhite,
-                    Parent = this,
-                };
-
-                description = description.Substring(description.IndexOf(".") + 1).Trim();
-            }
-
-
-
-            var skillDescription = new Label() {
-                Text = description,
+            var traitDescription = new Label() {
+                Text = StringUtil.SanitizeTraitDescription( _trait.Description),
                 Font = Content.DefaultFont16,
                 AutoSizeWidth = true,
                 AutoSizeHeight = true,
-                Location = new Point(0, (categoryText == null ? skillTitle.Bottom : categoryText.Bottom) + 5),
+                Location = new Point(0, traitTitle.Bottom + 5),
                 Parent = this,
             };
 
             // Poor mans max width implementation
-            if (skillDescription.Width > MAX_WIDTH) {
-                skillDescription.AutoSizeWidth = false;
-                skillDescription.Width = MAX_WIDTH;
-                skillDescription.WrapText = true;
-                skillDescription.RecalculateLayout();
+            if (traitDescription.Width > MAX_WIDTH) {
+                traitDescription.AutoSizeWidth = false;
+                traitDescription.Width = MAX_WIDTH;
+                traitDescription.WrapText = true;
+                traitDescription.RecalculateLayout();
             }
 
-            Control lastFact = skillDescription;
-            if (_skill.Facts != null) {
-                SkillFactRecharge rechargeFact = null;
-                foreach (var fact in _skill.Facts) {
+            Control lastFact = traitDescription;
+            if (_trait.Facts != null) {
+                TraitFactRecharge rechargeFact = null;
+                foreach (var fact in _trait.Facts) {
                     switch (fact) {
-                        case SkillFactRecharge skillFactRecharge:
-                            rechargeFact = skillFactRecharge;
+                        case TraitFactRecharge traitFactRecharge:
+                            rechargeFact = traitFactRecharge;
                             break;
                         default:
                             lastFact = CreateFact(fact, lastFact);
@@ -76,17 +57,47 @@ namespace Universal_Search_Module.Controls {
                     CreateRechargeFact(rechargeFact);
                 }
             }
+
+
+            // TODO: Find a way to mimic the behaviour in gw2 with multiple tooltips
+            //if (_trait.Skills != null) {
+            //    Tooltip lastToolTip = this;
+
+            //    foreach (var skill in _trait.Skills) {
+                    
+            //        var tooltip = new SkillTooltip(ConvertSkill(skill));
+            //        lastToolTip.Tooltip = tooltip;
+            //        tooltip.Show(AbsoluteBounds.Location + new Point(lastToolTip.Width + 10, 0));
+            //        lastToolTip = tooltip;
+            //    }
+            //}
         }
 
-        private Control CreateFact(SkillFact fact, Control lastFact) {
+        
+
+        private Skill ConvertSkill(TraitSkill skill) {
+            return new Skill() {
+                Id = skill.Id,
+                Name = skill.Name,
+                Description = skill.Description,
+                Icon = skill.Icon,
+                ChatLink = skill.ChatLink,
+                Flags = skill.Flags,
+                Facts = skill.Facts,
+                TraitedFacts = skill.TraitedFacts,
+                Categories = skill.Categories,
+            };
+        }
+
+        private Control CreateFact(TraitFact fact, Control lastFact) {
             // Skip Damage fact bc calculation of the actual damage value is rather complicated
-            if (fact is SkillFactDamage) {
+            if (fact is TraitFactDamage) {
                 return lastFact;
             }
 
             var icon = fact.Icon;
 
-            if (fact is SkillFactPrefixedBuff prefixedBuff) {
+            if (fact is TraitFactPrefixedBuff prefixedBuff) {
                 icon = prefixedBuff.Prefix.Icon;
             }
 
@@ -109,9 +120,9 @@ namespace Universal_Search_Module.Controls {
             };
 
             // Poor mans max width solution and vertical alignment of an image
-            if (factDescription.Width > MAX_WIDTH) {
+            if (factDescription.Width > MAX_WIDTH - factImage.Width) {
                 factDescription.AutoSizeWidth = false;
-                factDescription.Width = MAX_WIDTH;
+                factDescription.Width = MAX_WIDTH - factImage.Width;
                 factDescription.WrapText = true;
                 factDescription.AutoSizeHeight = true;
                 factDescription.RecalculateLayout();
@@ -121,51 +132,45 @@ namespace Universal_Search_Module.Controls {
             return factDescription;
         }
 
-        private string GetTextForFact(SkillFact fact) {
+        private string GetTextForFact(TraitFact fact) {
             switch (fact) {
-                case SkillFactAttributeAdjust attributeAdjust:
+                case TraitFactAttributeAdjust attributeAdjust:
                     return $"{attributeAdjust.Text}: {attributeAdjust.Value}";
-                case SkillFactBuff buff:
+                case TraitFactBuff buff:
                     var applyCountText = buff.ApplyCount != null && buff.ApplyCount != 1 ? buff.ApplyCount + "x " : string.Empty;
                     var durationText = buff.Duration != 0 ? $" ({buff.Duration}s) " : string.Empty;
                     return $"{applyCountText}{buff.Status}{durationText}: {buff.Description}";
-                case SkillFactComboField comboField:
+                case TraitFactBuffConversion buffConversion: // TODO: Localization
+                    return $"Gain {buffConversion.Target} Based on a Percentage of {buffConversion.Source}: {buffConversion.Percent}%";
+                case TraitFactComboField comboField:
                     return $"{comboField.Text}: {comboField.FieldType.ToEnumString()}";
-                case SkillFactComboFinisher comboFinisher:
+                case TraitFactComboFinisher comboFinisher:
                     return $"{comboFinisher.Text}: {comboFinisher.Type} ({comboFinisher.Percent} Chance)";
-                case SkillFactDamage damage: // Skip
+                case TraitFactDamage damage: // Skip
                     return $"{damage.Text}({damage.HitCount}x): {damage.Text}";
-                case SkillFactDistance distance:
+                case TraitFactDistance distance:
                     return $"{distance.Text}: {distance.Distance}";
-                case SkillFactDuration duration:
-                    return $"{duration.Text}: {duration.Duration}s";
-                case SkillFactHeal heal:
-                    return $"{heal.HitCount}x {heal.Text}";
-                case SkillFactHealingAdjust healingAdjust:
-                    return $"{healingAdjust.HitCount}x {healingAdjust.Text}";
-                case SkillFactNoData skillFactNoData: // TODO: Localization
+                case TraitFactNoData noData: // TODO: Localization
                     return "Combat Only";
-                case SkillFactNumber skillFactNumber:
-                    return $"{skillFactNumber.Text}: {skillFactNumber.Value}";
-                case SkillFactPercent skillFactPercent:
-                    return $"{skillFactPercent.Text}: {skillFactPercent.Percent}%";
-                case SkillFactPrefixedBuff skillFactPrefixedBuff:
-                    return $"{skillFactPrefixedBuff.ApplyCount}x {skillFactPrefixedBuff.Status} ({skillFactPrefixedBuff.Duration}s): {skillFactPrefixedBuff.Description}";
-                case SkillFactRadius skillFactRadius:
-                    return $"{skillFactRadius.Text}: {skillFactRadius.Distance}";
-                case SkillFactRange skillFactRange:
-                    return $"{skillFactRange.Text}: {skillFactRange.Value}";
-                case SkillFactStunBreak stunBreak: // TODO: Localization
-                    return "Breaks Stun";
-                case SkillFactTime skillFactTime:
-                    return $"{skillFactTime.Text}: {skillFactTime.Duration}s";
-                case SkillFactUnblockable skillFactUnblockable:
+                case TraitFactNumber number:
+                    return $"{number.Text}: {number.Value}";
+                case TraitFactPercent percent:
+                    return $"{percent.Text}: {percent.Percent}%";
+                case TraitFactPrefixedBuff prefixedBuff:
+                    return $"{prefixedBuff.ApplyCount}x {prefixedBuff.Status} ({prefixedBuff.Duration}s): {prefixedBuff.Description}";
+                case TraitFactRadius radius:
+                    return $"{radius.Text}: {radius.Distance}";
+                case TraitFactRange range:
+                    return $"{range.Text}: {range.Value}";
+                case TraitFactTime time:
+                    return $"{time.Text}: {time.Duration}s";
+                case TraitFactUnblockable unblockable:
                 default:
                     return fact.Text;
             }
         }
 
-        private void CreateRechargeFact(SkillFactRecharge skillFactRecharge) {
+        private void CreateRechargeFact(TraitFactRecharge skillFactRecharge) {
             var cooldownImage = new Image() {
                 Texture = skillFactRecharge.Icon != null ? Content.GetRenderServiceTexture(skillFactRecharge.Icon) : (AsyncTexture2D)ContentService.Textures.Error,
                 Visible = true,
