@@ -139,7 +139,7 @@
     <value>Name Loading...</value>
   </data>
   <data name="SearchWindow_NoneFound" xml:space="preserve">
-    <value>none found</value>
+    <value>None found</value>
   </data>
   <data name="SearchWindow_NoResults" xml:space="preserve">
     <value>No Results</value>

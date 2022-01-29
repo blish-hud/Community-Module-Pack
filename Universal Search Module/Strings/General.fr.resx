@@ -139,7 +139,7 @@
     <value>Chargement du nom...</value>
   </data>
   <data name="SearchWindow_NoneFound" xml:space="preserve">
-    <value>aucun trouvé</value>
+    <value>Aucun trouvé</value>
   </data>
   <data name="SearchWindow_NoResults" xml:space="preserve">
     <value>Aucun résultats</value>
@@ -154,13 +154,13 @@
     <value>Chargement de l'étage {0}...</value>
   </data>
   <data name="Settings_HideWindow" xml:space="preserve">
-    <value>Cache la fenêtre après la sélection</value>
+    <value>Cacher la fenêtre après la sélection</value>
   </data>
   <data name="Settings_HideWindowHover" xml:space="preserve">
     <value>Si coché, la fenêtre de recherche se fermera automatiquement après qu'un point de repère soit selectionné dans les résultats.</value>
   </data>
   <data name="Settings_ShowNotification" xml:space="preserve">
-    <value>Affiche une notification quand un point de repère est copié</value>
+    <value>Afficher une notification quand un point de repère est copié</value>
   </data>
   <data name="Settings_ShowNotificationHover" xml:space="preserve">
     <value>Si coché, une notification sera affiché au centre de l'écran, confirmant que le point de passage a été copié</value>

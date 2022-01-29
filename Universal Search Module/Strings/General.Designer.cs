@@ -124,7 +124,7 @@ namespace Universal_Search_Module.Strings {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à none found.
+        ///   Recherche une chaîne localisée semblable à None found.
         /// </summary>
         internal static string SearchWindow_NoneFound {
             get {
