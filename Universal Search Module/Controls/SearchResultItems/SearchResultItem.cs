@@ -63,10 +63,10 @@ namespace Universal_Search_Module.Controls.SearchResultItems {
                 var clipboardResult = await ClipboardUtil.WindowsClipboardService.SetTextAsync(ChatLink);
 
                 if (!clipboardResult) {
-                    ScreenNotification.ShowNotification("Failed to copy chat link to clipboard. Try again.", ScreenNotification.NotificationType.Red, duration: 2);
+                    ScreenNotification.ShowNotification(Strings.Common.SearchItem_FailedToCopy, ScreenNotification.NotificationType.Red, duration: 2);
                 } else {
                     if (UniversalSearchModule.ModuleInstance.SettingShowNotificationWhenLandmarkIsCopied.Value) {
-                        ScreenNotification.ShowNotification("Copied chat link to clipboard!", duration: 2);
+                        ScreenNotification.ShowNotification(Strings.Common.SearchItem_Copied, duration: 2);
                     }
                     if (UniversalSearchModule.ModuleInstance.SettingHideWindowAfterSelection.Value) {
                         this.Parent.Hide();

@@ -140,18 +140,18 @@ namespace Universal_Search_Module.Controls {
                     var applyCountText = buff.ApplyCount != null && buff.ApplyCount != 1 ? buff.ApplyCount + "x " : string.Empty;
                     var durationText = buff.Duration != 0 ? $" ({buff.Duration}s) " : string.Empty;
                     return $"{applyCountText}{buff.Status}{durationText}: {buff.Description}";
-                case TraitFactBuffConversion buffConversion: // TODO: Localization
-                    return $"Gain {buffConversion.Target} Based on a Percentage of {buffConversion.Source}: {buffConversion.Percent}%";
+                case TraitFactBuffConversion buffConversion:
+                    return string.Format(Strings.Common.TraitTooltip_BuffConversion, buffConversion.Target, buffConversion.Source, buffConversion.Percent);
                 case TraitFactComboField comboField:
                     return $"{comboField.Text}: {comboField.FieldType.ToEnumString()}";
                 case TraitFactComboFinisher comboFinisher:
-                    return $"{comboFinisher.Text}: {comboFinisher.Type} ({comboFinisher.Percent} Chance)";
+                    return $"{comboFinisher.Text}: {comboFinisher.Type} ({comboFinisher.Percent} {Strings.Common.TraitTooltip_Chance})";
                 case TraitFactDamage damage: // Skip
                     return $"{damage.Text}({damage.HitCount}x): {damage.Text}";
                 case TraitFactDistance distance:
                     return $"{distance.Text}: {distance.Distance}";
-                case TraitFactNoData noData: // TODO: Localization
-                    return "Combat Only";
+                case TraitFactNoData noData:
+                    return Strings.Common.TraitTooltip_CombatOnly;
                 case TraitFactNumber number:
                     return $"{number.Text}: {number.Value}";
                 case TraitFactPercent percent:

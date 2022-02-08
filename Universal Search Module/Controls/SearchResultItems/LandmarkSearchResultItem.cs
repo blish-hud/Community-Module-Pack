@@ -55,7 +55,7 @@ namespace Universal_Search_Module.Controls.SearchResultItems {
             };
 
             var detailsHintCopyChatCode = new Label() {
-                Text = "Enter: Copy chat code to clipboard.",
+                Text = Strings.Common.Landmark_Details_CopyChatCode,
                 Font = Content.DefaultFont16,
                 Location = new Point(10, detailsName.Bottom + 5),
                 TextColor = Color.White,
@@ -66,7 +66,7 @@ namespace Universal_Search_Module.Controls.SearchResultItems {
             };
 
             var detailsClosestWaypointTitle = new Label() {
-                Text = "Closest Waypoint",
+                Text = Strings.Common.Landmark_Details_ClosestWaypoint,
                 Font = Content.DefaultFont16,
                 Location = new Point(10, detailsHintCopyChatCode.Bottom + 12),
                 Height = 11,
@@ -91,7 +91,7 @@ namespace Universal_Search_Module.Controls.SearchResultItems {
             };
 
             new Label() {
-                Text = "Shift + Enter: Copy closest waypoint to clipboard.",
+                Text = Strings.Common.Landmark_Details_CopyClosestWaypoint,
                 Font = Content.DefaultFont14,
                 Location = new Point(10, detailsClosestWaypoint.Bottom + 5),
                 TextColor = Color.White,
@@ -112,10 +112,10 @@ namespace Universal_Search_Module.Controls.SearchResultItems {
                 var clipboardResult = await ClipboardUtil.WindowsClipboardService.SetTextAsync(ClosestWaypoint().PointOfInterest.ChatLink);
 
                 if (!clipboardResult) {
-                    ScreenNotification.ShowNotification("Failed to copy nearest waypoint to clipboard. Try again.", ScreenNotification.NotificationType.Red, duration: 2);
+                    ScreenNotification.ShowNotification(Strings.Common.Landmark_FailedToCopy, ScreenNotification.NotificationType.Red, duration: 2);
                 } else {
                     if (UniversalSearchModule.ModuleInstance.SettingShowNotificationWhenLandmarkIsCopied.Value) {
-                        ScreenNotification.ShowNotification("Copied nearest waypoint to clipboard!", duration: 2);
+                        ScreenNotification.ShowNotification(Strings.Common.Landmark_WaypointCopied, duration: 2);
                     }
                     if (UniversalSearchModule.ModuleInstance.SettingHideWindowAfterSelection.Value) {
                         this.Parent.Hide();

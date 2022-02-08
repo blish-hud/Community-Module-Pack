@@ -11,7 +11,7 @@ namespace Universal_Search_Module.Services.SearchHandler {
         private readonly Gw2ApiManager _gw2ApiManager;
         private readonly HashSet<Landmark> _landmarks = new HashSet<Landmark>();
 
-        public override string Name => "Landmarks";
+        public override string Name => Strings.Common.SearchHandler_Landmarks;
 
         public override string Prefix => "l";
 

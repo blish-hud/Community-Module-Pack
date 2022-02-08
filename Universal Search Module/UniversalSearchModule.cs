@@ -39,9 +39,9 @@ namespace Universal_Search_Module {
         internal SettingEntry<bool> SettingEnterSelectionIntoChatAutomatically;
 
         protected override void DefineSettings(SettingCollection settingsManager) {
-            SettingShowNotificationWhenLandmarkIsCopied = settingsManager.DefineSetting("ShowNotificationOnCopy", true, () => "Show Notification When Landmark is Copied", () => "If checked, a notification will be displayed in the center of the screen confirming the landmark was copied.");
-            SettingHideWindowAfterSelection = settingsManager.DefineSetting("HideWindowOnSelection", true, () => "Hide Window After Selection", () => "If checked, the landmark search window will automatically hide after a landmark is selected from the results.");
-            SettingEnterSelectionIntoChatAutomatically = settingsManager.DefineSetting("EnterSelectionIntoChat", false, () => "Enter Selection Into Chat Automatically", () => "If checked, the chat code will automatically entered into the ingame chat");
+            SettingShowNotificationWhenLandmarkIsCopied = settingsManager.DefineSetting("ShowNotificationOnCopy", true, () => Strings.Common.Settings_NotificationAfterCopy_Title, () => Strings.Common.Settings_NotificationAfterCopy_Text);
+            SettingHideWindowAfterSelection = settingsManager.DefineSetting("HideWindowOnSelection", true, () => Strings.Common.Settings_HideWindowAfterSelection_Title, () => Strings.Common.Settings_HideWindowAfterSelection_Text);
+            SettingEnterSelectionIntoChatAutomatically = settingsManager.DefineSetting("EnterSelectionIntoChat", false, () => Strings.Common.Settings_EnterSelectionIntoChat_Title, () => Strings.Common.Settings_EnterSelectionIntoChat_Text);
         }
 
         protected override void Initialize() {
@@ -61,7 +61,7 @@ namespace Universal_Search_Module {
 
         protected override async Task LoadAsync() {
             _searchIcon = new CornerIcon() {
-                IconName = "Landmark Search",
+                IconName = Strings.Common.Icon_Title,
                 Icon = ContentsManager.GetTexture(@"textures\landmark-search.png"),
                 HoverIcon = ContentsManager.GetTexture(@"textures\landmark-search-hover.png"),
                 Priority = 5

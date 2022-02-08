@@ -147,7 +147,7 @@ namespace Universal_Search_Module.Controls {
                 case SkillFactComboField comboField:
                     return $"{comboField.Text}: {comboField.FieldType.ToEnumString()}";
                 case SkillFactComboFinisher comboFinisher:
-                    return $"{comboFinisher.Text}: {comboFinisher.Type} ({comboFinisher.Percent} Chance)";
+                    return $"{comboFinisher.Text}: {comboFinisher.Type} ({comboFinisher.Percent}% {Strings.Common.SkillTooltip_Chance})";
                 case SkillFactDamage damage: // Skip
                     return $"{damage.Text}({damage.HitCount}x): {damage.Text}";
                 case SkillFactDistance distance:
@@ -158,8 +158,8 @@ namespace Universal_Search_Module.Controls {
                     return $"{heal.HitCount}x {heal.Text}";
                 case SkillFactHealingAdjust healingAdjust:
                     return $"{healingAdjust.HitCount}x {healingAdjust.Text}";
-                case SkillFactNoData skillFactNoData: // TODO: Localization
-                    return "Combat Only";
+                case SkillFactNoData skillFactNoData:
+                    return Strings.Common.SkillTooltip_CombatOnly;
                 case SkillFactNumber skillFactNumber:
                     return $"{skillFactNumber.Text}: {skillFactNumber.Value}";
                 case SkillFactPercent skillFactPercent:
@@ -170,8 +170,8 @@ namespace Universal_Search_Module.Controls {
                     return $"{skillFactRadius.Text}: {skillFactRadius.Distance}";
                 case SkillFactRange skillFactRange:
                     return $"{skillFactRange.Text}: {skillFactRange.Value}";
-                case SkillFactStunBreak stunBreak: // TODO: Localization
-                    return "Breaks Stun";
+                case SkillFactStunBreak stunBreak:
+                    return Strings.Common.SkillTooltip_BreaksStun;
                 case SkillFactTime skillFactTime:
                     return $"{skillFactTime.Text}: {skillFactTime.Duration}s";
                 case SkillFactUnblockable skillFactUnblockable:

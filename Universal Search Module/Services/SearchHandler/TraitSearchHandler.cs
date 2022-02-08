@@ -12,7 +12,7 @@ namespace Universal_Search_Module.Services.SearchHandler {
         private readonly Gw2ApiManager _gw2ApiManager;
         private readonly HashSet<Trait> _traits = new HashSet<Trait>();
         
-        public override string Name => "Traits";
+        public override string Name => Strings.Common.SearchHandler_Traits;
 
         public override string Prefix => "t";
 
