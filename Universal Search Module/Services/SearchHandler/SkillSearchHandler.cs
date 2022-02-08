@@ -22,7 +22,7 @@ namespace Universal_Search_Module.Services.SearchHandler {
         protected override HashSet<Skill> SearchItems => _skills;
 
         public override async Task Initialize(Action<string> progress) {
-            progress("Loading Skills ...");
+            progress(Strings.Common.SearchHandler_Skills_SkillLoading);
             _skills.UnionWith(await _gw2ApiManager.Gw2ApiClient.V2.Skills.AllAsync());
 
         }

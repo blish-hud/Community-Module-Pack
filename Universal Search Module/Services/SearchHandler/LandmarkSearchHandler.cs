@@ -28,7 +28,7 @@ namespace Universal_Search_Module.Services.SearchHandler {
             var floors = await _gw2ApiManager.Gw2ApiClient.V2.Continents[1].Floors.IdsAsync();
 
             foreach (var floorId in floors) {
-                progress($"Loading floor {floorId}...");
+                progress(string.Format(Strings.Common.SearchHandler_Landmarks_FloorLoading, floorId));
                 var floor = await _gw2ApiManager.Gw2ApiClient.V2.Continents[1].Floors[floorId].GetAsync();
                 foreach (var regionPair in floor.Regions) {
                     foreach (var mapPair in regionPair.Value.Maps) {

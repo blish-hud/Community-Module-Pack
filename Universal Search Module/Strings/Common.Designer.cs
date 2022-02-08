@@ -133,6 +133,15 @@ namespace Universal_Search_Module.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Loading Floor {0}....
+        /// </summary>
+        internal static string SearchHandler_Landmarks_FloorLoading {
+            get {
+                return ResourceManager.GetString("SearchHandler_Landmarks_FloorLoading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Skills.
         /// </summary>
         internal static string SearchHandler_Skills {
@@ -142,11 +151,29 @@ namespace Universal_Search_Module.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Loading Skills ....
+        /// </summary>
+        internal static string SearchHandler_Skills_SkillLoading {
+            get {
+                return ResourceManager.GetString("SearchHandler_Skills_SkillLoading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Traits.
         /// </summary>
         internal static string SearchHandler_Traits {
             get {
                 return ResourceManager.GetString("SearchHandler_Traits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading Traits ....
+        /// </summary>
+        internal static string SearchHandler_Traits_TraitLoading {
+            get {
+                return ResourceManager.GetString("SearchHandler_Traits_TraitLoading", resourceCulture);
             }
         }
         

@@ -141,11 +141,20 @@
   <data name="SearchHandler_Landmarks" xml:space="preserve">
     <value>Landmarks</value>
   </data>
+  <data name="SearchHandler_Landmarks_FloorLoading" xml:space="preserve">
+    <value>Loading Floor {0}...</value>
+  </data>
   <data name="SearchHandler_Skills" xml:space="preserve">
     <value>Skills</value>
   </data>
+  <data name="SearchHandler_Skills_SkillLoading" xml:space="preserve">
+    <value>Loading Skills ...</value>
+  </data>
   <data name="SearchHandler_Traits" xml:space="preserve">
     <value>Traits</value>
+  </data>
+  <data name="SearchHandler_Traits_TraitLoading" xml:space="preserve">
+    <value>Loading Traits ...</value>
   </data>
   <data name="SearchItem_Copied" xml:space="preserve">
     <value>Copied chat link to clipboard!</value>

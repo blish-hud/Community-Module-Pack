@@ -23,7 +23,7 @@ namespace Universal_Search_Module.Services.SearchHandler {
         }
 
         public override async Task Initialize(Action<string> progress) {
-            progress("Loading Skills ...");
+            progress(Strings.Common.SearchHandler_Traits_TraitLoading);
             _traits.UnionWith(await _gw2ApiManager.Gw2ApiClient.V2.Traits.AllAsync());
         }
 
