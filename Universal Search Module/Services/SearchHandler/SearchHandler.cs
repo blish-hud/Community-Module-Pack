@@ -19,7 +19,7 @@ namespace Universal_Search_Module.Services.SearchHandler {
                 var name = GetSearchableProperty(item);
                 if (name.StartsWith(searchText, StringComparison.CurrentCultureIgnoreCase)) {
                     score = 0;
-                } else if (name.EndsWith(searchText, StringComparison.CurrentCultureIgnoreCase)) {
+                } else if (name.ToUpper().Contains(searchText.ToUpper())) {
                     score = 3;
                 } else {
                     score = StringUtil.ComputeLevenshteinDistance(searchText.ToLower(), name.Substring(0, Math.Min(searchText.Length, name.Length)).ToLower());
@@ -28,7 +28,7 @@ namespace Universal_Search_Module.Services.SearchHandler {
                 diffs.Add(new WordScoreResult<T>(item, score));
             }
 
-            return diffs.OrderBy(x => x.DiffScore).Take(MAX_RESULT_COUNT).Select(x => CreateSearchResultItem(x.Result));
+            return diffs.OrderBy(x => x.DiffScore).ThenBy(x => GetSearchableProperty(x.Result).Length).Take(MAX_RESULT_COUNT).Select(x => CreateSearchResultItem(x.Result));
 
         }
     }

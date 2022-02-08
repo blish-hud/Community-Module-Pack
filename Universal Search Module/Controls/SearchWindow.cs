@@ -9,6 +9,8 @@ using Color = Microsoft.Xna.Framework.Color;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Universal_Search_Module.Services.SearchHandler;
 using Universal_Search_Module.Controls.SearchResultItems;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Universal_Search_Module.Controls {
 
@@ -33,11 +35,16 @@ namespace Universal_Search_Module.Controls {
 
         private List<SearchResultItem> _results;
         private SearchHandler _selectedSearchHandler;
-        
+
         private TextBox _searchbox;
         private LoadingSpinner _spinner;
         private Label _noneLabel;
         private Dropdown _searchHandlerSelect;
+
+        private Task _delayTask;
+        private CancellationTokenSource _delayCancellationToken;
+        private readonly SemaphoreSlim _searchSemaphore = new SemaphoreSlim(1, 1);
+
 
         public SearchWindow(IEnumerable<SearchHandler> searchHandlers) : base() {
             _searchHandlers = searchHandlers.ToDictionary(x => x.Name, y => y);
@@ -106,7 +113,7 @@ namespace Universal_Search_Module.Controls {
                 searchItem.Width = _size.X - 4;
                 searchItem.Parent = this;
                 searchItem.Location = new Point(2, lastResultBottom + 3);
-                
+
                 lastResultBottom = searchItem.Bottom;
 
                 _results.Add(searchItem);
@@ -136,30 +143,64 @@ namespace Universal_Search_Module.Controls {
             return true;
         }
 
-        private void Search() {
-            _results.ForEach(r => r.Dispose());
-            _results.Clear();
-            string searchText = _searchbox.Text;
+        private async Task SearchAsync(CancellationToken cancellationToken = default) {
+            await _searchSemaphore.WaitAsync(cancellationToken);
+            try {
+                _results.ForEach(r => r.Dispose());
+                _results.Clear();
 
-            if (!HandlePrefix(searchText) || searchText.Length <= 2) {
-                _noneLabel.Show();
-                return;
-            }
+                cancellationToken.ThrowIfCancellationRequested();
 
-            _noneLabel.Hide();
-            _spinner.Show();
+                string searchText = _searchbox.Text;
 
-            AddSearchResultItems(_selectedSearchHandler.Search(searchText));
+                if (!HandlePrefix(searchText) || searchText.Length <= 2) {
+                    _noneLabel.Show();
+                    return;
+                }
 
-            _spinner.Hide();
+                _noneLabel.Hide();
+                _spinner.Show();
 
-            if (!_results.Any()) {
-                _noneLabel.Show();
+                AddSearchResultItems(_selectedSearchHandler.Search(searchText));
+
+                _spinner.Hide();
+
+                if (!_results.Any()) {
+                    _noneLabel.Show();
+                }
+            } finally {
+                _searchSemaphore.Release();
             }
         }
 
         private void SearchboxOnTextChanged(object sender, EventArgs e) {
             Search();
+        }
+
+        private void Search() {
+            try {
+                if (!HandlePrefix(_searchbox.Text)) {
+                    return;
+                }
+
+                if (_delayTask != null) {
+                    _delayCancellationToken.Cancel();
+                    _delayTask = null;
+                    _delayCancellationToken = null;
+                }
+
+                _delayCancellationToken = new CancellationTokenSource();
+                _delayTask = new Task(async () => await DelaySeach(_delayCancellationToken.Token), _delayCancellationToken.Token);
+                _delayTask.Start();
+            } catch (OperationCanceledException) {
+            }
+        }
+
+        private async Task DelaySeach(CancellationToken cancellationToken) {
+            try {
+                await Task.Delay(300, cancellationToken);
+                await SearchAsync(cancellationToken);
+            } catch (OperationCanceledException) { }
         }
 
         /// <inheritdoc />
