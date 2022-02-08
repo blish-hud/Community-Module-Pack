@@ -51,24 +51,29 @@ namespace Universal_Search_Module.Controls.SearchResultItems {
         protected abstract string ChatLink { get; }
 
         protected override void OnClick(MouseEventArgs e) {
-            if (ChatLink != null) {
-                Task.Run(async () => {
-                    var clipboardResult = await ClipboardUtil.WindowsClipboardService.SetTextAsync(ChatLink);
-
-                    if (!clipboardResult) {
-                        ScreenNotification.ShowNotification("Failed to copy waypoint to clipboard. Try again.", ScreenNotification.NotificationType.Red, duration: 2);
-                    } else {
-                        if (UniversalSearchModule.ModuleInstance.SettingShowNotificationWhenLandmarkIsCopied.Value) {
-                            ScreenNotification.ShowNotification("Copied waypoint to clipboard!", duration: 2);
-                        }
-                        if (UniversalSearchModule.ModuleInstance.SettingHideWindowAfterSelection.Value) {
-                            this.Parent.Hide();
-                        }
-                    }
-                });
-            }
+            Task.Run(async () => {
+                await ClickAction();
+            });
 
             base.OnClick(e);
+        }
+
+        protected virtual async Task ClickAction() {
+            if (ChatLink != null) {
+                var clipboardResult = await ClipboardUtil.WindowsClipboardService.SetTextAsync(ChatLink);
+
+                if (!clipboardResult) {
+                    ScreenNotification.ShowNotification("Failed to copy chat link to clipboard. Try again.", ScreenNotification.NotificationType.Red, duration: 2);
+                } else {
+                    if (UniversalSearchModule.ModuleInstance.SettingShowNotificationWhenLandmarkIsCopied.Value) {
+                        ScreenNotification.ShowNotification("Copied chat link to clipboard!", duration: 2);
+                    }
+                    if (UniversalSearchModule.ModuleInstance.SettingHideWindowAfterSelection.Value) {
+                        this.Parent.Hide();
+                    }
+                }
+            }
+
         }
 
         protected virtual Tooltip BuildTooltip()

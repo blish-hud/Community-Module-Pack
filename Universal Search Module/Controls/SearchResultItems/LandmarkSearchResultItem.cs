@@ -4,6 +4,11 @@ using Blish_HUD.Controls;
 using Blish_HUD.Input;
 using Gw2Sharp.WebApi.V2.Models;
 using Microsoft.Xna.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Universal_Search_Module.Services.SearchHandler;
 using Color = Microsoft.Xna.Framework.Color;
 
 namespace Universal_Search_Module.Controls.SearchResultItems {
@@ -11,21 +16,26 @@ namespace Universal_Search_Module.Controls.SearchResultItems {
         private const string POI_FILE = "https://render.guildwars2.com/file/25B230711176AB5728E86F5FC5F0BFAE48B32F6E/97461.png";
         private const string WAYPOINT_FILE = "https://render.guildwars2.com/file/32633AF8ADEA696A1EF56D3AE32D617B10D3AC57/157353.png";
         private const string VISTA_FILE = "https://render.guildwars2.com/file/A2C16AF497BA3A0903A0499FFBAF531477566F10/358415.png";
+        private readonly IEnumerable<Landmark> _waypoints;
 
-        protected override string ChatLink => Landmark?.ChatLink;
+        protected override string ChatLink => Landmark?.PointOfInterest.ChatLink;
 
-        private ContinentFloorRegionMapPoi _landmark;
-        public ContinentFloorRegionMapPoi Landmark {
+        private Landmark _landmark;
+        public Landmark Landmark {
             get => _landmark;
             set {
                 if (SetProperty(ref _landmark, value)) {
                     if (_landmark != null) {
-                        Icon = GetTextureForLandmarkAsync(_landmark);
-                        Name = _landmark.Name;
-                        Description = _landmark.ChatLink;
+                        Icon = GetTextureForLandmarkAsync(_landmark.PointOfInterest);
+                        Name = _landmark.PointOfInterest.Name;
+                        Description = _landmark.PointOfInterest.ChatLink;
                     }
                 }
             }
+        }
+
+        public LandmarkSearchResultItem(IEnumerable<Landmark> waypoints) {
+            _waypoints = waypoints;
         }
 
         protected override Tooltip BuildTooltip() {
@@ -94,6 +104,31 @@ namespace Universal_Search_Module.Controls.SearchResultItems {
             };
 
             return tooltip;
+        }
+
+        protected override async Task ClickAction() {
+
+            if (GameService.Input.Keyboard.ActiveModifiers == Microsoft.Xna.Framework.Input.ModifierKeys.Shift) {
+                var clipboardResult = await ClipboardUtil.WindowsClipboardService.SetTextAsync(ClosestWaypoint().PointOfInterest.ChatLink);
+
+                if (!clipboardResult) {
+                    ScreenNotification.ShowNotification("Failed to copy nearest waypoint to clipboard. Try again.", ScreenNotification.NotificationType.Red, duration: 2);
+                } else {
+                    if (UniversalSearchModule.ModuleInstance.SettingShowNotificationWhenLandmarkIsCopied.Value) {
+                        ScreenNotification.ShowNotification("Copied nearest waypoint to clipboard!", duration: 2);
+                    }
+                    if (UniversalSearchModule.ModuleInstance.SettingHideWindowAfterSelection.Value) {
+                        this.Parent.Hide();
+                    }
+                }
+            } else {
+                await base.ClickAction();
+            }
+        }
+
+        private Landmark ClosestWaypoint() {
+            var distances = _waypoints.Select(waypoint => (Math.Sqrt(Math.Pow(Landmark.PointOfInterest.Coord.X - waypoint.PointOfInterest.Coord.X, 2) + Math.Pow(Landmark.PointOfInterest.Coord.Y - waypoint.PointOfInterest.Coord.Y, 2)), waypoint));
+            return distances.OrderBy(x => x.Item1).First().waypoint;
         }
 
 

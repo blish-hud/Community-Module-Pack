@@ -7,9 +7,9 @@ using Gw2Sharp.WebApi.V2.Models;
 using Universal_Search_Module.Controls.SearchResultItems;
 
 namespace Universal_Search_Module.Services.SearchHandler {
-    public class LandmarkSearchHandler : SearchHandler<ContinentFloorRegionMapPoi> {
+    public class LandmarkSearchHandler : SearchHandler<Landmark> {
         private readonly Gw2ApiManager _gw2ApiManager;
-        private readonly HashSet<ContinentFloorRegionMapPoi> _landmarks = new HashSet<ContinentFloorRegionMapPoi>();
+        private readonly HashSet<Landmark> _landmarks = new HashSet<Landmark>();
 
         public override string Name => "Landmarks";
 
@@ -19,7 +19,7 @@ namespace Universal_Search_Module.Services.SearchHandler {
             _gw2ApiManager = gw2ApiManager;
         }
 
-        protected override HashSet<ContinentFloorRegionMapPoi> SearchItems => _landmarks;
+        protected override HashSet<Landmark> SearchItems => _landmarks;
 
         public override async Task Initialize(Action<string> progress) {
             // Continent 1 = Tyria
@@ -32,17 +32,39 @@ namespace Universal_Search_Module.Services.SearchHandler {
                 var floor = await _gw2ApiManager.Gw2ApiClient.V2.Continents[1].Floors[floorId].GetAsync();
                 foreach (var regionPair in floor.Regions) {
                     foreach (var mapPair in regionPair.Value.Maps) {
-                        _landmarks.UnionWith(mapPair.Value.PointsOfInterest.Values.Where(landmark => landmark.Name != null));
+                        foreach (var landmark in mapPair.Value.PointsOfInterest.Values.Where(landmark => landmark.Name != null).Select(x => new Landmark() { PointOfInterest = x, Map = mapPair.Value })) {
+                            var existingLandmark = _landmarks.FirstOrDefault(x => x.PointOfInterest.ChatLink == landmark.PointOfInterest.ChatLink);
+                            if (existingLandmark == null) {
+                                _landmarks.Add(landmark);
+                            } else {
+                                if(!existingLandmark.Map.PointsOfInterest.Any(x => x.Value.Type.ToEnum() == PoiType.Waypoint) && landmark.Map.PointsOfInterest.Any(x => x.Value.Type.ToEnum() == PoiType.Waypoint)) {
+                                    _landmarks.Remove(existingLandmark);
+                                    _landmarks.Add(landmark);
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
 
-        protected override SearchResultItem CreateSearchResultItem(ContinentFloorRegionMapPoi item)
-            => new LandmarkSearchResultItem() { Landmark = item };
+        protected override SearchResultItem CreateSearchResultItem(Landmark item) {
+            var possibleWaypoints = _landmarks.Where(x => x.Map == item.Map && x.PointOfInterest.Type.ToEnum() == PoiType.Waypoint);
+            // For the case where a landmark exists only in an instance where no waypoint is, just take the closest waypoint from all waypoints
+            if (!possibleWaypoints.Any()) {
+                possibleWaypoints = _landmarks.Where(x => x.PointOfInterest.Type.ToEnum() == PoiType.Waypoint);
+            }
+            return new LandmarkSearchResultItem(possibleWaypoints) { Landmark = item };
+        }
 
-        protected override string GetSearchableProperty(ContinentFloorRegionMapPoi item)
-            => item.Name;
+        protected override string GetSearchableProperty(Landmark item)
+            => item.PointOfInterest.Name;
+    }
+
+    public class Landmark {
+        public ContinentFloorRegionMapPoi PointOfInterest { get; set; }
+
+        public ContinentFloorRegionMap Map { get; set; }
     }
 
 }
