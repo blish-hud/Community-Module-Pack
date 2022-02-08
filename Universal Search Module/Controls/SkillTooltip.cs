@@ -1,6 +1,7 @@
 ﻿using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
+using Gw2Sharp;
 using Gw2Sharp.WebApi.V2.Models;
 using Microsoft.Xna.Framework;
 using System.Linq;
@@ -80,11 +81,15 @@ namespace Universal_Search_Module.Controls {
             }
 
             if (skill.Professions.Contains("Revenant") && skill.Cost != null) {
-                CreateEnergyDisplay(lastTopRightCornerControl);
+                lastTopRightCornerControl = CreateEnergyDisplay(lastTopRightCornerControl);
             }
 
             if (skill.Professions.Contains("Thief") && skill.Initiative != null) {
-                CreateInitiativeDisplay(lastTopRightCornerControl);
+                lastTopRightCornerControl = CreateInitiativeDisplay(lastTopRightCornerControl);
+            }
+
+            if(skill.Flags.ToArray().FirstOrDefault(x => x.ToEnum() == SkillFlag.NoUnderwater) != null) { 
+                lastTopRightCornerControl = CreateNonUnderwaterDisplay(lastTopRightCornerControl);
             }
         }
 
@@ -196,7 +201,7 @@ namespace Universal_Search_Module.Controls {
             return cooldownText;
         }
 
-        private void CreateInitiativeDisplay(Control lastControl) {
+        private Control CreateInitiativeDisplay(Control lastControl) {
             var initiativeImage = new Image() {
                 Texture = UniversalSearchModule.ModuleInstance.ContentsManager.GetTexture(@"textures\156649.png"),
                 Visible = true,
@@ -210,16 +215,17 @@ namespace Universal_Search_Module.Controls {
                 initiativeImage.Location = new Point(lastControl.Left - initiativeImage.Width - 5, 0);
             }
 
-            var cooldownText = new Label() {
+            var initiativeText = new Label() {
                 Text = _skill.Initiative.ToString(),
                 AutoSizeWidth = true,
                 AutoSizeHeight = true,
                 Parent = this,
             };
-            cooldownText.Location = new Point(initiativeImage.Left - cooldownText.Width - 2, 0);
+            initiativeText.Location = new Point(initiativeImage.Left - initiativeText.Width - 2, 0);
+            return initiativeText;
         }
 
-        private void CreateEnergyDisplay(Control lastControl) {
+        private Control CreateEnergyDisplay(Control lastControl) {
             var energyImage = new Image() {
                 Texture = UniversalSearchModule.ModuleInstance.ContentsManager.GetTexture(@"textures\156647.png"),
                 Visible = true,
@@ -233,13 +239,31 @@ namespace Universal_Search_Module.Controls {
                 energyImage.Location = new Point(lastControl.Left - energyImage.Width - 5, 0);
             }
 
-            var cooldownText = new Label() {
+            var energyText = new Label() {
                 Text = _skill.Cost.ToString(),
                 AutoSizeWidth = true,
                 AutoSizeHeight = true,
                 Parent = this,
             };
-            cooldownText.Location = new Point(energyImage.Left - cooldownText.Width - 2, 0);
+            energyText.Location = new Point(energyImage.Left - energyText.Width - 2, 0);
+            return energyText;
+        }
+
+        private Control CreateNonUnderwaterDisplay(Control lastControl) {
+            var underwaterImage = new Image() {
+                Texture = UniversalSearchModule.ModuleInstance.ContentsManager.GetTexture(@"textures\358417.png"),
+                Visible = true,
+                Size = new Point(16, 16),
+                Parent = this,
+            };
+
+            if (lastControl == null) {
+                underwaterImage.Location = new Point(Width - underwaterImage.Width, 1);
+            } else {
+                underwaterImage.Location = new Point(lastControl.Left - underwaterImage.Width - 5, 0);
+            }
+
+            return underwaterImage;
         }
     }
 }
