@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Blish_HUD.Modules.Managers;
 using Gw2Sharp.WebApi.V2.Models;
 using Universal_Search_Module.Controls.SearchResultItems;
+using Universal_Search_Module.Models;
 
 namespace Universal_Search_Module.Services.SearchHandler {
     public class LandmarkSearchHandler : SearchHandler<Landmark> {
@@ -60,11 +61,4 @@ namespace Universal_Search_Module.Services.SearchHandler {
         protected override string GetSearchableProperty(Landmark item)
             => item.PointOfInterest.Name;
     }
-
-    public class Landmark {
-        public ContinentFloorRegionMapPoi PointOfInterest { get; set; }
-
-        public ContinentFloorRegionMap Map { get; set; }
-    }
-
 }

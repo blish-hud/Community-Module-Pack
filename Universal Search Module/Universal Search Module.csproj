@@ -59,6 +59,8 @@
     <Compile Include="Controls\SearchResultItems\SearchResultItem.cs" />
     <Compile Include="Controls\TraitTooltip.cs" />
     <Compile Include="Controls\SkillTooltip.cs" />
+    <Compile Include="LabelUtil.cs" />
+    <Compile Include="Models\Landmark.cs" />
     <Compile Include="Services\SearchHandler\TraitSearchHandler.cs" />
     <Compile Include="Services\SearchHandler\WordScoreResult.cs" />
     <Compile Include="Services\SearchHandler\LandmarkSearchHandler.cs" />

@@ -52,13 +52,7 @@ namespace Universal_Search_Module.Controls {
                 Parent = this,
             };
 
-            // Poor mans max width implementation
-            if (skillDescription.Width > MAX_WIDTH) {
-                skillDescription.AutoSizeWidth = false;
-                skillDescription.Width = MAX_WIDTH;
-                skillDescription.WrapText = true;
-                skillDescription.RecalculateLayout();
-            }
+            LabelUtil.HandleMaxWidth(skillDescription, MAX_WIDTH);
 
             Control lastFact = skillDescription;
             Control lastTopRightCornerControl = null;
@@ -123,15 +117,15 @@ namespace Universal_Search_Module.Controls {
                 Parent = this,
             };
 
-            // Poor mans max width solution and vertical alignment of an image
-            if (factDescription.Width > MAX_WIDTH) {
-                factDescription.AutoSizeWidth = false;
-                factDescription.Width = MAX_WIDTH;
-                factDescription.WrapText = true;
-                factDescription.AutoSizeHeight = true;
-                factDescription.RecalculateLayout();
-                factImage.Location = new Point(0, factDescription.Location.Y + ((factDescription.Height / 2) - (factImage.Height / 2)));
-            }
+            LabelUtil.HandleMaxWidth(
+                factDescription, 
+                MAX_WIDTH, 
+                offset: factImage.Width,
+                afterRecalculate: () => {
+                    factDescription.AutoSizeHeight = true;
+                    factDescription.RecalculateLayout();
+                    factImage.Location = new Point(0, factDescription.Location.Y + ((factDescription.Height / 2) - (factImage.Height / 2)));
+                });
 
             return factDescription;
         }

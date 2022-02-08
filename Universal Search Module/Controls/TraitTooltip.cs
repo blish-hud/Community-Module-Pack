@@ -31,13 +31,7 @@ namespace Universal_Search_Module.Controls {
                 Parent = this,
             };
 
-            // Poor mans max width implementation
-            if (traitDescription.Width > MAX_WIDTH) {
-                traitDescription.AutoSizeWidth = false;
-                traitDescription.Width = MAX_WIDTH;
-                traitDescription.WrapText = true;
-                traitDescription.RecalculateLayout();
-            }
+            LabelUtil.HandleMaxWidth(traitDescription, MAX_WIDTH);
 
             Control lastFact = traitDescription;
             if (_trait.Facts != null) {
@@ -57,36 +51,6 @@ namespace Universal_Search_Module.Controls {
                     CreateRechargeFact(rechargeFact);
                 }
             }
-
-
-            // TODO: Find a way to mimic the behaviour in gw2 with multiple tooltips
-            //if (_trait.Skills != null) {
-            //    Tooltip lastToolTip = this;
-
-            //    foreach (var skill in _trait.Skills) {
-                    
-            //        var tooltip = new SkillTooltip(ConvertSkill(skill));
-            //        lastToolTip.Tooltip = tooltip;
-            //        tooltip.Show(AbsoluteBounds.Location + new Point(lastToolTip.Width + 10, 0));
-            //        lastToolTip = tooltip;
-            //    }
-            //}
-        }
-
-        
-
-        private Skill ConvertSkill(TraitSkill skill) {
-            return new Skill() {
-                Id = skill.Id,
-                Name = skill.Name,
-                Description = skill.Description,
-                Icon = skill.Icon,
-                ChatLink = skill.ChatLink,
-                Flags = skill.Flags,
-                Facts = skill.Facts,
-                TraitedFacts = skill.TraitedFacts,
-                Categories = skill.Categories,
-            };
         }
 
         private Control CreateFact(TraitFact fact, Control lastFact) {
@@ -119,15 +83,15 @@ namespace Universal_Search_Module.Controls {
                 Parent = this,
             };
 
-            // Poor mans max width solution and vertical alignment of an image
-            if (factDescription.Width > MAX_WIDTH - factImage.Width) {
-                factDescription.AutoSizeWidth = false;
-                factDescription.Width = MAX_WIDTH - factImage.Width;
-                factDescription.WrapText = true;
-                factDescription.AutoSizeHeight = true;
-                factDescription.RecalculateLayout();
-                factImage.Location = new Point(0, factDescription.Location.Y + ((factDescription.Height / 2) - (factImage.Height / 2)));
-            }
+            LabelUtil.HandleMaxWidth(
+                factDescription,
+                MAX_WIDTH,
+                factImage.Width,
+                () => {
+                    factDescription.AutoSizeHeight = true;
+                    factDescription.RecalculateLayout();
+                    factImage.Location = new Point(0, factDescription.Location.Y + ((factDescription.Height / 2) - (factImage.Height / 2)));
+                });
 
             return factDescription;
         }

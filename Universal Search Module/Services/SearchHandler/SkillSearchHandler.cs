@@ -33,5 +33,4 @@ namespace Universal_Search_Module.Services.SearchHandler {
         protected override string GetSearchableProperty(Skill item)
             => item.Name;
     }
-
 }

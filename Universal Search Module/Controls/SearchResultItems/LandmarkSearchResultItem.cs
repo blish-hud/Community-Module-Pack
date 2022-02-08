@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Universal_Search_Module.Models;
 using Universal_Search_Module.Services.SearchHandler;
 using Color = Microsoft.Xna.Framework.Color;
 
