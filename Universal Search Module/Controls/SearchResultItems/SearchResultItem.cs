@@ -53,6 +53,7 @@ namespace Universal_Search_Module.Controls.SearchResultItems {
         protected override void OnClick(MouseEventArgs e) {
             Task.Run(async () => {
                 await ClickAction();
+                await AfterClickAction();
             });
 
             base.OnClick(e);
@@ -74,6 +75,12 @@ namespace Universal_Search_Module.Controls.SearchResultItems {
                 }
             }
 
+        }
+
+        protected virtual async Task AfterClickAction() {
+            if (UniversalSearchModule.ModuleInstance.SettingEnterSelectionIntoChatAutomatically.Value) {
+                GameService.GameIntegration.Chat.Send(await ClipboardUtil.WindowsClipboardService.GetTextAsync());
+            }
         }
 
         protected virtual Tooltip BuildTooltip()
