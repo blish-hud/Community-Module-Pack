@@ -18,7 +18,7 @@ namespace Universal_Search_Module.Controls.SearchResultItems {
         private const string WAYPOINT_FILE = "https://render.guildwars2.com/file/32633AF8ADEA696A1EF56D3AE32D617B10D3AC57/157353.png";
         private const string VISTA_FILE = "https://render.guildwars2.com/file/A2C16AF497BA3A0903A0499FFBAF531477566F10/358415.png";
         private readonly IEnumerable<Landmark> _waypoints;
-
+        
         protected override string ChatLink => Landmark?.PointOfInterest.ChatLink;
 
         private Landmark _landmark;
@@ -80,7 +80,7 @@ namespace Universal_Search_Module.Controls.SearchResultItems {
             };
 
             var detailsClosestWaypoint = new Label() {
-                Text = "none found",
+                Text = ClosestWaypoint().PointOfInterest.Name,
                 Font = Content.DefaultFont14,
                 Location = new Point(10, detailsClosestWaypointTitle.Bottom + 5),
                 TextColor = Color.White,
