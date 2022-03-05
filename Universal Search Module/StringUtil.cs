@@ -32,5 +32,16 @@ namespace Universal_Search_Module {
             return d[n, m];
         }
 
+        public static string SanitizeTraitDescription(string description) {
+                var indexOfClosingBracket = description.IndexOf('>');
+
+                while (indexOfClosingBracket != -1) {
+                    description = description.Remove(description.IndexOf('<'), indexOfClosingBracket - description.IndexOf('<') + 1);
+                    indexOfClosingBracket = description.IndexOf('>');
+                }
+
+                return description;
+        }
+
     }
 }

@@ -52,9 +52,27 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Controls\SearchResultItems\LandmarkSearchResultItem.cs" />
+    <Compile Include="Controls\SearchResultItems\SkillSearchResultItem.cs" />
+    <Compile Include="Controls\SearchResultItems\TraitSearchResultItem.cs" />
     <Compile Include="Controls\SearchWindow.cs" />
-    <Compile Include="Controls\SearchResultItem.cs" />
+    <Compile Include="Controls\SearchResultItems\SearchResultItem.cs" />
+    <Compile Include="Controls\TraitTooltip.cs" />
+    <Compile Include="Controls\SkillTooltip.cs" />
+    <Compile Include="LabelUtil.cs" />
+    <Compile Include="Models\Landmark.cs" />
+    <Compile Include="Services\SearchHandler\TraitSearchHandler.cs" />
+    <Compile Include="Services\SearchHandler\WordScoreResult.cs" />
+    <Compile Include="Services\SearchHandler\LandmarkSearchHandler.cs" />
     <Compile Include="LandmarkUtil.cs" />
+    <Compile Include="Services\SearchHandler\SearchHandler.cs" />
+    <Compile Include="Services\SearchHandler\SearchHandler{T}.cs" />
+    <Compile Include="Services\SearchHandler\SkillSearchHandler.cs" />
+    <Compile Include="Strings\Common.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Common.resx</DependentUpon>
+    </Compile>
     <Compile Include="StringUtil.cs" />
     <Compile Include="UniversalSearchModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -69,6 +87,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Strings\Common.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Common.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="manifest.json">
