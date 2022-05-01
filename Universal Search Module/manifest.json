@@ -1,6 +1,6 @@
 {
   "name": "Universal Search",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "namespace": "bh.general.universalsearch",
   "package": "Universal Search Module.dll",
   "manifest_version": 1,

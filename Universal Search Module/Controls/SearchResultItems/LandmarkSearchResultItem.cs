@@ -79,8 +79,10 @@ namespace Universal_Search_Module.Controls.SearchResultItems {
                 Parent = tooltip,
             };
 
+            var closestWaypont = ClosestWaypoint();
+
             var detailsClosestWaypoint = new Label() {
-                Text = ClosestWaypoint().PointOfInterest.Name,
+                Text = closestWaypont.Map.Name + ": " + closestWaypont.PointOfInterest.Name,
                 Font = Content.DefaultFont14,
                 Location = new Point(10, detailsClosestWaypointTitle.Bottom + 5),
                 TextColor = Color.White,
