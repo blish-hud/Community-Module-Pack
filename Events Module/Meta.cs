@@ -179,11 +179,12 @@ namespace Events_Module {
                     uniqueEvents.Add(meta);
                 }
 
-                if (!string.IsNullOrEmpty(meta._wikiEn)) {
-                    var pageEn = new Uri(meta._wikiEn).Segments.Last();
-                    var task = GetInterwikiLinks(pageEn).ContinueWith(async v => meta._wikiLinks = await v);
-                    wikiTasks.Add(task);
-                }
+                // TODO: Disabled - blocked by wiki and we should likely prequery this info and host it statically somewhere.
+                //if (!string.IsNullOrEmpty(meta._wikiEn)) {
+                //    var pageEn = new Uri(meta._wikiEn).Segments.Last();
+                //    var task = GetInterwikiLinks(pageEn).ContinueWith(async v => meta._wikiLinks = await v);
+                //    wikiTasks.Add(task);
+                //}
             }
 
             await Task.WhenAll(wikiTasks.ToArray());
@@ -209,7 +210,7 @@ namespace Events_Module {
                           formatversion = 2,
                           llprop = "url"
                       });
-            var json = await url.GetJsonAsync();
+            var json = await url.WithHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36 Edg/103.0.1264.49").GetJsonAsync();
             var wikiPage = json.query.pages[0];
             if (((IDictionary<string, object>)wikiPage).ContainsKey("langlinks")) {
                 var links = new Dictionary<string, string>();
