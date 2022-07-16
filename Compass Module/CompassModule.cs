@@ -21,6 +21,7 @@ namespace Compass_Module {
         private SettingEntry<float> _settingCompassSize;
         private SettingEntry<float> _settingCompassRadius;
         private SettingEntry<float> _settingVerticalOffset;
+        private SettingEntry<bool>  _settingFadeForwardDirection;
 
         private CompassBillboard _northBb;
         private CompassBillboard _eastBb;
@@ -35,9 +36,10 @@ namespace Compass_Module {
         private const float VERTICALOFFSET_MIDDLE = 2.5f;
 
         protected override void DefineSettings(SettingCollection settings) {
-            _settingCompassSize    = settings.DefineSetting("CompassSize",    0.5f, "Compass Size",    "Size of the compass elements.");
-            _settingCompassRadius  = settings.DefineSetting("CompassRadius",  0f,   "Compass Radius",  "Radius of the compass.");
-            _settingVerticalOffset = settings.DefineSetting("VerticalOffset", VERTICALOFFSET_MIDDLE,   "Vertical Offset", "How high to offset the compass off the ground.");
+            _settingCompassSize          = settings.DefineSetting("CompassSize",          0.5f,                  () => "Compass Size",           () => "Size of the compass elements.");
+            _settingCompassRadius        = settings.DefineSetting("CompassRadius",        0f,                    () => "Compass Radius",         () => "Radius of the compass.");
+            _settingVerticalOffset       = settings.DefineSetting("VerticalOffset",       VERTICALOFFSET_MIDDLE, () => "Vertical Offset",        () => "How high to offset the compass off the ground.");
+            _settingFadeForwardDirection = settings.DefineSetting("FadeForwardDirection", true,                  () => "Fade Forward Direction", () => "If enabled, the direction in front of the character is faded out.");
 
             _settingCompassSize.SetRange(0.1f, 2f);
             _settingCompassRadius.SetRange(0f, 4f);
@@ -83,10 +85,17 @@ namespace Compass_Module {
         }
 
         private void UpdateBillboardOpacity() {
-            _northBb.Opacity = Math.Min(1 - GameService.Gw2Mumble.PlayerCamera.Forward.Y, 1f);
-            _eastBb.Opacity  = Math.Min(1 - GameService.Gw2Mumble.PlayerCamera.Forward.X, 1f);
-            _southBb.Opacity = Math.Min(1 + GameService.Gw2Mumble.PlayerCamera.Forward.Y, 1f);
-            _westBb.Opacity  = Math.Min(1 + GameService.Gw2Mumble.PlayerCamera.Forward.X, 1f);
+            if (_settingFadeForwardDirection.Value) {
+                _northBb.Opacity = Math.Min(1 - GameService.Gw2Mumble.PlayerCamera.Forward.Y, 1f);
+                _eastBb.Opacity  = Math.Min(1 - GameService.Gw2Mumble.PlayerCamera.Forward.X, 1f);
+                _southBb.Opacity = Math.Min(1 + GameService.Gw2Mumble.PlayerCamera.Forward.Y, 1f);
+                _westBb.Opacity  = Math.Min(1 + GameService.Gw2Mumble.PlayerCamera.Forward.X, 1f);
+            } else {
+                _northBb.Opacity = 1f;
+                _eastBb.Opacity  = 1f;
+                _southBb.Opacity = 1f;
+                _westBb.Opacity  = 1f;
+            }
         }
 
         /// <inheritdoc />
