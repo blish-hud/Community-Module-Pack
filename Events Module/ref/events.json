@@ -1018,5 +1018,70 @@
     "duration": "8",
     "alert": 5,
     "icon": "742201F5EB421D0F9216AA6E9FD095FDA3512798/2604528"
+  },
+  {
+    "name": "Skiff Race",
+    "offset": "00:00Z",
+    "repeat": "02:00",
+    "difficulty": "",
+    "category": "Group Event",
+    "location": "Labyrinthine Cliffs",
+    "waypoint": "[&BBwHAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/Labyrinthine_Skiffs:_A_race_is_starting_soon!",
+    "duration": "8",
+    "alert": 5,
+    "icon": "9BED5B1BC4DC043E72CA9A6F07704D4EF875655E/2015706"
+  },
+  {
+    "name": "Treasure Hunt",
+    "offset": "00:30Z",
+    "repeat": "02:00",
+    "difficulty": "",
+    "category": "Group Event",
+    "location": "Labyrinthine Cliffs",
+    "waypoint": "[&BBwHAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/Participate_in_the_treasure_hunt!",
+    "duration": "30",
+    "alert": 5,
+    "icon": "9BED5B1BC4DC043E72CA9A6F07704D4EF875655E/2015706"
+  },
+  {
+    "name": "Skimmer Race",
+    "offset": "01:15Z",
+    "repeat": "02:00",
+    "difficulty": "",
+    "category": "Group Event",
+    "location": "Labyrinthine Cliffs",
+    "waypoint": "[&BBwHAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/Skimmer_Slalom:_Reach_the_finish_line!",
+    "duration": "10",
+    "alert": 5,
+    "icon": "9BED5B1BC4DC043E72CA9A6F07704D4EF875655E/2015706"
+  },
+  {
+    "name": "Fishing Tournament",
+    "offset": "01:30Z",
+    "repeat": "02:00",
+    "difficulty": "",
+    "category": "Group Event",
+    "location": "Labyrinthine Cliffs",
+    "waypoint": "[&BBwHAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/Fishing_Tournament_Sign-Up",
+    "duration": "10",
+    "alert": 5,
+    "icon": "9BED5B1BC4DC043E72CA9A6F07704D4EF875655E/2015706"
+  },
+  {
+    "name": "Dolyak Race",
+    "offset": "01:45Z",
+    "repeat": "02:00",
+    "difficulty": "",
+    "category": "Group Event",
+    "location": "Labyrinthine Cliffs",
+    "waypoint": "[&BBwHAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/Flying_Dolyak:_Reach_the_finish_line!",
+    "duration": "10",
+    "alert": 5,
+    "icon": "9BED5B1BC4DC043E72CA9A6F07704D4EF875655E/2015706"
   }
 ]
