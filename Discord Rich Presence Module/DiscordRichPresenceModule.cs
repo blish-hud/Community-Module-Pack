@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Modules;
@@ -15,7 +16,7 @@ namespace Discord_Rich_Presence_Module {
     [Export(typeof(Module))]
     public class DiscordRichPresenceModule : Module {
 
-        private static readonly Logger Logger = Logger.GetLogger(typeof(DiscordRichPresenceModule));
+        internal static readonly Logger Logger = Logger.GetLogger(typeof(DiscordRichPresenceModule));
 
         internal static DiscordRichPresenceModule ModuleInstance;
 
@@ -26,7 +27,7 @@ namespace Discord_Rich_Presence_Module {
         internal Gw2ApiManager      Gw2ApiManager      => this.ModuleParameters.Gw2ApiManager;
 
         private const string DISCORD_APP_ID = "498585183792922677";
-
+        private const string MAPS_TABLE_URL = "https://raw.githubusercontent.com/OpNop/GW2-RPC-Resources/main/maps.jsonc";
         private enum MapType {
             PvP                   = 2,
             Instance              = 4,
@@ -40,19 +41,9 @@ namespace Discord_Rich_Presence_Module {
             Armistice_Bastion     = 18
         }
 
-        private readonly Dictionary<string, string> _mapOverrides = new Dictionary<string, string>() {
-            { "1206", "fractals_of_the_mists" }, // Mistlock Sanctuary
-            { "350",  "fractals_of_the_mists" }, // Heart of the Mists
-            { "95",   "eternal_battlegrounds" }, // Alpine Borderlands
-            { "96",   "eternal_battlegrounds" }, // Alpine Borderlands
-        };
-
-        private readonly Dictionary<int, string> _contextOverrides = new Dictionary<int, string>() {
-
-        };
-
         private DiscordRpcClient _rpcClient;
         private DateTime         _startTime;
+        private Dictionary<string, int> _mapsTable;
 
         [ImportingConstructor]
         public DiscordRichPresenceModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) {
@@ -63,9 +54,15 @@ namespace Discord_Rich_Presence_Module {
             //settings.DefineSetting("HideInWvW", false, "Hide Detailed Location while in WvW", "Prevents people on Discord from being able to see closest landmark details while you're in WvW.");
         }
 
-        protected override void Initialize() { /* NOOP */ }
+        protected override void Initialize()
+        {
+            _mapsTable = new Dictionary<string, int>();
+        }
 
-        protected override async Task LoadAsync() {
+        protected override async Task LoadAsync()
+        {
+            await DownloadMapsTable();
+
             // Update character name
             GameService.Gw2Mumble.PlayerCharacter.NameChanged += delegate { CurrentMapOnMapChanged(null, new ValueEventArgs<int>(GameService.Gw2Mumble.CurrentMap.Id)); };
 
@@ -89,23 +86,38 @@ namespace Discord_Rich_Presence_Module {
                                            if (!mapTask.IsFaulted && mapTask.Result != null) {
                                                UpdateDetails(mapTask.Result);
                                            }
-                                       });
+                         });
         }
 
         private void UpdateDetails(Map map) {
             if (map.Id <= 0) return;
+
+            var id = _mapsTable.TryGetValue(map.GetHash(), out var publicId) ? publicId : map.Id;
+
+            var location = map.Name;
+
+            // Some instanced maps consist of just a single sector and hide their display name in it.
+            if (map.Name.Equals(map.RegionName, StringComparison.InvariantCultureIgnoreCase))
+            {
+                var defaultSector = RequestSectors(map.ContinentId, map.DefaultFloor, map.RegionId, map.Id)
+                                        .ContinueWith(sectorTask =>
+                                        {
+                                            if (sectorTask.IsFaulted || sectorTask.Result == null || sectorTask.Result.Count() > 1) return null;
+                                            return sectorTask.Result.FirstOrDefault();
+                                        }).Result;
+                if (defaultSector != null && !string.IsNullOrEmpty(defaultSector.Name))
+                    location = defaultSector.Name.Replace("<br>", " ");
+            }
 
             // rpcClient *shouldn't* be null at this point unless a rare race condition occurs
             // In the event that this occurs, it'll be resolved by the next loop
             _rpcClient?.SetPresence(new RichPresence() {
                 // Truncate length (requirements: https://discordapp.com/developers/docs/rich-presence/how-to)
                 Details = DiscordUtil.TruncateLength(GameService.Gw2Mumble.PlayerCharacter.Name, 128),
-                State   = DiscordUtil.TruncateLength($"in {map.Name}", 128),
+                State   = DiscordUtil.TruncateLength($"in {location}", 128),
                 Assets = new Assets() {
-                    LargeImageKey = DiscordUtil.TruncateLength(_mapOverrides.ContainsKey(map.Id.ToString())
-                                                                   ? _mapOverrides[map.Id.ToString()]
-                                                                   : DiscordUtil.GetDiscordSafeString(map.Name), 32),
-                    LargeImageText = DiscordUtil.TruncateLength(map.Name,                                                128),
+                    LargeImageKey = DiscordUtil.TruncateLength($"map_{id}", 32),
+                    LargeImageText = DiscordUtil.TruncateLength(location,                                                128),
                     SmallImageKey  = DiscordUtil.TruncateLength(((MapType)map.Type.Value).ToString().ToLowerInvariant(), 32),
                     SmallImageText = DiscordUtil.TruncateLength(((MapType)map.Type.Value).ToString().Replace("_", " "),  128)
                 },
@@ -135,6 +147,23 @@ namespace Discord_Rich_Presence_Module {
             // Disposing _rpcClient also clears presence
             _rpcClient?.Dispose();
             _rpcClient = null;
+        }
+
+        private async Task DownloadMapsTable()
+        {
+            var response = await TaskUtil.GetJsonResponse<Dictionary<string, int>>(MAPS_TABLE_URL);
+            if (!response.Item1) return;
+            _mapsTable = response.Item2;
+        }
+
+        private async Task<IEnumerable<ContinentFloorRegionMapSector>> RequestSectors(int continentId, int floor, int regionId, int mapId)
+        {
+            return await Gw2ApiManager.Gw2ApiClient.V2.Continents[continentId].Floors[floor].Regions[regionId].Maps[mapId].Sectors.AllAsync()
+                    .ContinueWith(sectorTask =>
+                    {
+                        if (sectorTask.IsFaulted || sectorTask.Result == null) return Enumerable.Empty<ContinentFloorRegionMapSector>();
+                        return sectorTask.Result;
+                    });
         }
 
         protected override void Update(GameTime gameTime) { /* NOOP */ }
