@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Events_Module {
-    public class NotificationMover : Control, IWindow {
+    public class NotificationMover : Control {
 
         // This is all very kludgy.  I wouldn't use it as a reference for anything.
 
@@ -26,8 +26,6 @@ namespace Events_Module {
         public NotificationMover(params ScreenRegion[] screenPositions) : this(screenPositions.ToList()) { /* NOOP */ }
 
         public NotificationMover(IEnumerable<ScreenRegion> screenPositions) {
-            WindowBase2.RegisterWindow(this);
-
             this.ZIndex = int.MaxValue - 10;
 
             _clearDrawParameters = new SpriteBatchParameters(SpriteSortMode.Deferred, BlendState.Opaque);
@@ -43,6 +41,14 @@ namespace Events_Module {
             }
 
             _grabPosition = this.RelativeMousePosition;
+        }
+
+        public override void DoUpdate(GameTime gameTime) {
+            base.DoUpdate(gameTime);
+
+            if (GameService.Input.Keyboard.KeysDown.Contains(Microsoft.Xna.Framework.Input.Keys.Escape)) {
+                this.Dispose();
+            }
         }
 
         protected override void OnLeftMouseButtonReleased(MouseEventArgs e) {
@@ -100,20 +106,6 @@ namespace Events_Module {
             }
 
             spriteBatch.DrawStringOnCtrl(this, "Press ESC to close.", GameService.Content.DefaultFont32, bounds, Color.White, false, HorizontalAlignment.Center);
-        }
-
-        public override void Hide() {
-            this.Dispose();
-        }
-
-        public void BringWindowToFront() { /* NOOP */ }
-
-        public bool   TopMost         => true;
-        public double LastInteraction { get; }
-        public bool   CanClose        => true;
-
-        protected override void DisposeControl() {
-            WindowBase2.UnregisterWindow(this);
         }
 
     }

@@ -182,7 +182,7 @@ namespace Events_Module {
                 eventPanel.FilterChildren<DetailsButton>(db => db.Text.ToLower().Contains(searchBox.Text.ToLower()));
             };
 
-            eventPanel.SuspendLayout();
+            //eventPanel.SuspendLayout();
 
             foreach (var meta in Meta.Events) {
                 var setting = _watchCollection.DefineSetting(@"watchEvent:" + meta.Name, true);
@@ -249,7 +249,7 @@ namespace Events_Module {
                     };
                 }
 
-                eventPanel.ResumeLayout();
+                //eventPanel.ResumeLayout(true);
 
                 var toggleFollowBttn = new GlowButton() {
                     Icon             = _textureWatch,
