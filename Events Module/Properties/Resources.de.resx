@@ -164,7 +164,7 @@
   </data>
   <data name="Starts in {0}" xml:space="preserve">
     <value>Startet in {0}</value>
-    <comment>{0} ist die Zeit</comment>
+    <comment>{0} is time</comment>
   </data>
   <data name="Upcoming Event Times:" xml:space="preserve">
     <value>Kommende Events:</value>
@@ -213,7 +213,7 @@ Rechtsklick zum abbrechen.</value>
     <value>Ley-Linien-Anomalie (Baumgrenzen-Fälle)</value>
     <comment>Event name</comment>
   </data>
-  <data name="Ley-Linien-Anomalie (Iron Marches)" xml:space="preserve">
+  <data name="Ley-Line Anomaly (Iron Marches)" xml:space="preserve">
     <value>Ley-Linien-Anomalie (Eisenmark)</value>
     <comment>Event name</comment>
   </data>
