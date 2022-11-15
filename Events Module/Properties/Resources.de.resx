@@ -171,7 +171,7 @@
   </data>
   <data name="Notification_Tooltip" xml:space="preserve">
     <value>Linksklick um den Wegpunkt zu kopieren.
-Rechtsklick zum abbrechen.</value>
+Rechtsklick zum ausblenden.</value>
   </data>
   <data name="Failed to load metas from events.json!" xml:space="preserve">
     <value>Metas konnten nicht aus der events.json geladen werden!</value>
@@ -206,7 +206,7 @@ Rechtsklick zum abbrechen.</value>
     <comment>Event category</comment>
   </data>
   <data name="Group Event" xml:space="preserve">
-    <value>Gruppenevent</value>
+    <value>Gruppenevents</value>
     <comment>Event category</comment>
   </data>
   <data name="Ley-Line Anomaly (Timberline Falls)" xml:space="preserve">
@@ -282,7 +282,7 @@ Rechtsklick zum abbrechen.</value>
     <comment>Event name</comment>
   </data>
   <data name="Meta Event" xml:space="preserve">
-    <value>Meta Event</value>
+    <value>Meta Events</value>
     <comment>Event category</comment>
   </data>
   <data name="Crash Site" xml:space="preserve">
