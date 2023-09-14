@@ -1083,5 +1083,31 @@
     "duration": "10",
     "alert": 5,
     "icon": "9BED5B1BC4DC043E72CA9A6F07704D4EF875655E/2015706"
+  },
+  {
+    "name": "Unlocking the Wizard's Tower",
+    "offset": "01:00Z",
+    "repeat": "02:00",
+    "difficulty": "",
+    "category": "Meta Event",
+    "location": "Skywatch Archipelago",
+    "waypoint": "[&BL4NAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/Unlocking_the_Wizard's_Tower",
+    "duration": "25",
+    "alert": 10,
+    "icon": "36F60153BA5DAB722F7BE657B110950D2B524B7D/3124846"
+  },
+  {
+    "name": "The Defense of Amnytas",
+    "offset": "00:00Z",
+    "repeat": "02:00",
+    "difficulty": "",
+    "category": "Meta Event",
+    "location": "Amnytas",
+    "waypoint": "[&BDQOAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/The_Defense_of_Amnytas",
+    "duration": "25",
+    "alert": 10,
+    "icon": "0339A231A4973455D69AD7DCF222F50C1148206E/3124847"
   }
 ]
