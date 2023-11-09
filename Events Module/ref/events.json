@@ -1109,5 +1109,18 @@
     "duration": "25",
     "alert": 10,
     "icon": "0339A231A4973455D69AD7DCF222F50C1148206E/3124847"
+  },
+  {
+    "name": "Convergences (Public)",
+    "offset": "01:30Z",
+    "repeat": "03:00",
+    "difficulty": "",
+    "category": "The Wizard's Tower",
+    "location": "The Wizard's Tower",
+    "waypoint": "[&BB8OAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/Convergences",
+    "duration": "10",
+    "alert": 10,
+    "icon": "49B0902552EFD9E9A0A11C027CA3BBE3507C266B/3124849"
   }
 ]
