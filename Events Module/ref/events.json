@@ -1135,5 +1135,18 @@
     "duration": "25",
     "alert": 10,
     "icon": "A629624F2D3E3679B3E5040D4C67EBCE59C13770/3378968"
+  },
+  {
+    "name": "Convergence: Mount Balrior",
+    "offset": "00:00Z",
+    "repeat": "03:00",
+    "difficulty": "",
+    "category": "Mount Balrior",
+    "location": "Mount Balrior",
+    "waypoint": "[&BK4OAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/Convergence:_Mount_Balrior",
+    "duration": "10",
+    "alert": 10,
+    "icon": "3AFE35CB31A40540DF799D589611053506601DDA/3443173"
   }
 ]
