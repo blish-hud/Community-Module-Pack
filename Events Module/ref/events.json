@@ -1148,5 +1148,18 @@
     "duration": "10",
     "alert": 10,
     "icon": "3AFE35CB31A40540DF799D589611053506601DDA/3443173"
+  },
+  {
+    "name": "A Titanic Voyage",
+    "offset": "01:20Z",
+    "repeat": "02:00",
+    "difficulty": "",
+    "category": "Meta Event",
+    "location": "Bava Nisos",
+    "waypoint": "[&BGEPAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/A_Titanic_Voyage",
+    "duration": "25",
+    "alert": 10,
+    "icon": "A629624F2D3E3679B3E5040D4C67EBCE59C13770/3378968"
   }
 ]
