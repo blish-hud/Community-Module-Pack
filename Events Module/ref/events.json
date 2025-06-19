@@ -703,6 +703,7 @@
   },
   {
     "name": "The Path to Ascension",
+    "colloquial": "Doppelganger",
     "offset": "01:30Z",
     "repeat": "02:00",
     "difficulty": "",
@@ -781,6 +782,7 @@
   },
   {
     "name": "Dangerous Prey",
+    "colloquial": "Death-Branded Shatterer",
     "offset": "01:00Z",
     "repeat": "02:00",
     "difficulty": "",
@@ -878,6 +880,7 @@
   },
   {
     "name": "Storms of Winter",
+    "colloquial": "Jora's Keep",
     "offset": "01:45Z",
     "repeat": "02:00",
     "difficulty": "",
@@ -914,6 +917,19 @@
     "duration": "20",
     "alert": 10,
     "icon": "0D5CD907A06D0AD70750505CC49AB149DABAEFE7/710687"
+  },
+  {
+    "name": "Battle For Lion's Arch (Public)",
+    "offset": "00:30Z",
+    "repeat": "02:00",
+    "difficulty": "",
+    "category": "Eye of the North",
+    "location": "Eye of the North",
+    "waypoint": "[&BAkMAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/The_Battle_For_Lion's_Arch",
+    "duration": "15",
+    "alert": 10,
+    "icon": "044069E479AC34FDB2C398A6046663AC39994547/757050"
   },
   {
     "name": "Aetherblade Assault",
@@ -1111,19 +1127,6 @@
     "icon": "0339A231A4973455D69AD7DCF222F50C1148206E/3124847"
   },
   {
-    "name": "Convergences (Public)",
-    "offset": "01:30Z",
-    "repeat": "03:00",
-    "difficulty": "",
-    "category": "The Wizard's Tower",
-    "location": "The Wizard's Tower",
-    "waypoint": "[&BB8OAAA=]",
-    "wiki": "https://wiki.guildwars2.com/wiki/Convergences",
-    "duration": "10",
-    "alert": 10,
-    "icon": "49B0902552EFD9E9A0A11C027CA3BBE3507C266B/3124849"
-  },
-  {
     "name": "Of Mists and Monsters",
     "offset": "00:30Z",
     "repeat": "02:00",
@@ -1138,7 +1141,7 @@
   },
   {
     "name": "Convergence: Mount Balrior",
-    "offset": "00:00Z",
+    "offset": "02:00Z",
     "repeat": "03:00",
     "difficulty": "",
     "category": "Mount Balrior",
@@ -1148,6 +1151,19 @@
     "duration": "10",
     "alert": 10,
     "icon": "3AFE35CB31A40540DF799D589611053506601DDA/3443173"
+  },
+  {
+    "name": "Convergence: Outer Nayos",
+    "offset": "00:30Z",
+    "repeat": "03:00",
+    "difficulty": "",
+    "category": "Outer Nayos",
+    "location": "Outer Nayos",
+    "waypoint": "[&BB8OAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/Convergence:_Outer_Nayos",
+    "duration": "10",
+    "alert": 10,
+    "icon": "A629624F2D3E3679B3E5040D4C67EBCE59C13770/3378968"
   },
   {
     "name": "A Titanic Voyage",
@@ -1161,5 +1177,70 @@
     "duration": "25",
     "alert": 10,
     "icon": "A629624F2D3E3679B3E5040D4C67EBCE59C13770/3378968"
+  },
+  {
+    "name": "Target Practice",
+    "offset": "01:00Z",
+    "repeat": "02:00",
+    "difficulty": "",
+    "category": "Adventure",
+    "location": "The Wizard's Tower",
+    "waypoint": "[&BB8OAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/Skyscale_Target_Practice_in_the_Wizard's_Tower",
+    "duration": "55",
+    "alert": 5,
+    "icon": "A4593A77CAD109FCB8E1021F1502EE08087075E7/3124848"
+  },
+  {
+    "name": "Fly by Night",
+    "offset": "01:40Z",
+    "repeat": "02:00",
+    "difficulty": "",
+    "category": "Adventure",
+    "location": "The Wizard's Tower",
+    "waypoint": "[&BB8OAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/Wizard's_Tower:_Fly_by_Night",
+    "duration": "40",
+    "alert": 5,
+    "icon": "A4593A77CAD109FCB8E1021F1502EE08087075E7/3124848"
+  },
+  {
+    "name": "White Mantle Control: New Loamhurst",
+    "offset": "01:45Z",
+    "repeat": "02:00",
+    "difficulty": "",
+    "category": "Meta Event",
+    "location": "Lake Doric",
+    "waypoint": "[&BLQJAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/White_Mantle_Control:_New_Loamhurst",
+    "duration": "45",
+    "alert": 5,
+    "icon": "ACA2511FEFBDCA54DB256CF8F50AE7EA80231FED/1635142"
+  },
+  {
+    "name": "White Mantle Control: Noran's Homestead",
+    "offset": "00:30Z",
+    "repeat": "02:00",
+    "difficulty": "",
+    "category": "Meta Event",
+    "location": "Lake Doric",
+    "waypoint": "[&BK8JAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/White_Mantle_Control:_Noran's_Homestead",
+    "duration": "45",
+    "alert": 5,
+    "icon": "ACA2511FEFBDCA54DB256CF8F50AE7EA80231FED/1635142"
+  },
+  {
+    "name": "White Mantle Control: Saidra's Haven",
+    "offset": "01:00Z",
+    "repeat": "02:00",
+    "difficulty": "",
+    "category": "Meta Event",
+    "location": "Lake Doric",
+    "waypoint": "[&BK0JAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/White_Mantle_Control:_Saidra's_Haven",
+    "duration": "45",
+    "alert": 5,
+    "icon": "ACA2511FEFBDCA54DB256CF8F50AE7EA80231FED/1635142"
   }
 ]
