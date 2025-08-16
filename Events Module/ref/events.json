@@ -531,6 +531,45 @@
     "icon": "57490B059669DA64517C99BCA5A359082696DEC9/638120"
   },
   {
+    "name": "Moredremoth Invasion: Brisban Wildlands",
+    "offset": "00:30Z",
+    "repeat": "04:00",
+    "difficulty": "",
+    "category": "Group Event",
+    "location": "Brisban Wildlands",
+    "waypoint": "&BFwAAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/Mordremoth%27s_Minions_Invade_Tyria",
+    "alert": 15,
+    "duration": "15",
+    "icon": "91EA7224450CBD98C62544ECFDDD231DDA3A7E0E/1302680"
+  },
+  {
+    "name": "Moredremoth Invasion: Kessex Hils",
+    "offset": "01:30Z",
+    "repeat": "04:00",
+    "difficulty": "",
+    "category": "Group Event",
+    "location": "Kessex Hils",
+    "waypoint": "[&BAoAAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/Mordremoth%27s_Minions_Invade_Tyria",
+    "alert": 15,
+    "duration": "15",
+    "icon": "91EA7224450CBD98C62544ECFDDD231DDA3A7E0E/1302680"
+  },
+  {
+    "name": "Moredremoth Invasion: Diessa Plateau",
+    "offset": "02:30Z",
+    "repeat": "04:00",
+    "difficulty": "",
+    "category": "Group Event",
+    "location": "Diessa Plateau",
+    "waypoint": "[&BNkAAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/Mordremoth%27s_Minions_Invade_Tyria",
+    "alert": 15,
+    "duration": "15",
+    "icon": "91EA7224450CBD98C62544ECFDDD231DDA3A7E0E/1302680"
+  },
+  {
     "name": "Crash Site",
     "offset": "00:00Z",
     "repeat": "01:00",
