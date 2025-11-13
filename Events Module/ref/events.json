@@ -1281,5 +1281,31 @@
     "duration": "45",
     "alert": 5,
     "icon": "ACA2511FEFBDCA54DB256CF8F50AE7EA80231FED/1635142"
-  }
+  },
+  {
+    "name": "Hammerhart Rumble",
+    "offset": "00:40Z",
+    "repeat": "02:00",
+    "difficulty": "",
+    "category": "Meta Event",
+    "location": "Shipwreck Strand",
+    "waypoint": "[&BJEPAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/Hammerhart_Rumble",
+    "duration": "20",
+    "alert": 5,
+    "icon": "98B1985F1A07664CE00F624B6A7BC775126408A5/3713020"
+  },
+  {
+    "name": "Secrets of the Weald",
+    "offset": "01:40Z",
+    "repeat": "02:00",
+    "difficulty": "",
+    "category": "Meta Event",
+    "location": "Starlit Weald",
+    "waypoint": "[&BJ4PAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/Secrets_of_the_Weald",
+    "duration": "35",
+    "alert": 5,
+    "icon": "F43A732A0106EAFDC67D72AA1DFF9F7338E55F16/3713021"
+  },
 ]
