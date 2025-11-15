@@ -199,7 +199,7 @@ namespace Events_Module {
                     ShowToggleButton = true
                 };
 
-                if (meta.Texture.HasTexture) {
+                if (meta.Texture != null && meta.Texture.HasTexture) {
                     es2.Icon = meta.Texture;
                 }
 
