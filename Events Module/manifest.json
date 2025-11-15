@@ -1,6 +1,6 @@
 {
   "name": "Events and Metas Observer",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "namespace": "bh.general.events",
   "package": "Events Module.dll",
   "manifest_version": 1,
