@@ -97,9 +97,11 @@ namespace Events_Module {
                                    bounds,
                                    Color.White * 0.85f);
 
-            spriteBatch.DrawOnCtrl(this,
-                                   _icon,
-                                   _layoutIconBounds);
+            if (_icon != null) {
+                spriteBatch.DrawOnCtrl(this,
+                                       _icon,
+                                       _layoutIconBounds);
+            }
         }
 
         private void Show(float duration) {
