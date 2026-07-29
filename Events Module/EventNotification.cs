@@ -1,9 +1,10 @@
-﻿using Blish_HUD;
+using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Events_Module.Properties;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
 namespace Events_Module {
     public class EventNotification : Container {
@@ -26,6 +27,7 @@ namespace Events_Module {
         private readonly AsyncTexture2D _icon;
 
         private static int _visibleNotifications = 0;
+        private static readonly List<EventNotification> _activeNotifications = new List<EventNotification>();
 
         private EventNotification(string title, AsyncTexture2D icon, string message, string waypoint) {
             string tooltipText = Resources.Notification_Tooltip;
@@ -59,6 +61,7 @@ namespace Events_Module {
             };
 
             _visibleNotifications++;
+            _activeNotifications.Add(this);
 
             this.RightMouseButtonReleased += delegate { this.Dispose(); };
             this.LeftMouseButtonReleased += delegate {
@@ -125,8 +128,16 @@ namespace Events_Module {
             notif.Show(duration);
         }
 
+        public static void ClearAll() {
+            var current = new List<EventNotification>(_activeNotifications);
+            foreach (var notif in current) {
+                notif.Dispose();
+            }
+        }
+
         protected override void DisposeControl() {
             _visibleNotifications--;
+            _activeNotifications.Remove(this);
 
             base.DisposeControl();
         }
