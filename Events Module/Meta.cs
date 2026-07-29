@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -69,6 +69,7 @@ namespace Events_Module {
                 if (_nextTime == value) return;
 
                 _nextTime = value;
+                LastFiredAlertThreshold = null;
 
                 this.OnNextRunTimeChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -78,7 +79,7 @@ namespace Events_Module {
         public bool IsWatched = false;
 
         [JsonIgnore]
-        protected bool HasAlerted = false;
+        public int? LastFiredAlertThreshold = null;
 
         private string _icon;
         private string _wikiEn;
@@ -105,6 +106,18 @@ namespace Events_Module {
 
             var tsNow = DateTime.Now.ToLocalTime().TimeOfDay;
 
+            List<int> globalThresholds = new List<int>();
+            if (!string.IsNullOrWhiteSpace(EventsModule.ModuleInstance.NotificationPreTime)) {
+                var parts = EventsModule.ModuleInstance.NotificationPreTime.Split(',');
+                foreach (var part in parts) {
+                    if (int.TryParse(part.Trim(), out int t)) {
+                        globalThresholds.Add(t);
+                    }
+                }
+            }
+            if (globalThresholds.Count == 0) globalThresholds.Add(15);
+            globalThresholds = globalThresholds.OrderByDescending(t => t).ToList();
+
             foreach (var e in Events) {
                 TimeSpan[] justTimes = e.Times.Select(time => time.ToLocalTime().TimeOfDay).OrderBy(time => time.TotalSeconds).ToArray();
                 var nextTime = justTimes.FirstOrDefault(ts => ts.TotalSeconds >= tsNow.TotalSeconds);
@@ -116,19 +129,46 @@ namespace Events_Module {
                 }
 
                 double timeUntil = (e.NextTime - DateTime.Now).TotalMinutes;
-                if (timeUntil < (e.Reminder ?? -1) && e.IsWatched) {
-                    if (!e.HasAlerted && EventsModule.ModuleInstance.NotificationsEnabled) {
-                        EventNotification.ShowNotification(
-                            Resources.ResourceManager.GetString(e.Name) ?? e.Name,
-                            e.Texture,
-                            string.Format(Resources.Starts_in__0_, timeUntil.Minutes().Humanize()),
-                            10f,
-                            e.Waypoint
-                        );
-                        e.HasAlerted = true;
+                
+                var thresholdsSet = new HashSet<int>(globalThresholds);
+                if (e.Reminder.HasValue) {
+                    thresholdsSet.Add(e.Reminder.Value);
+                }
+
+                string customTimeStr = EventsModule.ModuleInstance.GetEventCustomTime(e.Name);
+                if (!string.IsNullOrWhiteSpace(customTimeStr)) {
+                    var parts = customTimeStr.Split(',');
+                    foreach (var part in parts) {
+                        if (int.TryParse(part.Trim(), out int t)) {
+                            thresholdsSet.Add(t);
+                        }
                     }
-                } else {
-                    e.HasAlerted = false;
+                }
+                
+                var orderedThresholds = thresholdsSet.OrderByDescending(t => t).ToList();
+                
+                if (e.IsWatched) {
+                    int? targetThreshold = null;
+                    foreach (int t in orderedThresholds) {
+                        if (timeUntil < t) {
+                            targetThreshold = t;
+                        } else {
+                            break;
+                        }
+                    }
+                    
+                    if (targetThreshold.HasValue && targetThreshold != e.LastFiredAlertThreshold) {
+                        if (EventsModule.ModuleInstance.NotificationsEnabled) {
+                            EventNotification.ShowNotification(
+                                Resources.ResourceManager.GetString(e.Name) ?? e.Name,
+                                e.Texture,
+                                string.Format(Resources.Starts_in__0_, timeUntil.Minutes().Humanize()),
+                                EventsModule.ModuleInstance.NotificationDuration,
+                                e.Waypoint
+                            );
+                        }
+                        e.LastFiredAlertThreshold = targetThreshold;
+                    }
                 }
             }
         }
