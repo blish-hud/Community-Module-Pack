@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
@@ -47,11 +47,18 @@ namespace Events_Module {
         private SettingCollection  _watchCollection;
         private SettingEntry<bool> _settingNotificationsEnabled;
         private SettingEntry<bool> _settingChimeEnabled;
+        private SettingEntry<string> _settingNotificationPreTime;
+        private SettingEntry<int>  _settingNotificationDuration;
+        private SettingEntry<bool> _settingShowCornerIcon;
 
         private SettingEntry<Point> _settingNotificationsPosition;
 
         private Texture2D _textureWatch;
         private Texture2D _textureWatchActive;
+        private Texture2D _textureClockIcon;
+
+        private CornerIcon _eventsCornerIcon;
+        private ContextMenuStrip _eventsContextMenu;
 
         public bool NotificationsEnabled {
             get => _settingNotificationsEnabled.Value;
@@ -61,6 +68,21 @@ namespace Events_Module {
         public bool ChimeEnabled {
             get => _settingChimeEnabled.Value;
             set => _settingChimeEnabled.Value = value;
+        }
+
+        public string NotificationPreTime {
+            get => _settingNotificationPreTime.Value;
+            set => _settingNotificationPreTime.Value = value;
+        }
+
+        public bool ShowCornerIcon {
+            get => _settingShowCornerIcon.Value;
+            set => _settingShowCornerIcon.Value = value;
+        }
+
+        public int NotificationDuration {
+            get => _settingNotificationDuration.Value;
+            set => _settingNotificationDuration.Value = value;
         }
 
         public Point NotificationPosition {
@@ -78,6 +100,9 @@ namespace Events_Module {
 
             _settingNotificationsEnabled = selfManagedSettings.DefineSetting(@"notificationsEnabled", true);
             _settingChimeEnabled         = selfManagedSettings.DefineSetting(@"chimeEnabled",         true);
+            _settingNotificationPreTime  = selfManagedSettings.DefineSetting(@"notificationPreTime",  "15");
+            _settingNotificationDuration = selfManagedSettings.DefineSetting(@"notificationDuration", 10);
+            _settingShowCornerIcon       = selfManagedSettings.DefineSetting(@"showCornerIcon",       true);
 
             _settingNotificationsPosition = selfManagedSettings.DefineSetting("notificationPosition", new Point(180, 60));
 
@@ -92,6 +117,7 @@ namespace Events_Module {
         private void LoadTextures() {
             _textureWatch       = ContentsManager.GetTexture(@"textures\605021.png");
             _textureWatchActive = ContentsManager.GetTexture(@"textures\605019.png");
+            _textureClockIcon   = ContentsManager.GetTexture(@"textures\clock-icon.png");
         }
 
         protected override async Task LoadAsync() {
@@ -102,9 +128,64 @@ namespace Events_Module {
         }
 
         protected override void OnModuleLoaded(EventArgs e) {
-            _eventsTab = GameService.Overlay.BlishHudWindow.AddTab(Resources.Events_and_Metas, this.ContentsManager.GetTexture(@"textures\1466345.png"), _tabPanel);
+            _tabPanel = BuildSettingPanel(GameService.Overlay.BlishHudWindow.ContentRegion);
+
+            UpdateCornerIconState();
+
+            GameService.Overlay.BlishHudWindow.AddTab(
+                Resources.Events_and_Metas,
+                _textureWatch,
+                _tabPanel
+            );
 
             base.OnModuleLoaded(e);
+        }
+
+        private void UpdateCornerIconState() {
+            if (ShowCornerIcon && _eventsCornerIcon == null) {
+                _eventsCornerIcon = new CornerIcon() {
+                    Icon             = _textureWatch,
+                    BasicTooltipText = $"Events",
+                    Priority         = 10
+                };
+
+                _eventsCornerIcon.Click += delegate {
+                    ShowUpcomingEventNotifications();
+                };
+
+                _eventsContextMenu = new ContextMenuStrip();
+                _eventsCornerIcon.Menu = _eventsContextMenu;
+                _eventsContextMenu.Shown += delegate {
+                    UpdateContextMenu();
+                };
+            } else if (!ShowCornerIcon && _eventsCornerIcon != null) {
+                _eventsCornerIcon.Dispose();
+                _eventsCornerIcon = null;
+                _eventsContextMenu?.Dispose();
+                _eventsContextMenu = null;
+            }
+        }
+
+        private void ShowUpcomingEventNotifications() {
+            if (Meta.Events == null) return;
+            
+            EventNotification.ClearAll();
+
+            var upcomingWatched = Meta.Events
+                .Where(e => e.IsWatched && e.LastFiredAlertThreshold.HasValue && (e.NextTime - DateTime.Now).TotalMinutes > 0)
+                .OrderBy(e => e.NextTime)
+                .ToList();
+
+            foreach (var e in upcomingWatched) {
+                double timeUntil = (e.NextTime - DateTime.Now).TotalMinutes;
+                EventNotification.ShowNotification(
+                    Resources.ResourceManager.GetString(e.Name) ?? e.Name,
+                    e.Texture,
+                    string.Format(Resources.Starts_in__0_, timeUntil.Minutes().Humanize()),
+                    NotificationDuration,
+                    e.Waypoint
+                );
+            }
         }
 
         public override IView GetSettingsView() {
@@ -119,6 +200,13 @@ namespace Events_Module {
             var choseLocation = new NotificationMover(new ScreenRegion("Notifications", _settingNotificationsPosition, tempSizeSetting));
             choseLocation.Parent = GameService.Graphics.SpriteScreen;
             choseLocation.Size = GameService.Graphics.SpriteScreen.ContentRegion.Size;
+        }
+
+        public string GetEventCustomTime(string eventName) {
+            if (_watchCollection.TryGetSetting(@"customTime:" + eventName, out var setting)) {
+                return ((SettingEntry<string>)setting).Value;
+            }
+            return "";
         }
 
         private Panel BuildSettingPanel(Rectangle panelBounds) {
@@ -186,6 +274,7 @@ namespace Events_Module {
 
             foreach (var meta in Meta.Events) {
                 var setting = _watchCollection.DefineSetting(@"watchEvent:" + meta.Name, true);
+                var customTimeSetting = _watchCollection.DefineSetting(@"customTime:" + meta.Name, "");
 
                 meta.IsWatched = setting.Value;
 
@@ -202,6 +291,21 @@ namespace Events_Module {
                 if (meta.Texture != null && meta.Texture.HasTexture) {
                     es2.Icon = meta.Texture;
                 }
+
+                string defaultHint = meta.Reminder.HasValue ? meta.Reminder.Value.ToString() : NotificationPreTime;
+
+                var customTimeTextBox = new TextBox() {
+                    Parent           = es2,
+                    Location         = new Point(230, 15),
+                    Text             = customTimeSetting.Value,
+                    BasicTooltipText = "Custom Pre-Time (min) for this event. E.g. '10, 5'",
+                    Width            = 60,
+                    PlaceholderText  = defaultHint
+                };
+
+                customTimeTextBox.TextChanged += delegate {
+                    customTimeSetting.Value = customTimeTextBox.Text;
+                };
 
                 var nextTimeLabel = new Label() {
                     Size                = new Point(65, es2.ContentRegion.Height),
@@ -395,14 +499,51 @@ namespace Events_Module {
         protected override void Update(GameTime gameTime) {
             _elapsedSeconds += gameTime.ElapsedGameTime.TotalSeconds;
 
+            UpdateCornerIconState();
+
             if (_elapsedSeconds > TIMER_RECALC_RATE) {
                 Meta.UpdateEventSchedules();
+                UpdateContextMenu();
                 _elapsedSeconds = 0;
+            }
+        }
+
+        private void UpdateContextMenu() {
+            if (_eventsContextMenu == null || Meta.Events == null) return;
+
+            foreach (var child in _eventsContextMenu.Children.ToList()) {
+                child.Dispose();
+            }
+
+            var upcomingWatched = Meta.Events
+                .Where(e => e.IsWatched && e.LastFiredAlertThreshold.HasValue && (e.NextTime - DateTime.Now).TotalMinutes > 0)
+                .OrderBy(e => e.NextTime)
+                .ToList();
+
+            if (!upcomingWatched.Any()) {
+                _eventsContextMenu.AddMenuItem("No upcoming watched events");
+                return;
+            }
+
+            foreach (var e in upcomingWatched) {
+                double timeUntil = (e.NextTime - DateTime.Now).TotalMinutes;
+                string timeStr = timeUntil > 0 ? timeUntil.Minutes().Humanize() : "Now";
+                string name = Resources.ResourceManager.GetString(e.Name) ?? e.Name;
+                
+                var menuItem = _eventsContextMenu.AddMenuItem($"{name} (in {timeStr})");
+                if (e.Texture != null && e.Texture.HasTexture) {
+                    // ContextMenuItem might not support icon natively like this in old Blish HUD, but usually it's possible. 
+                    // If it doesn't, this line might error, so I'll leave out the icon on the context menu to be safe.
+                }
             }
         }
 
         protected override void Unload() {
             ModuleInstance = null;
+
+            if (_eventsCornerIcon != null) {
+                _eventsCornerIcon.Dispose();
+            }
 
             GameService.Overlay.UserLocaleChanged -= ChangeLocalization;
             GameService.Overlay.BlishHudWindow.RemoveTab(_eventsTab);
