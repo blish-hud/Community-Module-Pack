@@ -1359,5 +1359,44 @@
     "duration": "15",
     "alert": 5,
     "icon": "4A5834E40CDC6A0C44085B1F697565002D71CD47/1228226"
+  },
+  {
+    "name": "Shackles of the Ancients",
+    "offset": "01:15Z",
+    "repeat": "02:00",
+    "difficulty": "",
+    "category": "Meta Event",
+    "location": "Eternity's Garden",
+    "waypoint": "[&BPwPAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/Shackles_of_the_Ancients",
+    "duration": "25",
+    "alert": 5,
+    "icon": "642001EEBE27077E9A0D513B3A12063B562A252A/3772537"
+  },
+  {
+    "name": "Depths of Cruelty",
+    "offset": "02:00Z",
+    "repeat": "03:00",
+    "difficulty": "",
+    "category": "Meta Event",
+    "location": "Leyspring Hollows",
+    "waypoint": "[&BDYQAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/Depths_of_Cruelty",
+    "duration": "30",
+    "alert": 5,
+    "icon": "A9C70ED53245179FAEBAB80E5EABC30454C00A91/3807230"
+  },
+  {
+    "name": "Convergence: Nexus of Eternity",
+    "offset": "01:00Z",
+    "repeat": "03:00",
+    "difficulty": "",
+    "category": "Convergence",
+    "location": "Nexus of Eternity",
+    "waypoint": "[&BB8QAAA=]",
+    "wiki": "https://wiki.guildwars2.com/wiki/Convergence:_Nexus_of_Eternity",
+    "duration": "10",
+    "alert": 10,
+    "icon": "F3D120A7D0391769D41BB02601DD52D038CCCBCC/3807232"
   }
 ]
